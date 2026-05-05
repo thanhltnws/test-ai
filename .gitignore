@@ -233,3 +233,6 @@ dist/
 # Local env overrides (base .env already ignored above)
 .env.local
 .env.*.local
+
+# Seed — generated output only; raw/ is committed
+backend/seed/data/
