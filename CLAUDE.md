@@ -5,8 +5,8 @@
 Internal demo — AI Insight Hub. Aggregates customer insights from HubSpot, Jira, email, and ops notes into a unified store, surfaces them via dashboard and RAG chatbox.
 
 See `docs/architecture.md` for full system design.
-<!-- See `docs/schema.md` for table definitions.
-See `docs/decisions.md` for ADRs. -->
+See `docs/schema.md` for table definitions.
+See `docs/decisions.md` for ADRs.
 
 ## Stack
 
