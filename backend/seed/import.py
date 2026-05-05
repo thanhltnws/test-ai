@@ -1,5 +1,5 @@
 """
-Import backend/seed/data/unified_seed.json into Aurora PostgreSQL.
+Import backend/seed/data/insights_seed.json into Aurora PostgreSQL.
 Vectorize import is stubbed — to be implemented.
 
 Usage:
@@ -17,7 +17,7 @@ import requests
 from dotenv import load_dotenv
 
 _HERE     = Path(__file__).parent
-DATA_PATH = _HERE / "data" / "unified_seed.json"
+DATA_PATH = _HERE / "data" / "insights_seed.json"
 
 
 # ── db connection ─────────────────────────────────────────────────────────────
@@ -39,7 +39,7 @@ def import_to_postgres(records: list[dict]) -> None:
                 for rec in records:
                     cur.execute(
                         """
-                        INSERT INTO unified (
+                        INSERT INTO insights (
                             id, source, source_id, source_url, raw_text,
                             pain_points, objections, use_cases,
                             icp, funnel_stage, confidence_score,
@@ -72,7 +72,7 @@ def import_to_postgres(records: list[dict]) -> None:
                             datetime.now(timezone.utc),
                         ),
                     )
-        print(f"Imported {len(records)} records into unified.")
+        print(f"Imported {len(records)} records into insights.")
     finally:
         conn.close()
 

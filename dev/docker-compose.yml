@@ -1,0 +1,28 @@
+# Local dev only — PostgreSQL for seed data import.
+# Not related to application deployment.
+#
+# Usage:
+#   docker compose -f dev/docker-compose.yml up -d     # start
+#   docker compose -f dev/docker-compose.yml down      # stop (keep data)
+#   docker compose -f dev/docker-compose.yml down -v   # stop + wipe data
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ai_insight_hub
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ai_insight_hub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db_data:

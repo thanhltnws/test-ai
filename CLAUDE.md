@@ -2,7 +2,7 @@
 
 ## Project
 
-Internal demo — AI Insight Hub. Aggregates customer insights from HubSpot, Jira, email, and ops notes into a unified store, surfaces them via dashboard and RAG chatbox.
+Internal demo — AI Insight Hub. Aggregates customer insights from HubSpot, Jira, email, and ops notes into a insights store, surfaces them via dashboard and RAG chatbox.
 
 See `docs/architecture.md` for full system design.
 See `docs/schema.md` for table definitions.
@@ -25,7 +25,7 @@ Gemini → Bedrock: swap endpoint + key only, logic unchanged.
 - Prompts always in `prompt.py`, never inline in `handler.py`
 - Each Lambda is self-contained with its own `requirements.txt`
 - Pipeline outputs JSON — never generate raw SQL strings
-- `source_url` is mandatory in every `unified` row — reject INSERT without it
+- `source_url` is mandatory in every `insights` row — reject INSERT without it
 
 ## Data situation
 
