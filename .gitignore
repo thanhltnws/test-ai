@@ -216,3 +216,20 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# HubSpot config file
+hubspot.config.yml
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Node / CDK / Frontend
+node_modules/
+cdk.out/
+.cdk.staging/
+dist/
+.vite/
+
+# Local env overrides (base .env already ignored above)
+.env.local
+.env.*.local
