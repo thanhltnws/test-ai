@@ -6,7 +6,7 @@
 
 ## Overview
 
-AI Insight Hub aggregates customer insights scattered across HubSpot, Jira/Redmine, email, and manual notes into a unified store, then surfaces them through a dashboard and a natural-language chatbox.
+AI Insight Hub aggregates customer insights scattered across HubSpot, Jira/Redmine, email, and manual notes into a insights store, then surfaces them through a dashboard and a natural-language chatbox.
 
 ```
 Data Sources → Ingestion (Lambda + S3) → Transform (Glue + Bedrock) → Aurora + Vectorize → Application (Feature 1 + Feature 2)
@@ -42,7 +42,7 @@ Normalize schema, rule-based dedup, field mapping for structured fields (deal st
 
 Processes unstructured text (call notes, email body, ops notes). Two parallel outputs:
 
-**Output A — Structured extraction → Aurora PostgreSQL `unified` table**
+**Output A — Structured extraction → Aurora PostgreSQL `insights` table**
 
 | Field | Description |
 |---|---|
@@ -54,7 +54,7 @@ Processes unstructured text (call notes, email body, ops notes). Two parallel ou
 | `confidence_score` | Model confidence in the extraction |
 | `source_url` | Link back to the originating Jira ticket or HubSpot deal |
 
-`source_url` is mandatory — every row in `unified` must have it. Reject any INSERT missing this field.
+`source_url` is mandatory — every row in `insights` must have it. Reject any INSERT missing this field.
 
 **Output B — Vector embedding → Cloudflare Vectorize**
 
@@ -73,13 +73,13 @@ EventBridge triggers Lambda daily or weekly.
 ```
 EventBridge scheduler
   → Lambda batch compute
-      → SQL query Aurora unified          (structured aggregates)
+      → SQL query Aurora insights          (structured aggregates)
       → Vectorize semantic search         (pattern context)
       → enrich prompt with both contexts
       → Bedrock / Claude
           Case A → top pain points, funnel distribution
           Case B → ICP narrative, action recommendations for Sales & Marketing
-  → Aurora table_c (pre-computed results)
+  → Aurora recommendations (pre-computed results)
   → GET /insights/summary
   → Frontend · Dashboard (charts, ICP cards, recommendations)
 ```
@@ -91,7 +91,7 @@ User submits a free-text question. Lambda retrieves context from both stores, en
 ```
 POST /chat
   → Lambda RAG
-      → SQL query Aurora unified          (structured fields + source_url)
+      → SQL query Aurora insights          (structured fields + source_url)
       → Vectorize semantic search         (relevant raw chunks + source_url)
       → merge context → enrich prompt
   → Bedrock / Claude
@@ -111,7 +111,7 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 | Ingestion | S3 | Raw landing zone |
 | Transform | AWS Glue ETL | Schema normalize, dedup, field map |
 | Transform | Bedrock / Claude | AI field extraction from unstructured text |
-| Store | Aurora PostgreSQL | `unified` table (source of truth) + `table_c` (pre-computed) |
+| Store | Aurora PostgreSQL | `insights` table (source of truth) + `recommendations` (pre-computed) |
 | Store | Cloudflare Vectorize | Vector index — raw text chunks + source_url metadata |
 | Store | ElastiCache Redis | API response cache |
 | Application | EventBridge | Batch scheduler |
@@ -124,7 +124,7 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 
 ## Key Design Decisions
 
-- **`source_url` is mandatory in `unified` and Vectorize metadata** — every response in both features links back to the exact Jira ticket or HubSpot deal that produced the insight.
+- **`source_url` is mandatory in `insights` and Vectorize metadata** — every response in both features links back to the exact Jira ticket or HubSpot deal that produced the insight.
 - **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich Bedrock prompt with context from Aurora (structured) and Vectorize (semantic) before generating output.
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
 - **Fixed SQL is primary for Aurora queries** — Text-to-SQL deferred as fallback only, due to hallucination risk on complex queries.

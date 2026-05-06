@@ -1,5 +1,5 @@
 """
-Import backend/seed/data/unified_seed.json into Aurora PostgreSQL.
+Import backend/seed/data/insights_seed.json into Aurora PostgreSQL.
 Vectorize import is stubbed — to be implemented.
 
 Usage:
@@ -16,7 +16,7 @@ import psycopg2.extras
 from dotenv import load_dotenv
 
 _HERE     = Path(__file__).parent
-DATA_PATH = _HERE / "data" / "unified_seed.json"
+DATA_PATH = _HERE / "data" / "insights_seed.json"
 
 
 # ── db connection ─────────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ def import_to_postgres(records: list[dict]) -> None:
                 for rec in records:
                     cur.execute(
                         """
-                        INSERT INTO unified (
+                        INSERT INTO insights (
                             id, source, source_id, source_url, raw_text,
                             pain_points, objections, use_cases,
                             icp, funnel_stage, confidence_score,
@@ -71,7 +71,7 @@ def import_to_postgres(records: list[dict]) -> None:
                             datetime.now(timezone.utc),
                         ),
                     )
-        print(f"Imported {len(records)} records into unified.")
+        print(f"Imported {len(records)} records into insights.")
     finally:
         conn.close()
 
@@ -83,7 +83,7 @@ def import_to_vectorize(records: list[dict]) -> None:
     TODO: embed raw_text and upsert into Cloudflare Vectorize.
 
     For each record:
-      - vector id : record["id"]          (matches unified.id)
+      - vector id : record["id"]          (matches insights.id)
       - text      : record["raw_text"]    (split into chunks if > 512 tokens)
       - metadata  : {source, source_url, funnel_stage, ingested_at}
 
