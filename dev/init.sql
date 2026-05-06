@@ -2,6 +2,8 @@
 -- Auto-run by postgres container on first start (docker-entrypoint-initdb.d).
 -- Keep in sync with docs/schema.md.
 
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- ── core tables ───────────────────────────────────────────────────────────────
 
 CREATE TABLE insights (
@@ -49,3 +51,16 @@ CREATE INDEX ON insights USING GIN (pain_points);
 
 CREATE INDEX ON recommendations (computed_at DESC);
 CREATE INDEX ON recommendations (period, period_start DESC, result_type);
+
+-- ── vector store ──────────────────────────────────────────────────────────────
+
+CREATE TABLE insight_chunks (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    insight_id  UUID NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
+    chunk_index INT  NOT NULL,
+    chunk_text  TEXT,
+    embedding   vector(1024),
+    UNIQUE (insight_id, chunk_index)
+);
+
+CREATE INDEX ON insight_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);

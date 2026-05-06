@@ -28,21 +28,21 @@ CREATE TABLE insights (
 );
 ```
 
-| Column | Type | Notes |
-|---|---|---|
-| `id` | UUID | Surrogate key |
-| `source` | TEXT | `hubspot` · `jira` · `crm` · `email` · `form` |
-| `source_id` | TEXT | Original record ID in source system |
-| `source_url` | TEXT | **Mandatory.** Deep link to originating record — HubSpot deal URL, Jira ticket URL, etc. INSERT rejected if NULL or empty. |
-| `raw_text` | TEXT | Original unstructured text passed to Bedrock/Gemini |
-| `pain_points` | TEXT[] | Extracted customer pain points |
-| `objections` | TEXT[] | Sales objections raised |
-| `use_cases` | TEXT[] | Use cases mentioned |
-| `icp` | JSONB | ICP signals — see structure below |
-| `funnel_stage` | TEXT | `awareness` · `consideration` · `negotiation` · `won` · `lost` |
-| `confidence_score` | NUMERIC(3,2) | 0.00–1.00, model self-reported confidence |
-| `ingested_at` | TIMESTAMPTZ | When raw record arrived in S3 |
-| `extracted_at` | TIMESTAMPTZ | When AI extraction completed |
+| Column             | Type         | Notes                                                                                                                      |
+| ------------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `id`               | UUID         | Surrogate key                                                                                                              |
+| `source`           | TEXT         | `hubspot` · `jira` · `crm` · `email` · `form`                                                                              |
+| `source_id`        | TEXT         | Original record ID in source system                                                                                        |
+| `source_url`       | TEXT         | **Mandatory.** Deep link to originating record — HubSpot deal URL, Jira ticket URL, etc. INSERT rejected if NULL or empty. |
+| `raw_text`         | TEXT         | Original unstructured text passed to Bedrock/Gemini                                                                        |
+| `pain_points`      | TEXT[]       | Extracted customer pain points                                                                                             |
+| `objections`       | TEXT[]       | Sales objections raised                                                                                                    |
+| `use_cases`        | TEXT[]       | Use cases mentioned                                                                                                        |
+| `icp`              | JSONB        | ICP signals — see structure below                                                                                          |
+| `funnel_stage`     | TEXT         | `awareness` · `consideration` · `negotiation` · `won` · `lost`                                                             |
+| `confidence_score` | NUMERIC(3,2) | 0.00–1.00, model self-reported confidence                                                                                  |
+| `ingested_at`      | TIMESTAMPTZ  | When raw record arrived in S3                                                                                              |
+| `extracted_at`     | TIMESTAMPTZ  | When AI extraction completed                                                                                               |
 
 #### `icp` JSONB structure
 
@@ -55,12 +55,12 @@ CREATE TABLE insights (
 }
 ```
 
-| Field | Example values |
-|---|---|
-| `sector` | `fintech` · `logistics` · `retail` · `healthcare` · `manufacturing` |
-| `company_size` | `1-10` · `11-50` · `50-200` · `200-1000` · `1000+` |
-| `deal_size` | `small` · `medium` · `large` |
-| `region` | `Vietnam` · `Southeast Asia` · `International` |
+| Field          | Example values                                                      |
+| -------------- | ------------------------------------------------------------------- |
+| `sector`       | `fintech` · `logistics` · `retail` · `healthcare` · `manufacturing` |
+| `company_size` | `1-10` · `11-50` · `50-200` · `200-1000` · `1000+`                  |
+| `deal_size`    | `small` · `medium` · `large`                                        |
+| `region`       | `Vietnam` · `Southeast Asia` · `International`                      |
 
 ```sql
 -- Reject INSERT without source_url at DB level
@@ -93,12 +93,12 @@ CREATE TABLE recommendations (
 );
 ```
 
-| Column | Type | Notes |
-|---|---|---|
-| `period` | TEXT | `daily` · `weekly` |
-| `period_start` | DATE | Start of the compute window |
-| `result_type` | TEXT | `pain_points_summary` · `funnel_distribution` · `icp_narrative` · `recommendations` |
-| `payload` | JSONB | Full Bedrock response for this result type |
+| Column         | Type  | Notes                                                                               |
+| -------------- | ----- | ----------------------------------------------------------------------------------- |
+| `period`       | TEXT  | `daily` · `weekly`                                                                  |
+| `period_start` | DATE  | Start of the compute window                                                         |
+| `result_type`  | TEXT  | `pain_points_summary` · `funnel_distribution` · `icp_narrative` · `recommendations` |
+| `payload`      | JSONB | Full Bedrock response for this result type                                          |
 
 ---
 
@@ -120,18 +120,30 @@ CREATE INDEX ON recommendations (period, period_start DESC, result_type);
 
 ---
 
-## Cloudflare Vectorize (companion vector store)
+### `insight_chunks`
 
-Not PostgreSQL — documented here for completeness.
+pgvector store co-located with PostgreSQL. One row per text chunk of `insights.raw_text`.
 
-Each vector entry mirrors a row in `insights`:
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
 
-| Metadata field | Maps to |
-|---|---|
-| `insights_id` | `insights.id` |
-| `source` | `insights.source` |
-| `source_url` | `insights.source_url` — **mandatory** |
-| `funnel_stage` | `insights.funnel_stage` |
-| `extracted_at` | `insights.extracted_at` |
+CREATE TABLE insight_chunks (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    insight_id  UUID NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
+    chunk_index INT  NOT NULL,
+    chunk_text  TEXT,
+    embedding   vector(1024),
+    UNIQUE (insight_id, chunk_index)
+);
 
-Text chunk embedded: `raw_text` (split by sentence if > 512 tokens).
+CREATE INDEX ON insight_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);
+```
+
+| Column        | Type         | Notes                                         |
+| ------------- | ------------ | --------------------------------------------- |
+| `insight_id`  | UUID         | FK → `insights.id`                            |
+| `chunk_index` | INT          | 0-based chunk order within the source record  |
+| `chunk_text`  | TEXT         | ~512-token slice of `raw_text` (≈ 2048 chars) |
+| `embedding`   | vector(1024) | Gemini `text-embedding-004` output            |
+
+Embedding model: Gemini `text-embedding-004` (768 dims) via `GEMINI_API_KEY`.

@@ -1,16 +1,15 @@
 """
-Import backend/seed/data/insights_seed.json into Aurora PostgreSQL.
-Vectorize import is stubbed — to be implemented.
+Import backend/seed/data/insights_seed.json into Aurora PostgreSQL + pgvector.
 
 Usage:
     python backend/seed/import.py
 """
-import json
 import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+import json
 import psycopg2
 import psycopg2.extras
 import requests
@@ -18,6 +17,8 @@ from dotenv import load_dotenv
 
 _HERE     = Path(__file__).parent
 DATA_PATH = _HERE / "data" / "insights_seed.json"
+
+_CHUNK_SIZE = 2048   # ~512 tokens
 
 
 # ── db connection ─────────────────────────────────────────────────────────────
@@ -77,63 +78,63 @@ def import_to_postgres(records: list[dict]) -> None:
         conn.close()
 
 
-# ── vectorize (stub) ──────────────────────────────────────────────────────────
+# ── pgvector ──────────────────────────────────────────────────────────────────
 
-def import_to_vectorize(records: list[dict]) -> None:
+def _split_chunks(text: str) -> list[str]:
+    text = text or ""
+    return [text[i:i + _CHUNK_SIZE] for i in range(0, max(len(text), 1), _CHUNK_SIZE)]
+
+
+def _embed_batch(texts: list[str], account_id: str, api_token: str) -> list[list[float]]:
+    url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/@cf/baai/bge-m3"
+    resp = requests.post(
+        url,
+        headers={"Authorization": f"Bearer {api_token}"},
+        json={"text": texts},
+    )
+    if not resp.ok:
+        raise RuntimeError(f"Cloudflare embed {resp.status_code}: {resp.text}")
+    return resp.json()["result"]["data"]
+
+
+def import_to_pgvector(records: list[dict]) -> None:
     account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
     api_token  = os.environ.get("CLOUDFLARE_API_TOKEN")
-    index_name = os.environ.get("VECTORIZE_INDEX_NAME")
-    if not all([account_id, api_token, index_name]):
-        print("Vectorize skipped — CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN / VECTORIZE_INDEX_NAME not set")
+    if not all([account_id, api_token]):
+        print("pgvector skipped — CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN not set")
         return
 
-    headers    = {"Authorization": f"Bearer {api_token}"}
-    embed_url  = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/@cf/baai/bge-m3"
-    upsert_url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/vectorize/v2/indexes/{index_name}/upsert"
-
-    # ~512-token chunks (≈ 2048 chars)
-    def chunks(text: str) -> list[str]:
-        text = text or ""
-        return [text[i:i + 2048] for i in range(0, max(len(text), 1), 2048)]
-
-    texts, metas = [], []
+    # build flat list of (insight_id, chunk_index, chunk_text)
+    chunks: list[tuple[str, int, str]] = []
     for rec in records:
-        for i, chunk in enumerate(chunks(rec.get("raw_text") or "")):
-            texts.append(chunk)
-            metas.append({
-                "vector_id":    rec["id"] if i == 0 else f"{rec['id']}_{i}",
-                "unified_id":   rec["id"],
-                "source":       rec["source"],
-                "source_url":   rec["source_url"],
-                "funnel_stage": rec.get("funnel_stage"),
-                "ingested_at":  rec.get("ingested_at"),
-            })
+        for i, text in enumerate(_split_chunks(rec.get("raw_text") or "")):
+            chunks.append((rec["id"], i, text))
 
     # embed in batches of 100
-    vectors = []
-    for start in range(0, len(texts), 100):
-        resp = requests.post(
-            embed_url,
-            headers=headers,
-            json={"text": texts[start:start + 100]},
-        )
-        if not resp.ok:
-            raise RuntimeError(f"Embed API {resp.status_code}: {resp.text}")
-        for meta, values in zip(metas[start:start + 100], resp.json()["result"]["data"]):
-            vectors.append({"id": meta.pop("vector_id"), "values": values, "metadata": meta})
+    embeddings: list[list[float]] = []
+    for start in range(0, len(chunks), 100):
+        batch = [c[2] for c in chunks[start:start + 100]]
+        embeddings.extend(_embed_batch(batch, account_id, api_token))
 
-    # upsert in batches of 1000
-    upsert_headers = {**headers, "Content-Type": "application/x-ndjson"}
-    total = 0
-    for start in range(0, len(vectors), 1000):
-        batch  = vectors[start:start + 1000]
-        ndjson = "\n".join(json.dumps(v) for v in batch)
-        resp = requests.post(upsert_url, headers=upsert_headers, data=ndjson.encode())
-        if not resp.ok:
-            raise RuntimeError(f"Vectorize upsert {resp.status_code}: {resp.text}")
-        total += len(batch)
-
-    print(f"Upserted {total} vectors into Vectorize index '{index_name}'.")
+    # upsert into insight_chunks
+    conn = get_db_connection()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                for (insight_id, chunk_index, chunk_text), values in zip(chunks, embeddings):
+                    cur.execute(
+                        """
+                        INSERT INTO insight_chunks (insight_id, chunk_index, chunk_text, embedding)
+                        VALUES (%s, %s, %s, %s::vector)
+                        ON CONFLICT (insight_id, chunk_index) DO UPDATE SET
+                            chunk_text = EXCLUDED.chunk_text,
+                            embedding  = EXCLUDED.embedding
+                        """,
+                        (insight_id, chunk_index, chunk_text, str(values)),
+                    )
+        print(f"Upserted {len(chunks)} chunks into insight_chunks.")
+    finally:
+        conn.close()
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
@@ -144,14 +145,14 @@ def main() -> None:
     with open(DATA_PATH, encoding="utf-8") as f:
         records = json.load(f)
 
-    # Assign stable UUIDs once — same id used by both postgres and vectorize
+    # Assign stable UUIDs once — same id used by both postgres and pgvector
     for rec in records:
         if "id" not in rec:
             rec["id"] = str(uuid.uuid4())
 
     print(f"Loaded {len(records)} records from {DATA_PATH}")
     import_to_postgres(records)
-    import_to_vectorize(records)
+    import_to_pgvector(records)
 
 
 if __name__ == "__main__":
