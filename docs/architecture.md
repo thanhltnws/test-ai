@@ -68,7 +68,7 @@ Built on API Gateway + Lambda. Two independent features. Both enrich the Bedrock
 
 ### Feature 1 · Dashboard (batch)
 
-EventBridge triggers Lambda daily or weekly.
+EventBridge triggers Lambda daily.
 
 ```
 EventBridge scheduler
