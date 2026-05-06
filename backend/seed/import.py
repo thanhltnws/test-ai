@@ -13,6 +13,7 @@ from pathlib import Path
 
 import psycopg2
 import psycopg2.extras
+import requests
 from dotenv import load_dotenv
 
 _HERE     = Path(__file__).parent
@@ -79,18 +80,60 @@ def import_to_postgres(records: list[dict]) -> None:
 # ── vectorize (stub) ──────────────────────────────────────────────────────────
 
 def import_to_vectorize(records: list[dict]) -> None:
-    """
-    TODO: embed raw_text and upsert into Cloudflare Vectorize.
+    account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+    api_token  = os.environ.get("CLOUDFLARE_API_TOKEN")
+    index_name = os.environ.get("VECTORIZE_INDEX_NAME")
+    if not all([account_id, api_token, index_name]):
+        print("Vectorize skipped — CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN / VECTORIZE_INDEX_NAME not set")
+        return
 
-    For each record:
-      - vector id : record["id"]          (matches insights.id)
-      - text      : record["raw_text"]    (split into chunks if > 512 tokens)
-      - metadata  : {source, source_url, funnel_stage, ingested_at}
+    headers    = {"Authorization": f"Bearer {api_token}"}
+    embed_url  = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/@cf/baai/bge-m3"
+    upsert_url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/vectorize/v2/indexes/{index_name}/upsert"
 
-    Requires in .env:
-      CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, VECTORIZE_INDEX_NAME
-    """
-    pass
+    # ~512-token chunks (≈ 2048 chars)
+    def chunks(text: str) -> list[str]:
+        text = text or ""
+        return [text[i:i + 2048] for i in range(0, max(len(text), 1), 2048)]
+
+    texts, metas = [], []
+    for rec in records:
+        for i, chunk in enumerate(chunks(rec.get("raw_text") or "")):
+            texts.append(chunk)
+            metas.append({
+                "vector_id":    rec["id"] if i == 0 else f"{rec['id']}_{i}",
+                "unified_id":   rec["id"],
+                "source":       rec["source"],
+                "source_url":   rec["source_url"],
+                "funnel_stage": rec.get("funnel_stage"),
+                "ingested_at":  rec.get("ingested_at"),
+            })
+
+    # embed in batches of 100
+    vectors = []
+    for start in range(0, len(texts), 100):
+        resp = requests.post(
+            embed_url,
+            headers=headers,
+            json={"text": texts[start:start + 100]},
+        )
+        if not resp.ok:
+            raise RuntimeError(f"Embed API {resp.status_code}: {resp.text}")
+        for meta, values in zip(metas[start:start + 100], resp.json()["result"]["data"]):
+            vectors.append({"id": meta.pop("vector_id"), "values": values, "metadata": meta})
+
+    # upsert in batches of 1000
+    upsert_headers = {**headers, "Content-Type": "application/x-ndjson"}
+    total = 0
+    for start in range(0, len(vectors), 1000):
+        batch  = vectors[start:start + 1000]
+        ndjson = "\n".join(json.dumps(v) for v in batch)
+        resp = requests.post(upsert_url, headers=upsert_headers, data=ndjson.encode())
+        if not resp.ok:
+            raise RuntimeError(f"Vectorize upsert {resp.status_code}: {resp.text}")
+        total += len(batch)
+
+    print(f"Upserted {total} vectors into Vectorize index '{index_name}'.")
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
