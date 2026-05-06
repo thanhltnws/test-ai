@@ -1,6 +1,6 @@
 # AI Insight Hub
 
-Internal demo. Aggregates customer insights from HubSpot, Jira, email, and ops notes into a unified store, then surfaces them through a dashboard and a natural-language chatbox.
+Internal demo. Aggregates customer insights from HubSpot, Jira, email, and ops notes into a insights store, then surfaces them through a dashboard and a natural-language chatbox.
 
 ```text
 Data Sources → Ingestion (Lambda + S3) → Transform (Lambda ETL + Bedrock) → Aurora + Vectorize → Dashboard / Chatbox
@@ -38,7 +38,7 @@ ai-insight-hub/
 │   │
 │   ├── transform/
 │   │   ├── lambda_etl/       ← Lambda: normalize schema, dedup, field map
-│   │   └── bedrock_extract/  ← Lambda: AI extraction → unified table
+│   │   └── bedrock_extract/  ← Lambda: AI extraction → insights table
 │   │       ├── handler.py
 │   │       └── prompt.py     ← prompt template (never inline in handler)
 │   │
@@ -50,8 +50,8 @@ ai-insight-hub/
 │   │       └── prompt.py
 │   │
 │   └── seed/                 ← local dev only — not deployed
-│       ├── generate.py       ← read raw/, call Gemini, output unified_seed.json
-│       ├── import.py         ← import unified_seed.json → Aurora + Vectorize (stub)
+│       ├── generate.py       ← read raw/, call Gemini, output insights_seed.json
+│       ├── import.py         ← import insights_seed.json → Aurora + Vectorize (stub)
 │       ├── prompt.py
 │       ├── requirements.txt
 │       ├── raw/              ← source datasets, committed to git
@@ -63,7 +63,7 @@ ai-insight-hub/
 │       │   └── ops/
 │       │       └── ofbiz_issues.json
 │       └── data/
-│           └── unified_seed.json   ← generated, gitignored
+│           └── insights_seed.json   ← generated, gitignored
 │
 ├── infra/                    ← CDK TypeScript
 │   ├── bin/app.ts
@@ -107,26 +107,36 @@ source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Create the database
+### 3. Start the local database
 
-Create a local PostgreSQL database and run the DDL from [`docs/schema.md`](docs/schema.md).
+Requires Docker. Starts a PostgreSQL 16 container and runs the schema DDL automatically on first boot.
 
 ```bash
-createdb ai_insight_hub
-# then paste the CREATE TABLE statements from docs/schema.md into psql
+docker compose -f dev/docker-compose.yml up -d
 ```
+
+Add to `.env`:
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_insight_hub
+```
+
+To wipe and recreate the database from scratch: `docker compose -f dev/docker-compose.yml down -v && docker compose -f dev/docker-compose.yml up -d`
 
 ### 4. Generate and import seed data
 
 ```bash
-# Generate ~28 records by calling Gemini on backend/seed/raw/
+# Test run — 5 rows per subfolder, a few API calls, fast
+python backend/seed/generate.py --limit 5
+
+# Full run — processes all rows in backend/seed/raw/
 python backend/seed/generate.py
 
 # Import into PostgreSQL
 python backend/seed/import.py
 ```
 
-`generate.py` accepts `--jira N` and `--crm N` to control sample sizes.
+`--limit 5` is recommended for first-time setup to verify the pipeline works. Increase or drop it once you have a model with higher quota (default: `gemini-3.1-flash-lite-preview`, free tier RPD = 500).
 
 ---
 
@@ -135,5 +145,5 @@ python backend/seed/import.py
 | File | Contents |
 | --- | --- |
 | [`docs/architecture.md`](docs/architecture.md) | Three-tier architecture, data flow, service list |
-| [`docs/schema.md`](docs/schema.md) | `unified` and `table_c` table definitions, indexes, seed mappings |
+| [`docs/schema.md`](docs/schema.md) | `insights` and `table_c` table definitions, indexes, seed mappings |
 | [`docs/decisions.md`](docs/decisions.md) | ADRs — Vectorize vs OpenSearch, fixed SQL vs Text-to-SQL, Gemini vs Bedrock, etc. |
