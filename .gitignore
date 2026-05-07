@@ -236,3 +236,8 @@ dist/
 
 # Seed — generated output only; raw/ is committed
 backend/seed/data/
+
+# Un-ignore CDK source dirs caught by Python lib/ and dist/ rules above
+!infra/lib/
+!infra/bin/
+!infra/dist/
