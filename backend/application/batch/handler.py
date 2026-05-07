@@ -16,10 +16,10 @@ import sys
 from datetime import date
 from pathlib import Path
 
-import psycopg2
-import psycopg2.extras
+import pg8000.dbapi
 # import requests  # used by query_vectorize (disabled)
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 sys.path.insert(0, str(Path(__file__).parent))
 from prompt import build_batch_prompt
@@ -27,12 +27,51 @@ from prompt import build_batch_prompt
 PERIOD       = "daily"
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 
+# Cached across Lambda invocations within the same container
+_db_url_cache: str | None = None
+
 # # Seed queries used to pull semantic pattern context from Vectorize
 # _VECTOR_QUERIES = [
 #     "customer pain points and challenges",
 #     "sales objections and friction",
 #     "product use cases and applications",
 # ]
+
+
+# ── db url ────────────────────────────────────────────────────────────────────
+
+def _get_db_url() -> str:
+    global _db_url_cache
+    if _db_url_cache:
+        return _db_url_cache
+
+    secret_arn = os.environ.get("DB_SECRET_ARN")
+    if secret_arn:
+        import boto3
+        sm = boto3.client("secretsmanager")
+        s = json.loads(sm.get_secret_value(SecretId=secret_arn)["SecretString"])
+        _db_url_cache = (
+            f"postgresql://{s['username']}:{s['password']}"
+            f"@{s['host']}:{s.get('port', 5432)}/{s['dbname']}"
+        )
+    else:
+        _db_url_cache = os.environ.get("DATABASE_URL", "")
+
+    if not _db_url_cache:
+        raise RuntimeError("Set DB_SECRET_ARN (AWS) or DATABASE_URL (local)")
+
+    return _db_url_cache
+
+
+def _pg_connect():
+    u = urlparse(_get_db_url())
+    return pg8000.dbapi.connect(
+        host=u.hostname,
+        database=u.path.lstrip("/"),
+        user=u.username,
+        password=u.password,
+        port=u.port or 5432,
+    )
 
 
 # ── period window ──────────────────────────────────────────────────────────────
@@ -45,8 +84,8 @@ def get_period_start() -> date:
 
 def query_aurora(conn, period_start: date) -> dict:
     ctx: dict = {}
-    with conn.cursor() as cur:
-
+    cur = conn.cursor()
+    try:
         cur.execute(
             "SELECT COUNT(*), AVG(confidence_score) FROM insights WHERE extracted_at >= %s",
             (period_start,),
@@ -144,7 +183,9 @@ def query_aurora(conn, period_start: date) -> dict:
             for r in cur.fetchall()
         ]
 
-    return ctx
+        return ctx
+    finally:
+        cur.close()
 
 
 # ── vectorize queries (disabled) ───────────────────────────────────────────────
@@ -292,19 +333,22 @@ def write_recommendations(
     conn, results: dict, period: str, period_start: date
 ) -> int:
     written = 0
-    with conn:
-        with conn.cursor() as cur:
-            for rt in RESULT_TYPES:
-                if rt not in results:
-                    continue
-                cur.execute(
-                    """
-                    INSERT INTO recommendations (period, period_start, result_type, payload)
-                    VALUES (%s, %s, %s, %s)
-                    """,
-                    (period, period_start, rt, psycopg2.extras.Json(results[rt])),
-                )
-                written += 1
+    cur = conn.cursor()
+    try:
+        for rt in RESULT_TYPES:
+            if rt not in results:
+                continue
+            cur.execute(
+                """
+                INSERT INTO recommendations (period, period_start, result_type, payload)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (period, period_start, rt, json.dumps(results[rt])),
+            )
+            written += 1
+        conn.commit()
+    finally:
+        cur.close()
     return written
 
 
@@ -313,14 +357,10 @@ def write_recommendations(
 def handler(event=None, context=None):
     load_dotenv()
 
-    db_url = os.environ.get("DATABASE_URL")
-    if not db_url:
-        raise RuntimeError("DATABASE_URL not set")
-
     period_start = get_period_start()
     print(f"Period: {PERIOD}, period_start: {period_start}")
 
-    conn = psycopg2.connect(db_url)
+    conn = _pg_connect()
     try:
         sql_ctx    = query_aurora(conn, period_start)
         vector_ctx: list[dict] = []  # Vectorize disabled
