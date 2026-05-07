@@ -1,0 +1,4 @@
+anthropic[bedrock]
+instructor[anthropic]
+pydantic>=2.0
+python-dotenv==1.2.2
