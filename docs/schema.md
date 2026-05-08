@@ -133,17 +133,20 @@ CREATE TABLE insight_chunks (
     chunk_index INT  NOT NULL,
     chunk_text  TEXT,
     embedding   vector(1024),
+    metadata    JSONB,
     UNIQUE (insight_id, chunk_index)
 );
 
 CREATE INDEX ON insight_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);
+CREATE INDEX ON insight_chunks USING GIN (metadata);
 ```
 
-| Column        | Type         | Notes                                         |
-| ------------- | ------------ | --------------------------------------------- |
-| `insight_id`  | UUID         | FK → `insights.id`                            |
-| `chunk_index` | INT          | 0-based chunk order within the source record  |
-| `chunk_text`  | TEXT         | ~512-token slice of `raw_text` (≈ 2048 chars) |
-| `embedding`   | vector(1024) | Gemini `text-embedding-004` output            |
+| Column        | Type         | Notes                                                     |
+| ------------- | ------------ | --------------------------------------------------------- |
+| `insight_id`  | UUID         | FK → `insights.id`                                        |
+| `chunk_index` | INT          | 0-based chunk order within the source record              |
+| `chunk_text`  | TEXT         | ~512-token slice of `raw_text` (≈ 2048 chars)             |
+| `embedding`   | vector(1024) | Cloudflare `@cf/baai/bge-m3` output (1024 dims)           |
+| `metadata`    | JSONB        | `source`, `funnel_stage` — for filtered similarity search |
 
-Embedding model: Gemini `text-embedding-004` (768 dims) via `GEMINI_API_KEY`.
+Embedding model: Cloudflare Workers AI `@cf/baai/bge-m3` (1024 dims) via `CLOUDFLARE_ACCOUNT_ID` / `CLOUDFLARE_API_TOKEN`.
