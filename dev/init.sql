@@ -60,7 +60,9 @@ CREATE TABLE insight_chunks (
     chunk_index INT  NOT NULL,
     chunk_text  TEXT,
     embedding   vector(1024),
+    metadata    JSONB,
     UNIQUE (insight_id, chunk_index)
 );
 
 CREATE INDEX ON insight_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);
+CREATE INDEX ON insight_chunks USING GIN (metadata);

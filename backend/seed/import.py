@@ -55,7 +55,9 @@ def import_to_postgres(records: list[dict]) -> None:
                             icp              = EXCLUDED.icp,
                             funnel_stage     = EXCLUDED.funnel_stage,
                             confidence_score = EXCLUDED.confidence_score,
-                            extracted_at     = EXCLUDED.extracted_at
+                            extracted_at     = EXCLUDED.extracted_at,
+                            source_id        = EXCLUDED.source_id
+                        RETURNING id
                         """,
                         (
                             rec["id"],
@@ -73,6 +75,8 @@ def import_to_postgres(records: list[dict]) -> None:
                             datetime.now(timezone.utc),
                         ),
                     )
+                    # sync rec["id"] with the actual DB id (handles conflict case)
+                    rec["id"] = str(cur.fetchone()[0])
         print(f"Imported {len(records)} records into insights.")
     finally:
         conn.close()
@@ -104,11 +108,15 @@ def import_to_pgvector(records: list[dict]) -> None:
         print("pgvector skipped — CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN not set")
         return
 
-    # build flat list of (insight_id, chunk_index, chunk_text)
-    chunks: list[tuple[str, int, str]] = []
+    # build flat list of (insight_id, chunk_index, chunk_text, metadata)
+    chunks: list[tuple[str, int, str, dict]] = []
     for rec in records:
+        metadata = {
+            "source":           rec["source"],
+            "funnel_stage":     rec.get("funnel_stage"),
+        }
         for i, text in enumerate(_split_chunks(rec.get("raw_text") or "")):
-            chunks.append((rec["id"], i, text))
+            chunks.append((rec["id"], i, text, metadata))
 
     # embed in batches of 100
     embeddings: list[list[float]] = []
@@ -121,16 +129,17 @@ def import_to_pgvector(records: list[dict]) -> None:
     try:
         with conn:
             with conn.cursor() as cur:
-                for (insight_id, chunk_index, chunk_text), values in zip(chunks, embeddings):
+                for (insight_id, chunk_index, chunk_text, metadata), values in zip(chunks, embeddings):
                     cur.execute(
                         """
-                        INSERT INTO insight_chunks (insight_id, chunk_index, chunk_text, embedding)
-                        VALUES (%s, %s, %s, %s::vector)
+                        INSERT INTO insight_chunks (insight_id, chunk_index, chunk_text, embedding, metadata)
+                        VALUES (%s, %s, %s, %s::vector, %s)
                         ON CONFLICT (insight_id, chunk_index) DO UPDATE SET
                             chunk_text = EXCLUDED.chunk_text,
-                            embedding  = EXCLUDED.embedding
+                            embedding  = EXCLUDED.embedding,
+                            metadata   = EXCLUDED.metadata
                         """,
-                        (insight_id, chunk_index, chunk_text, str(values)),
+                        (insight_id, chunk_index, chunk_text, str(values), psycopg2.extras.Json(metadata)),
                     )
         print(f"Upserted {len(chunks)} chunks into insight_chunks.")
     finally:
