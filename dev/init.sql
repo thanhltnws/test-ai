@@ -54,15 +54,12 @@ CREATE INDEX ON recommendations (period, period_start DESC, result_type);
 
 -- ── vector store ──────────────────────────────────────────────────────────────
 
-CREATE TABLE insight_chunks (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    insight_id  UUID NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
-    chunk_index INT  NOT NULL,
-    chunk_text  TEXT,
-    embedding   vector(1024),
-    metadata    JSONB,
-    UNIQUE (insight_id, chunk_index)
+CREATE TABLE insight_embeddings (
+    insight_id     UUID         PRIMARY KEY REFERENCES insights(id) ON DELETE CASCADE,
+    embedding_text TEXT         NOT NULL,
+    embedding      vector(1024) NOT NULL,
+    metadata       JSONB
 );
 
-CREATE INDEX ON insight_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 10);
-CREATE INDEX ON insight_chunks USING GIN (metadata);
+CREATE INDEX ON insight_embeddings USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX ON insight_embeddings USING GIN (metadata);

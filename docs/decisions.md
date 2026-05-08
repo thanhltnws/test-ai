@@ -59,7 +59,7 @@ Intended data sources (HubSpot deals, Jira tickets, internal email) do not conta
 
 ---
 
-## ADR-004 · Cloudflare Vectorize instead of Aurora pgvector or OpenSearch
+## ADR-004 · Aurora pgvector instead of Cloudflare Vectorize
 
 **Status:** Accepted
 
@@ -67,15 +67,16 @@ Intended data sources (HubSpot deals, Jira tickets, internal email) do not conta
 Need a vector store for semantic search to support the RAG chatbox.
 
 **Decision:**
-Use Cloudflare Vectorize. Aurora stores structured fields only — pgvector extension not enabled.
+Use pgvector on Aurora (`insight_embeddings` table). Cloudflare Vectorize dropped.
 
 **Reason:**
-Vectorize is a purpose-built vector DB with a free tier suited for demo scale. pgvector on Aurora adds coupling between the structured store and vector store. OpenSearch costs ~$25+/month and is overkill for demo scope.
+pgvector runs as an extension on the same Aurora instance — no extra service. Local dev uses Docker PostgreSQL + pgvector, identical to Aurora: no mock, no external API call during dev. Referential integrity enforced via FK (`insight_id → insights.id`), which Vectorize cannot provide. Coupling argument (original rejection reason) does not apply — `insight_embeddings` is inherently tied to `insights` and benefits from CASCADE DELETE.
 
 **Rejected:**
-- Aurora pgvector — simpler infra but creates coupling between structured and vector stores.
-- OpenSearch — powerful but over-engineering and costly.
-- Qdrant / Weaviate / Pinecone — unnecessary when Vectorize is sufficient and free.
+
+- Cloudflare Vectorize — no local equivalent (must call real API during dev), no FK support, extra service to manage.
+- OpenSearch — over-engineering and costly.
+- Qdrant / Weaviate / Pinecone — unnecessary extra service when pgvector is sufficient.
 
 ---
 
@@ -95,18 +96,18 @@ Use Gemini API (free tier) during local dev. Switch to Bedrock on AWS deploy —
 
 ---
 
-## ADR-006 · Vectorize semantic search as primary RAG strategy, SQL as secondary
+## ADR-006 · pgvector semantic search as primary RAG strategy, SQL as secondary
 
 **Status:** Accepted
 
 **Context:**
-The RAG chatbox needs to retrieve context from the data store to enrich the prompt before calling Bedrock. Two options: Text-to-SQL on Aurora, or semantic search on Vectorize.
+The RAG chatbox needs to retrieve context from the data store to enrich the prompt before calling Bedrock. Two options: Text-to-SQL on Aurora, or semantic search on pgvector.
 
 **Decision:**
-Vectorize semantic search is primary. SQL query on Aurora is secondary — fixed SQL only, no Text-to-SQL. Both contexts are merged to enrich the prompt.
+pgvector semantic search on `insight_embeddings` is primary. SQL query on Aurora is secondary — fixed SQL only, no Text-to-SQL. Both contexts are merged to enrich the prompt.
 
 **Reason:**
-Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, but wrong results returned. Vectorize similarity search does not carry this risk. SQL is still needed for structured fields (funnel_stage, icp) but only with pre-defined fixed queries.
+Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, but wrong results returned. pgvector similarity search does not carry this risk. SQL is still needed for structured fields (funnel_stage, icp) but only with pre-defined fixed queries.
 
 **Rejected:**
 - Text-to-SQL as primary — hallucination risk too high with no validation layer at demo scope.

@@ -8,7 +8,7 @@
 
 services:
   db:
-    image: pgvector/pgvector:pg18-trixie
+    image: pgvector/pgvector:pg17-bookworm
     environment:
       POSTGRES_DB: ai_insight_hub
       POSTGRES_USER: postgres
@@ -16,7 +16,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql
+      - db_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d ai_insight_hub"]
