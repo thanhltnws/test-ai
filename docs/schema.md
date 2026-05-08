@@ -95,7 +95,7 @@ CREATE TABLE recommendations (
 
 | Column | Type | Notes |
 |---|---|---|
-| `period` | TEXT | `daily` · `weekly` |
+| `period` | TEXT | `daily` |
 | `period_start` | DATE | Start of the compute window |
 | `result_type` | TEXT | `pain_points_summary` · `funnel_distribution` · `icp_narrative` · `recommendations` |
 | `payload` | JSONB | Full Bedrock response for this result type |
