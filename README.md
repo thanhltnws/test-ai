@@ -33,14 +33,17 @@ ai-insight-hub/
 │
 ├── backend/
 │   ├── ingestion/
-│   │   ├── hubspot/          ← Lambda: poll HubSpot deals + call notes
-│   │   └── jira/             ← Lambda: poll Jira tickets
-│   │
-│   ├── transform/
-│   │   ├── lambda_etl/       ← Lambda: normalize schema, dedup, field map
-│   │   └── bedrock_extract/  ← Lambda: AI extraction → insights table
+│   │   ├── hubspot/          ← Lambda: poll HubSpot deals + call notes → S3 raw/
+│   │   │   ├── handler.py
+│   │   │   └── requirements.txt
+│   │   └── jira/             ← Lambda: poll Jira issues → S3 raw/
 │   │       ├── handler.py
-│   │       └── prompt.py     ← prompt template (never inline in handler)
+│   │       └── requirements.txt
+│   │
+│   ├── transform/            ← Lambda: S3 ObjectCreated (raw/) → normalize + Bedrock → Aurora
+│   │   ├── handler.py        ← single handler: ETL normalize + AI extract + Aurora write
+│   │   ├── prompt.py         ← prompt template (never inline in handler)
+│   │   └── requirements.txt
 │   │
 │   ├── application/
 │   │   ├── batch/            ← Lambda: EventBridge-triggered dashboard compute

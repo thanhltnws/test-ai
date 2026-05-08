@@ -24,7 +24,8 @@ CREATE TABLE insights (
     funnel_stage     TEXT,
     confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0 AND 1),
     ingested_at      TIMESTAMPTZ,
-    extracted_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+    extracted_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    embedding_text   TEXT
 );
 ```
 
@@ -43,6 +44,7 @@ CREATE TABLE insights (
 | `confidence_score` | NUMERIC(3,2) | 0.00–1.00, model self-reported confidence |
 | `ingested_at` | TIMESTAMPTZ | When raw record arrived in S3 |
 | `extracted_at` | TIMESTAMPTZ | When AI extraction completed |
+| `embedding_text` | TEXT | AI-generated NL summary for embedding. NULL when record lacked enough signal. |
 
 #### `icp` JSONB structure
 
@@ -74,6 +76,9 @@ ALTER TABLE insights ADD CONSTRAINT insights_funnel_stage_valid
 -- Dedup: one AI extraction per source record
 ALTER TABLE insights ADD CONSTRAINT insights_source_record_unique
     UNIQUE (source, source_id);
+
+-- Migration: add embedding_text (run once on existing DBs)
+ALTER TABLE insights ADD COLUMN IF NOT EXISTS embedding_text TEXT;
 ```
 
 ---
@@ -102,6 +107,44 @@ CREATE TABLE recommendations (
 
 ---
 
+### `insight_embeddings`
+
+Vector store for semantic search (RAG). One row per insight that has a non-NULL `embedding_text`.
+
+Requires the `pgvector` extension: `CREATE EXTENSION IF NOT EXISTS vector;`
+
+```sql
+CREATE TABLE insight_embeddings (
+    id           UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    insight_id   UUID         NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
+    embedding    vector(1024) NOT NULL,
+    embedded_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    CONSTRAINT insight_embeddings_insight_id_unique UNIQUE (insight_id)
+);
+```
+
+| Column | Type | Notes |
+|---|---|---|
+| `insight_id` | UUID | FK → `insights.id`. One embedding per insight row. |
+| `embedding` | vector(1024) | Bedrock Titan Embeddings V2 (prod). Local dev: Gemini `gemini-embedding-001` with `output_dimensionality=1024`. Both environments use 1024 dims. |
+| `embedded_at` | TIMESTAMPTZ | When the vector was written |
+
+> **Dimension note:** Both prod (Bedrock Titan V2) and local dev (Gemini `gemini-embedding-001`) use 1024 dims. No schema change needed between environments.
+
+```sql
+-- Migration: add table on existing DBs
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE IF NOT EXISTS insight_embeddings (
+    id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    insight_id  UUID         NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
+    embedding   vector(1024) NOT NULL,
+    embedded_at TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    CONSTRAINT insight_embeddings_insight_id_unique UNIQUE (insight_id)
+);
+```
+
+---
+
 ## Indexes
 
 ```sql
@@ -116,22 +159,7 @@ CREATE INDEX ON insights USING GIN (pain_points);  -- array contains queries
 -- recommendations: each day appends new rows, query by recency
 CREATE INDEX ON recommendations (computed_at DESC);
 CREATE INDEX ON recommendations (period, period_start DESC, result_type);
+
+-- insight_embeddings: cosine similarity search
+CREATE INDEX ON insight_embeddings USING hnsw (embedding vector_cosine_ops);
 ```
-
----
-
-## Cloudflare Vectorize (companion vector store)
-
-Not PostgreSQL — documented here for completeness.
-
-Each vector entry mirrors a row in `insights`:
-
-| Metadata field | Maps to |
-|---|---|
-| `insights_id` | `insights.id` |
-| `source` | `insights.source` |
-| `source_url` | `insights.source_url` — **mandatory** |
-| `funnel_stage` | `insights.funnel_stage` |
-| `extracted_at` | `insights.extracted_at` |
-
-Text chunk embedded: `raw_text` (split by sentence if > 512 tokens).

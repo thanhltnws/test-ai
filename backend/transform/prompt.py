@@ -1,17 +1,3 @@
-_CLASSIFY_TEMPLATE = """\
-You are analyzing files inside a data subfolder for a B2B customer insight pipeline.
-
-File list and sample content:
-{file_summaries}
-
-Classify each file as either:
-- "context": reference, schema, dictionary, or lookup data that describes or enriches other data
-- "data": records containing actual customer/business information to extract insights from
-
-Return ONLY valid JSON, no markdown:
-{{"context_files": ["filename1", ...], "data_files": ["filename2", ...]}}"""
-
-
 _EXTRACT_TEMPLATE = """\
 You are a B2B customer insight analyst. Extract structured signals from raw records in the \
 subfolder "{source}".
@@ -75,6 +61,14 @@ A bug report or ops ticket is an indirect signal about customer health — score
 
 source_id: unique identifier from the record's own fields
 
+embedding_text: str
+  2–4 sentence natural-language summary of this record, written to maximise semantic search \
+relevance when embedded. Weave together: who the company is, the core problem they face, \
+their commercial stage, and the most meaningful signals (pain, objection, use case) present \
+in the record. Write in clear, direct English — no bullet points, no field labels. \
+Return "" when the record lacks enough meaningful signal to produce a useful summary \
+(e.g. sparse firmographics only, zero engagement, no pain or use-case signal).
+
 Constraints:
 - sector: fintech | logistics | retail | healthcare | manufacturing | software | education | ict | other
 - company_size: 1-10 | 11-50 | 50-200 | 200-1000 | 1000+
@@ -86,10 +80,6 @@ Return exactly {n} objects in input order. No markdown, no explanation.
 
 Records:
 {records_block}"""
-
-
-def build_classify_prompt(file_summaries: str) -> str:
-    return _CLASSIFY_TEMPLATE.format(file_summaries=file_summaries)
 
 
 def build_extract_prompt(

@@ -1,0 +1,6 @@
+anthropic[bedrock]
+instructor[anthropic]
+pydantic>=2.0
+psycopg2-binary>=2.9
+python-dotenv>=1.0
+google-generativeai>=0.8

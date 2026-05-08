@@ -2,6 +2,8 @@
 -- Auto-run by postgres container on first start (docker-entrypoint-initdb.d).
 -- Keep in sync with docs/schema.md.
 
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- ── core tables ───────────────────────────────────────────────────────────────
 
 CREATE TABLE insights (
@@ -17,7 +19,8 @@ CREATE TABLE insights (
     funnel_stage     TEXT,
     confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0 AND 1),
     ingested_at      TIMESTAMPTZ,
-    extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now()
+    extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    embedding_text   TEXT
 );
 
 ALTER TABLE insights ADD CONSTRAINT insights_source_url_nonempty
@@ -28,6 +31,14 @@ ALTER TABLE insights ADD CONSTRAINT insights_funnel_stage_valid
 
 ALTER TABLE insights ADD CONSTRAINT insights_source_record_unique
     UNIQUE (source, source_id);
+
+CREATE TABLE insight_embeddings (
+    id           UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    insight_id   UUID         NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
+    embedding    vector(1024) NOT NULL,
+    embedded_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    CONSTRAINT insight_embeddings_insight_id_unique UNIQUE (insight_id)
+);
 
 CREATE TABLE recommendations (
     id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -49,3 +60,5 @@ CREATE INDEX ON insights USING GIN (pain_points);
 
 CREATE INDEX ON recommendations (computed_at DESC);
 CREATE INDEX ON recommendations (period, period_start DESC, result_type);
+
+CREATE INDEX ON insight_embeddings USING hnsw (embedding vector_cosine_ops);
