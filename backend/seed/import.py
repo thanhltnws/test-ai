@@ -89,11 +89,50 @@ def _split_chunks(text: str) -> list[str]:
     return [text[i:i + _CHUNK_SIZE] for i in range(0, max(len(text), 1), _CHUNK_SIZE)]
 
 
-def _embed_batch(texts: list[str], account_id: str, api_token: str) -> list[list[float]]:
-    url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/@cf/baai/bge-m3"
+def _embed_bedrock(texts: list[str]) -> list[list[float]]:
+    import boto3
+    client = boto3.client(
+        "bedrock-runtime",
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+    )
+    embeddings = []
+    for text in texts:
+        resp = client.invoke_model(
+            modelId="amazon.titan-embed-text-v2:0",
+            contentType="application/json",
+            accept="application/json",
+            body=json.dumps({"inputText": text, "dimensions": 1024, "normalize": True}),
+        )
+        embeddings.append(json.loads(resp["body"].read())["embedding"])
+    return embeddings
+
+
+def _embed_gemini(texts: list[str]) -> list[list[float]]:
+    from google import genai
+    from google.genai import types
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    embeddings = []
+    for text in texts:
+        result = client.models.embed_content(
+            model="gemini-embedding-001",
+            contents=text,
+            config=types.EmbedContentConfig(
+                task_type="RETRIEVAL_DOCUMENT",
+                output_dimensionality=1024,
+            ),
+        )
+        embeddings.append(result.embeddings[0].values)
+    return embeddings
+
+
+def _embed_cloudflare(texts: list[str]) -> list[list[float]]:
+    url = (
+        f"https://api.cloudflare.com/client/v4/accounts"
+        f"/{os.environ['CLOUDFLARE_ACCOUNT_ID']}/ai/run/@cf/baai/bge-m3"
+    )
     resp = requests.post(
         url,
-        headers={"Authorization": f"Bearer {api_token}"},
+        headers={"Authorization": f"Bearer {os.environ['CLOUDFLARE_API_TOKEN']}"},
         json={"text": texts},
     )
     if not resp.ok:
@@ -101,12 +140,18 @@ def _embed_batch(texts: list[str], account_id: str, api_token: str) -> list[list
     return resp.json()["result"]["data"]
 
 
+def _embed_batch(texts: list[str]) -> list[list[float]]:
+    provider = os.environ.get("EMBEDDING_PROVIDER", "bedrock")
+    if provider == "gemini":
+        return _embed_gemini(texts)
+    elif provider == "cloudflare":
+        return _embed_cloudflare(texts)
+    else:
+        return _embed_bedrock(texts)
+
+
 def import_to_pgvector(records: list[dict]) -> None:
-    account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
-    api_token  = os.environ.get("CLOUDFLARE_API_TOKEN")
-    if not all([account_id, api_token]):
-        print("pgvector skipped — CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN not set")
-        return
+    print(f"Embedding provider: {os.environ.get('EMBEDDING_PROVIDER', 'bedrock')}")
 
     # build flat list of (insight_id, chunk_index, chunk_text, metadata)
     chunks: list[tuple[str, int, str, dict]] = []
@@ -115,16 +160,16 @@ def import_to_pgvector(records: list[dict]) -> None:
             "source":           rec["source"],
             "funnel_stage":     rec.get("funnel_stage"),
         }
-        for i, text in enumerate(_split_chunks(rec.get("raw_text") or "")):
+        for i, text in enumerate(_split_chunks(rec.get("embedding_text") or rec.get("raw_text") or "")):
             chunks.append((rec["id"], i, text, metadata))
 
-    # embed in batches of 100
+    # batch size: Bedrock/Gemini are per-call so 100 is fine; Cloudflare supports native batch
     embeddings: list[list[float]] = []
     for start in range(0, len(chunks), 100):
         batch = [c[2] for c in chunks[start:start + 100]]
-        embeddings.extend(_embed_batch(batch, account_id, api_token))
+        embeddings.extend(_embed_batch(batch))
 
-    # upsert into insight_chunks
+    # upsert into insight_embeddings
     conn = get_db_connection()
     try:
         with conn:
@@ -132,7 +177,7 @@ def import_to_pgvector(records: list[dict]) -> None:
                 for (insight_id, chunk_index, chunk_text, metadata), values in zip(chunks, embeddings):
                     cur.execute(
                         """
-                        INSERT INTO insight_chunks (insight_id, chunk_index, chunk_text, embedding, metadata)
+                        INSERT INTO insight_embeddings (insight_id, chunk_index, chunk_text, embedding, metadata)
                         VALUES (%s, %s, %s, %s::vector, %s)
                         ON CONFLICT (insight_id, chunk_index) DO UPDATE SET
                             chunk_text = EXCLUDED.chunk_text,
@@ -141,7 +186,7 @@ def import_to_pgvector(records: list[dict]) -> None:
                         """,
                         (insight_id, chunk_index, chunk_text, str(values), psycopg2.extras.Json(metadata)),
                     )
-        print(f"Upserted {len(chunks)} chunks into insight_chunks.")
+        print(f"Upserted {len(chunks)} chunks into insight_embeddings.")
     finally:
         conn.close()
 
