@@ -18,6 +18,7 @@ Use custom Lambda polling for all sources. AppFlow remains in the architecture d
 AppFlow is overkill for demo scale. Custom Lambda covers all sources, is easier to debug, and easier to explain during a demo.
 
 **Rejected:**
+
 - AppFlow — pre-built connectors exist but add configuration complexity not worth it at this scale.
 
 ---
@@ -36,6 +37,7 @@ Use Lambda ETL instead of Glue ETL.
 AWS Glue runs on a Spark cluster designed for big data. At ~500 docs/month demo scale, a Lambda function reading S3 and normalizing JSON is sufficient — simpler and easier to debug.
 
 **Rejected:**
+
 - AWS Glue — ~$3.65/month, over-engineering for this scale. Re-evaluate if moving to production.
 
 ---
@@ -54,6 +56,7 @@ Call Bedrock directly. No Comprehend or Macie in the pipeline.
 Intended data sources (HubSpot deals, Jira tickets, internal email) do not contain sensitive PII requiring filtering. Adding Comprehend or Macie increases complexity without clear benefit at demo scope.
 
 **Rejected:**
+
 - Comprehend pre-filter — can be added later to reduce token cost at production scale.
 - Macie PII detection — not necessary given current data sources.
 
@@ -91,6 +94,7 @@ Need an LLM for local development and testing before deploying to AWS.
 Use Gemini API (free tier) during local dev. Switch to Bedrock on AWS deploy — only the endpoint and credentials change, logic remains identical.
 
 **Rejected:**
+
 - Groq — free tier but less stable long-term than Gemini.
 - Ollama — runs locally but requires 16GB+ RAM; risk of spending 2 days on setup is too high given the 3-week timeline.
 
@@ -110,6 +114,7 @@ pgvector semantic search on `insight_embeddings` is primary. SQL query on Aurora
 Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, but wrong results returned. pgvector similarity search does not carry this risk. SQL is still needed for structured fields (funnel_stage, icp) but only with pre-defined fixed queries.
 
 **Rejected:**
+
 - Text-to-SQL as primary — hallucination risk too high with no validation layer at demo scope.
 
 ---
@@ -147,4 +152,5 @@ Render charts directly in the React frontend using Recharts.
 Recharts is sufficient for demo charts with no additional service required. QuickSight costs ~$18/month per author and adds an unnecessary dependency.
 
 **Rejected:**
+
 - QuickSight — powerful for BI but overkill and costly for demo scope.
