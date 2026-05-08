@@ -194,6 +194,61 @@ export class ApplicationStack extends cdk.Stack {
       },
     });
 
+    // ── Chat Lambda (Feature 2 — Chatbox / RAG) ───────────────────────────────
+    const chatFn = new lambda.Function(this, 'ChatFn', {
+      functionName: 'ai-insight-hub-chat',
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'handler.lambda_handler',
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, '../../backend/application/chat'),
+        {
+          bundling: {
+            image: lambda.Runtime.PYTHON_3_12.bundlingImage,
+            command: [
+              'bash', '-c',
+              'pip install -r requirements.txt -t /asset-output --quiet && cp -au . /asset-output',
+            ],
+            local: {
+              tryBundle(outputDir: string): boolean {
+                const srcDir = path.join(__dirname, '../../backend/application/chat');
+                const pip = spawnSync('pip', [
+                  'install', '-r', 'requirements.txt',
+                  '-t', outputDir, '--quiet',
+                ], { cwd: srcDir, stdio: 'inherit' });
+                if (pip.status !== 0) return false;
+                fs.cpSync(srcDir, outputDir, { recursive: true });
+                return true;
+              },
+            },
+          },
+        },
+      ),
+      timeout: cdk.Duration.seconds(60),
+      memorySize: 512,
+      environment: {
+        DB_SECRET_ARN: cluster.secret!.secretArn,
+        BEDROCK_MODEL_ID: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+      },
+      description: 'Chat endpoint: POST /chat → Aurora + pgvector context → Bedrock Sonnet → { answer, references }',
+    });
+
+    cluster.secret!.grantRead(chatFn);
+
+    chatFn.addToRolePolicy(new iam.PolicyStatement({
+      sid: 'BedrockInvokeModelChat',
+      actions: ['bedrock:InvokeModel'],
+      resources: ['*'],
+    }));
+
+    const chatUrl = chatFn.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedOrigins: ['*'],
+        allowedMethods: [lambda.HttpMethod.POST],
+        allowedHeaders: ['Content-Type'],
+      },
+    });
+
     // ── Outputs ────────────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'AuroraEndpoint', {
       value: cluster.clusterEndpoint.hostname,
@@ -217,6 +272,11 @@ export class ApplicationStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'ApiFunctionUrl', {
       value: apiUrl.url,
       description: 'GET /recommendations or GET /insights',
+    });
+
+    new cdk.CfnOutput(this, 'ChatFunctionUrl', {
+      value: chatUrl.url,
+      description: 'POST /chat — { question } → { answer, references }',
     });
   }
 }
