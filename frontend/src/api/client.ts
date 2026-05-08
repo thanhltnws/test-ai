@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { SummaryData, RecommendationsData, ChatMessage } from '../types'
+import type { SummaryData, RecommendationsData, ChatMessage, BeInsightResponse } from '../types'
 
 const BASE = import.meta.env.VITE_API_URL ?? '/api'
 
@@ -7,58 +7,92 @@ const BASE = import.meta.env.VITE_API_URL ?? '/api'
 
 const MOCK_SUMMARY: SummaryData = {
   period: 'weekly',
-  period_start: '2026-05-01',
+  period_start: '2026-05-07',
   funnel_distribution: [
-    { stage: 'awareness', count: 12 },
-    { stage: 'consideration', count: 28 },
-    { stage: 'negotiation', count: 15 },
-    { stage: 'won', count: 22 },
-    { stage: 'lost', count: 18 },
+    { stage: 'consideration', count: 11 },
+    { stage: 'won', count: 7 },
+    { stage: 'lost', count: 2 },
   ],
   top_pain_points: [
-    { label: 'Integration complexity', count: 31 },
-    { label: 'High implementation cost', count: 27 },
-    { label: 'Lack of local support', count: 24 },
-    { label: 'Unclear ROI', count: 19 },
-    { label: 'Security concerns', count: 15 },
-    { label: 'Vendor lock-in risk', count: 11 },
+    { label: 'Unemployed', count: 4 },
+    { label: 'Lack of career prospects', count: 4 },
+    { label: 'Async job failures', count: 1 },
   ],
   icp_summary: [
-    { sector: 'Fintech', company_size: '50-200', deal_size: 'large', region: 'Southeast Asia', count: 18 },
-    { sector: 'Logistics', company_size: '200-1000', deal_size: 'medium', region: 'Vietnam', count: 14 },
-    { sector: 'Retail', company_size: '11-50', deal_size: 'small', region: 'Vietnam', count: 11 },
-    { sector: 'Manufacturing', company_size: '1000+', deal_size: 'large', region: 'International', count: 9 },
+    { sector: 'education', company_size: '1-10', deal_size: 'small', region: 'International', count: 5 },
+    { sector: 'software', company_size: '200-1000', deal_size: 'medium', region: 'International', count: 3 },
+    { sector: 'healthcare', company_size: '1000+', deal_size: 'large', region: 'International', count: 2 },
+    { sector: 'software', company_size: '200-1000', deal_size: 'large', region: 'International', count: 2 },
+    { sector: 'manufacturing', company_size: '50-200', deal_size: 'medium', region: 'International', count: 1 },
   ],
 }
 
 const MOCK_RECOMMENDATIONS: RecommendationsData = {
+  computed_at: '2026-05-07T09:19:30.940150+00:00',
   recommendations: [
-    'Tăng cường nội dung về ROI và case study cho segment Fintech tại SEA — pain point "Unclear ROI" chiếm 19 trường hợp.',
-    'Xây dựng gói hỗ trợ triển khai local cho khách hàng SMB (11-200 nhân viên) để giảm rào cản "Lack of local support".',
-    'Ưu tiên deals trong giai đoạn Consideration (28 deals) — tỷ lệ chuyển đổi sang Negotiation chỉ đạt 54%.',
-    'Chuẩn bị tài liệu về bảo mật và data sovereignty cho segment Manufacturing quốc tế.',
+    'Prioritize outreach to small and medium-sized companies in the education, software, and healthcare sectors, as these appear to be the top segments based on the data.',
+    'Develop targeted sales strategies and messaging to address the key pain points of unemployment, lack of career prospects, and technical issues with asynchronous job processing.',
+    'Create content and campaigns that highlight the company\'s expertise in upskilling, professional development, and operational efficiency solutions.',
+    'Leverage customer success stories and testimonials from the top industry segments to showcase the value proposition of the company\'s offerings.',
   ],
 }
 
+// ── Transform BE response → FE types ──────────────────────────────────────────
+
+function toSummary(raw: BeInsightResponse): SummaryData {
+  return {
+    period: 'weekly',
+    period_start: raw.period_start,
+    funnel_distribution: raw.funnel_distribution.stages,
+    top_pain_points: raw.pain_points_summary.top_items.map(p => ({
+      label: p.item,
+      count: p.count,
+    })),
+    icp_summary: raw.icp_narrative.top_segments,
+  }
+}
+
+function toRecommendations(raw: BeInsightResponse): RecommendationsData {
+  return {
+    recommendations: [
+      ...raw.recommendations.sales,
+      ...raw.recommendations.marketing,
+    ],
+    computed_at: raw.computed_at,
+  }
+}
+
 // ── API calls ──────────────────────────────────────────────────────────────────
+// Hiện tại: fallback về mock data khi API lỗi (dùng cho dev/demo)
+// Khi go-live: xóa try/catch + MOCK_* objects, dùng version bên dưới
 
 export async function fetchSummary(): Promise<SummaryData> {
   try {
-    const res = await axios.get<SummaryData>(`${BASE}/insights/summary`)
-    return res.data
+    const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
+    return toSummary(res.data)
   } catch {
     return MOCK_SUMMARY
   }
 }
 
+// [GO-LIVE] export async function fetchSummary(): Promise<SummaryData> {
+//   const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
+//   return toSummary(res.data)
+// }
+
 export async function fetchRecommendations(): Promise<RecommendationsData> {
   try {
-    const res = await axios.get<RecommendationsData>(`${BASE}/recommendations`)
-    return res.data
+    const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
+    return toRecommendations(res.data)
   } catch {
     return MOCK_RECOMMENDATIONS
   }
 }
+
+// [GO-LIVE] export async function fetchRecommendations(): Promise<RecommendationsData> {
+//   const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
+//   return toRecommendations(res.data)
+// }
 
 export async function sendChat(
   question: string,

@@ -35,20 +35,59 @@ export default function Dashboard() {
   const [data, setData] = useState<SummaryData | null>(null)
   const [recs, setRecs] = useState<RecommendationsData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
 
   useEffect(() => {
-    Promise.all([fetchSummary(), fetchRecommendations()]).then(([summary, recommendations]) => {
-      setData(summary)
-      setRecs(recommendations)
-      setLoading(false)
-    })
-  }, [])
+    setLoading(true)
+    setError(null)
+    Promise.all([fetchSummary(), fetchRecommendations()])
+      .then(([summary, recommendations]) => {
+        setData(summary)
+        setRecs(recommendations)
+        setLoading(false)
+      })
+      .catch(err => {
+        setError(err?.message ?? 'Không thể tải dữ liệu. Vui lòng thử lại.')
+        setLoading(false)
+      })
+  }, [retryCount])
 
   if (loading) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 32, marginBottom: 8 }}>⏳</div>
         <div>Đang tải dữ liệu...</div>
+      </div>
+    </div>
+  )
+
+  if (error) return (
+    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{
+        textAlign: 'center',
+        background: 'var(--surface)',
+        border: '1px solid #fca5a5',
+        borderRadius: 'var(--radius)',
+        padding: '32px 40px',
+        boxShadow: 'var(--shadow)',
+      }}>
+        <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
+        <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Lỗi tải dữ liệu</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>{error}</div>
+        <button
+          onClick={() => setRetryCount(c => c + 1)}
+          style={{
+            background: 'var(--accent)',
+            color: '#fff',
+            padding: '8px 20px',
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: 600,
+          }}
+        >
+          Thử lại
+        </button>
       </div>
     </div>
   )
