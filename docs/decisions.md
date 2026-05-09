@@ -4,7 +4,9 @@
 
 ---
 
-## ADR-001 · Lambda polling instead of AppFlow
+## Ingestion
+
+### ADR-001 · Lambda polling instead of AppFlow
 
 **Status:** Accepted
 
@@ -18,11 +20,14 @@ Use custom Lambda polling for all sources. AppFlow remains in the architecture d
 AppFlow is overkill for demo scale. Custom Lambda covers all sources, is easier to debug, and easier to explain during a demo.
 
 **Rejected:**
+
 - AppFlow — pre-built connectors exist but add configuration complexity not worth it at this scale.
 
 ---
 
-## ADR-002 · Lambda ETL instead of AWS Glue
+## Transform
+
+### ADR-002 · Lambda ETL instead of AWS Glue
 
 **Status:** Accepted
 
@@ -36,11 +41,37 @@ Use Lambda ETL instead of Glue ETL.
 AWS Glue runs on a Spark cluster designed for big data. At ~500 docs/month demo scale, a Lambda function reading S3 and normalizing JSON is sufficient — simpler and easier to debug.
 
 **Rejected:**
+
 - AWS Glue — ~$3.65/month, over-engineering for this scale. Re-evaluate if moving to production.
 
 ---
 
-## ADR-003 · Call Bedrock directly, no Comprehend or Macie pre-filter
+### ADR-003 · Single transform Lambda — no staging S3, no split
+
+**Status:** Accepted
+
+**Context:**
+Transform tier needs ETL normalization + Bedrock AI extraction. Original design proposed two separate Lambdas with an intermediate S3 handoff.
+
+**Decision:**
+One Lambda handles both ETL (normalize, dedup) and Bedrock extraction in a single in-memory pipeline. No staging S3 write between steps.
+
+- Multi-source via folder structure — new source = new folder, no code change.
+- `row_to_text()` dumps all fields as plain text; Bedrock handles field name differences across sources — no FIELD_MAP needed.
+- Primary dedup: Aurora unique constraint `(source, external_id)` + upsert `ON CONFLICT DO UPDATE` at INSERT time.
+- Content hash in ETL deduplicates rows within the same file only — kept but not primary dedup.
+- `source_url` is pass-through — Ingestion Lambda injects it into raw JSON; Transform does not construct it.
+
+**Reason:**
+Intermediate S3 write adds infrastructure complexity (extra bucket, event trigger, partial-failure state) without benefit at demo scale. ETL and Bedrock extraction process the same record — keeping them in-memory in one Lambda is cleaner. Independent retry and scaling (the main argument for splitting) are not concerns at demo volume.
+
+**Rejected:**
+
+- Two Lambdas with S3 handoff — adds staging overhead with no retry or scale benefit at this scope.
+
+---
+
+### ADR-004 · Call Bedrock directly, no Comprehend or Macie pre-filter
 
 **Status:** Accepted
 
@@ -54,12 +85,15 @@ Call Bedrock directly. No Comprehend or Macie in the pipeline.
 Intended data sources (HubSpot deals, Jira tickets, internal email) do not contain sensitive PII requiring filtering. Adding Comprehend or Macie increases complexity without clear benefit at demo scope.
 
 **Rejected:**
+
 - Comprehend pre-filter — can be added later to reduce token cost at production scale.
 - Macie PII detection — not necessary given current data sources.
 
 ---
 
-## ADR-004 · Cloudflare Vectorize instead of Aurora pgvector or OpenSearch
+## Store
+
+### ADR-005 · Cloudflare Vectorize instead of Aurora pgvector or OpenSearch
 
 **Status:** Accepted
 
@@ -73,29 +107,16 @@ Use Cloudflare Vectorize. Aurora stores structured fields only — pgvector exte
 Vectorize is a purpose-built vector DB with a free tier suited for demo scale. pgvector on Aurora adds coupling between the structured store and vector store. OpenSearch costs ~$25+/month and is overkill for demo scope.
 
 **Rejected:**
+
 - Aurora pgvector — simpler infra but creates coupling between structured and vector stores.
 - OpenSearch — powerful but over-engineering and costly.
 - Qdrant / Weaviate / Pinecone — unnecessary when Vectorize is sufficient and free.
 
 ---
 
-## ADR-005 · Gemini API for local dev, Bedrock for AWS deploy
+## Application
 
-**Status:** Accepted
-
-**Context:**
-Need an LLM for local development and testing before deploying to AWS.
-
-**Decision:**
-Use Gemini API (free tier) during local dev. Switch to Bedrock on AWS deploy — only the endpoint and credentials change, logic remains identical.
-
-**Rejected:**
-- Groq — free tier but less stable long-term than Gemini.
-- Ollama — runs locally but requires 16GB+ RAM; risk of spending 2 days on setup is too high given the 3-week timeline.
-
----
-
-## ADR-006 · Vectorize semantic search as primary RAG strategy, SQL as secondary
+### ADR-006 · Vectorize semantic search as primary RAG strategy, SQL as secondary
 
 **Status:** Accepted
 
@@ -109,11 +130,50 @@ Vectorize semantic search is primary. SQL query on Aurora is secondary — fixed
 Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, but wrong results returned. Vectorize similarity search does not carry this risk. SQL is still needed for structured fields (funnel_stage, icp) but only with pre-defined fixed queries.
 
 **Rejected:**
+
 - Text-to-SQL as primary — hallucination risk too high with no validation layer at demo scope.
 
 ---
 
-## ADR-007 · Seed data to unblock development; full pipeline shown in demo
+### ADR-007 · Recharts instead of QuickSight
+
+**Status:** Accepted
+
+**Context:**
+The dashboard needs to display charts (top pain points, funnel distribution, ICP cards).
+
+**Decision:**
+Render charts directly in the React frontend using Recharts.
+
+**Reason:**
+Recharts is sufficient for demo charts with no additional service required. QuickSight costs ~$18/month per author and adds an unnecessary dependency.
+
+**Rejected:**
+
+- QuickSight — powerful for BI but overkill and costly for demo scope.
+
+---
+
+## Cross-cutting
+
+### ADR-008 · Gemini API for local dev, Bedrock for AWS deploy
+
+**Status:** Accepted
+
+**Context:**
+Need an LLM for local development and testing before deploying to AWS.
+
+**Decision:**
+Use Gemini API (free tier) during local dev. Switch to Bedrock on AWS deploy — only the endpoint and credentials change, logic remains identical.
+
+**Rejected:**
+
+- Groq — free tier but less stable long-term than Gemini.
+- Ollama — runs locally but requires 16GB+ RAM; risk of spending 2 days on setup is too high given the 3-week timeline.
+
+---
+
+### ADR-009 · Seed data to unblock development; full pipeline shown in demo
 
 **Status:** Accepted
 
@@ -129,21 +189,3 @@ Without seed data, backend and frontend work are blocked on the ingestion pipeli
 **Rejected:**
 
 - Waiting for real ingestion pipeline before starting backend/frontend — creates a sequential dependency that wastes time in a 3-week timeline.
-
----
-
-## ADR-008 · Recharts instead of QuickSight
-
-**Status:** Accepted
-
-**Context:**
-The dashboard needs to display charts (top pain points, funnel distribution, ICP cards).
-
-**Decision:**
-Render charts directly in the React frontend using Recharts.
-
-**Reason:**
-Recharts is sufficient for demo charts with no additional service required. QuickSight costs ~$18/month per author and adds an unnecessary dependency.
-
-**Rejected:**
-- QuickSight — powerful for BI but overkill and costly for demo scope.
