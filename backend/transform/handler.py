@@ -205,6 +205,7 @@ def _insert_insights(rows: list[dict]) -> tuple[int, list[str]]:
 # ── embed helpers ────────────────────────────────────────────────────────────
 
 _GEMINI_CLIENT = None
+_GEMINI_EXTRACT_CLIENT = None
 
 
 def _embed_bedrock(text: str) -> list[float]:
@@ -220,22 +221,28 @@ def _embed_bedrock(text: str) -> list[float]:
 def _embed_gemini(text: str) -> list[float]:
     global _GEMINI_CLIENT
     if _GEMINI_CLIENT is None:
-        import google.generativeai as genai
-        genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-        _GEMINI_CLIENT = genai
-    result = _GEMINI_CLIENT.embed_content(
+        from google import genai
+        _GEMINI_CLIENT = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    result = _GEMINI_CLIENT.models.embed_content(
         model="models/gemini-embedding-001",
-        content=text,
-        task_type="retrieval_document",
-        output_dimensionality=1024,
+        contents=text,
+        config={"task_type": "RETRIEVAL_DOCUMENT", "output_dimensionality": 1024},
     )
-    return result["embedding"]
+    return result.embeddings[0].values
 
 
 def _embed_text(text: str) -> list[float]:
     if os.environ.get("DB_SECRET_ARN"):
         return _embed_bedrock(text)
     return _embed_gemini(text)
+
+
+def _gemini_extract_client():
+    global _GEMINI_EXTRACT_CLIENT
+    if _GEMINI_EXTRACT_CLIENT is None:
+        from google import genai
+        _GEMINI_EXTRACT_CLIENT = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return _GEMINI_EXTRACT_CLIENT
 
 
 def _embed_rows(rows: list[dict]) -> dict[str, list[float]]:
@@ -354,17 +361,30 @@ def _make_batches(records: list[dict]) -> list[list[dict]]:
 
 
 def _extract_batch(
-    records: list[dict], source: str, client: Any, model_id: str
+    records: list[dict], source: str, client: Any, model_id: str, use_gemini: bool = False
 ) -> list[_Extraction]:
     texts  = [r["raw_text"] for r in records]
     prompt = build_extract_prompt(texts, source, context_content="")
-    result = client.messages.create(
-        model=model_id,
-        max_tokens=4096,
-        response_model=_ExtractionBatch,
-        max_retries=2,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    if use_gemini:
+        from google.genai import types as genai_types
+        schema = json.dumps(_ExtractionBatch.model_json_schema())
+        response = client.models.generate_content(
+            model="gemini-3.1-flash-lite-preview",
+            contents=f"{prompt}\n\nRespond ONLY with valid JSON matching this schema:\n{schema}",
+            config=genai_types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=_ExtractionBatch,
+            ),
+        )
+        result = _ExtractionBatch.model_validate_json(response.text)
+    else:
+        result = client.messages.create(
+            model=model_id,
+            max_tokens=4096,
+            response_model=_ExtractionBatch,
+            max_retries=2,
+            messages=[{"role": "user", "content": prompt}],
+        )
     extractions = result.records
     while len(extractions) < len(records):
         extractions.append(_Extraction())
@@ -372,13 +392,14 @@ def _extract_batch(
 
 
 def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> list[dict]:
-    client  = _bedrock_client()
+    use_gemini = not bool(os.environ.get("DB_SECRET_ARN"))
+    client  = _gemini_extract_client() if use_gemini else _bedrock_client()
     batches = _make_batches(normalized)
     results = []
 
     for i, batch in enumerate(batches, 1):
         try:
-            extractions = _extract_batch(batch, source, client, model_id)
+            extractions = _extract_batch(batch, source, client, model_id, use_gemini=use_gemini)
             for rec, ext in zip(batch, extractions):
                 results.append({
                     "id":               str(uuid.uuid4()),
@@ -449,7 +470,8 @@ def handler(event: dict, context=None) -> dict:
             vectors                = embed_fut.result()
 
             vec_upserted = _insert_embeddings(upserted_ids, vectors)
-            _mark_processed(bucket, s3_key)
+            if upserted > 0:
+                _mark_processed(bucket, s3_key)
             print(
                 f"OK {s3_key}: {upserted}/{len(rows)} Aurora rows, "
                 f"{vec_upserted} vectors upserted"
