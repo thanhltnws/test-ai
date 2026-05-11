@@ -129,7 +129,6 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
 - **Fixed SQL is primary for Aurora queries** — Text-to-SQL deferred as fallback only, due to hallucination risk on complex queries.
 - **Bedrock called directly, no Comprehend pre-filter** — simpler for demo scope. Comprehend can be added later to reduce token cost.
-- **No ingestion pipeline for demo** — seed data imported directly into Aurora and pgvector, bypassing Tier 1 and Tier 2 entirely.
 
 ---
 

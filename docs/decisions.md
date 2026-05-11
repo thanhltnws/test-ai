@@ -119,22 +119,25 @@ Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, bu
 
 ---
 
-## ADR-007 · Seed data to unblock development; full pipeline shown in demo
+## ADR-007 · Seed data locally first, then import to Aurora
 
 **Status:** Accepted
 
 **Context:**
-Backend and frontend development requires data in Aurora and Vectorize before the ingestion pipeline is complete. The ingestion pipeline is still being built and must be demonstrated end-to-end during the actual demo.
+Backend and frontend development requires a sufficiently large dataset in Aurora and pgvector before the ingestion and transform pipeline is complete. Running the full transform repeatedly in AWS during preparation would add unnecessary Bedrock/Glue cost and slow down iteration.
 
 **Decision:**
-Pre-seed Aurora and Vectorize with ~20–30 realistic records (HubSpot deals, Jira tickets, call notes) sourced from public datasets. This unblocks backend API and frontend UI development immediately. The seed data is for development only — the live demo will run the complete pipeline (Tier 1 ingestion → Tier 2 transform → Aurora/Vectorize) against real or prepared source records.
+Generate and validate seed data locally first, using public or prepared datasets and the same target schema as Aurora PostgreSQL + pgvector. The seed size should be large enough to exercise dashboard aggregation, fixed SQL filters, semantic search, and chat references realistically, not limited to a small 20–30 record sample.
+
+Local development uses Docker PostgreSQL + pgvector for testing import scripts, API behavior, dashboard queries, and RAG retrieval. After validation, import the prepared seed dataset into Aurora and pgvector. The deployed AWS services still mirror the real system architecture, including ingestion and transform services, but the large demo dataset is prepared locally to avoid paying for repeated cloud transform runs.
 
 **Reason:**
-Without seed data, backend and frontend work are blocked on the ingestion pipeline. Seeding decouples development tracks and allows parallel progress. The demo still shows the full end-to-end flow — seed data does not replace it.
+Without seed data, backend and frontend work are blocked on the ingestion pipeline. Preparing seed data locally decouples development tracks, allows fast repeatable testing, and avoids unnecessary AWS transform cost while still letting the deployed demo use the same service topology as the real system.
 
 **Rejected:**
 
 - Waiting for real ingestion pipeline before starting backend/frontend — creates a sequential dependency that wastes time in a 3-week timeline.
+- Re-running cloud transform for every seed iteration — unnecessary cost and slower feedback loop for demo preparation.
 
 ---
 
