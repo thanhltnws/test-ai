@@ -18,6 +18,7 @@ Use custom Lambda polling for all sources. AppFlow remains in the architecture d
 AppFlow is overkill for demo scale. Custom Lambda covers all sources, is easier to debug, and easier to explain during a demo.
 
 **Rejected:**
+
 - AppFlow — pre-built connectors exist but add configuration complexity not worth it at this scale.
 
 ---
@@ -36,6 +37,7 @@ Use Lambda ETL instead of Glue ETL.
 AWS Glue runs on a Spark cluster designed for big data. At ~500 docs/month demo scale, a Lambda function reading S3 and normalizing JSON is sufficient — simpler and easier to debug.
 
 **Rejected:**
+
 - AWS Glue — ~$3.65/month, over-engineering for this scale. Re-evaluate if moving to production.
 
 ---
@@ -54,12 +56,13 @@ Call Bedrock directly. No Comprehend or Macie in the pipeline.
 Intended data sources (HubSpot deals, Jira tickets, internal email) do not contain sensitive PII requiring filtering. Adding Comprehend or Macie increases complexity without clear benefit at demo scope.
 
 **Rejected:**
+
 - Comprehend pre-filter — can be added later to reduce token cost at production scale.
 - Macie PII detection — not necessary given current data sources.
 
 ---
 
-## ADR-004 · Cloudflare Vectorize instead of Aurora pgvector or OpenSearch
+## ADR-004 · Aurora pgvector instead of Cloudflare Vectorize
 
 **Status:** Accepted
 
@@ -67,15 +70,16 @@ Intended data sources (HubSpot deals, Jira tickets, internal email) do not conta
 Need a vector store for semantic search to support the RAG chatbox.
 
 **Decision:**
-Use Cloudflare Vectorize. Aurora stores structured fields only — pgvector extension not enabled.
+Use pgvector on Aurora (`insight_embeddings` table). Cloudflare Vectorize dropped.
 
 **Reason:**
-Vectorize is a purpose-built vector DB with a free tier suited for demo scale. pgvector on Aurora adds coupling between the structured store and vector store. OpenSearch costs ~$25+/month and is overkill for demo scope.
+pgvector runs as an extension on the same Aurora instance — no extra service. Local dev uses Docker PostgreSQL + pgvector, identical to Aurora: no mock, no external API call during dev. Referential integrity enforced via FK (`insight_id → insights.id`), which Vectorize cannot provide. Coupling argument (original rejection reason) does not apply — `insight_embeddings` is inherently tied to `insights` and benefits from CASCADE DELETE.
 
 **Rejected:**
-- Aurora pgvector — simpler infra but creates coupling between structured and vector stores.
-- OpenSearch — powerful but over-engineering and costly.
-- Qdrant / Weaviate / Pinecone — unnecessary when Vectorize is sufficient and free.
+
+- Cloudflare Vectorize — no local equivalent (must call real API during dev), no FK support, extra service to manage.
+- OpenSearch — over-engineering and costly.
+- Qdrant / Weaviate / Pinecone — unnecessary extra service when pgvector is sufficient.
 
 ---
 
@@ -90,45 +94,50 @@ Need an LLM for local development and testing before deploying to AWS.
 Use Gemini API (free tier) during local dev. Switch to Bedrock on AWS deploy — only the endpoint and credentials change, logic remains identical.
 
 **Rejected:**
+
 - Groq — free tier but less stable long-term than Gemini.
 - Ollama — runs locally but requires 16GB+ RAM; risk of spending 2 days on setup is too high given the 3-week timeline.
 
 ---
 
-## ADR-006 · Vectorize semantic search as primary RAG strategy, SQL as secondary
+## ADR-006 · pgvector semantic search as primary RAG strategy, SQL as secondary
 
 **Status:** Accepted
 
 **Context:**
-The RAG chatbox needs to retrieve context from the data store to enrich the prompt before calling Bedrock. Two options: Text-to-SQL on Aurora, or semantic search on Vectorize.
+The RAG chatbox needs to retrieve context from the data store to enrich the prompt before calling Bedrock. Two options: Text-to-SQL on Aurora, or semantic search on pgvector.
 
 **Decision:**
-Vectorize semantic search is primary. SQL query on Aurora is secondary — fixed SQL only, no Text-to-SQL. Both contexts are merged to enrich the prompt.
+pgvector semantic search on `insight_embeddings` is primary. SQL query on Aurora is secondary — fixed SQL only, no Text-to-SQL. Both contexts are merged to enrich the prompt.
 
 **Reason:**
-Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, but wrong results returned. Vectorize similarity search does not carry this risk. SQL is still needed for structured fields (funnel_stage, icp) but only with pre-defined fixed queries.
+Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, but wrong results returned. pgvector similarity search does not carry this risk. SQL is still needed for structured fields (funnel_stage, icp) but only with pre-defined fixed queries.
 
 **Rejected:**
+
 - Text-to-SQL as primary — hallucination risk too high with no validation layer at demo scope.
 
 ---
 
-## ADR-007 · Seed data to unblock development; full pipeline shown in demo
+## ADR-007 · Seed data locally first, then import to Aurora
 
 **Status:** Accepted
 
 **Context:**
-Backend and frontend development requires data in Aurora and Vectorize before the ingestion pipeline is complete. The ingestion pipeline is still being built and must be demonstrated end-to-end during the actual demo.
+Backend and frontend development requires a sufficiently large dataset in Aurora and pgvector before the ingestion and transform pipeline is complete. Running the full transform repeatedly in AWS during preparation would add unnecessary Bedrock/Glue cost and slow down iteration.
 
 **Decision:**
-Pre-seed Aurora and Vectorize with ~20–30 realistic records (HubSpot deals, Jira tickets, call notes) sourced from public datasets. This unblocks backend API and frontend UI development immediately. The seed data is for development only — the live demo will run the complete pipeline (Tier 1 ingestion → Tier 2 transform → Aurora/Vectorize) against real or prepared source records.
+Generate and validate seed data locally first, using public or prepared datasets and the same target schema as Aurora PostgreSQL + pgvector. The seed size should be large enough to exercise dashboard aggregation, fixed SQL filters, semantic search, and chat references realistically, not limited to a small 20–30 record sample.
+
+Local development uses Docker PostgreSQL + pgvector for testing import scripts, API behavior, dashboard queries, and RAG retrieval. After validation, import the prepared seed dataset into Aurora and pgvector. The deployed AWS services still mirror the real system architecture, including ingestion and transform services, but the large demo dataset is prepared locally to avoid paying for repeated cloud transform runs.
 
 **Reason:**
-Without seed data, backend and frontend work are blocked on the ingestion pipeline. Seeding decouples development tracks and allows parallel progress. The demo still shows the full end-to-end flow — seed data does not replace it.
+Without seed data, backend and frontend work are blocked on the ingestion pipeline. Preparing seed data locally decouples development tracks, allows fast repeatable testing, and avoids unnecessary AWS transform cost while still letting the deployed demo use the same service topology as the real system.
 
 **Rejected:**
 
 - Waiting for real ingestion pipeline before starting backend/frontend — creates a sequential dependency that wastes time in a 3-week timeline.
+- Re-running cloud transform for every seed iteration — unnecessary cost and slower feedback loop for demo preparation.
 
 ---
 
@@ -146,4 +155,5 @@ Render charts directly in the React frontend using Recharts.
 Recharts is sufficient for demo charts with no additional service required. QuickSight costs ~$18/month per author and adds an unnecessary dependency.
 
 **Rejected:**
+
 - QuickSight — powerful for BI but overkill and costly for demo scope.

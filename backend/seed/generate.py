@@ -231,6 +231,7 @@ def assemble_row(source: str, source_id: str, source_url: str,
         "icp":              ext.get("icp") or {},
         "funnel_stage":     ext.get("funnel_stage") or "consideration",
         "confidence_score": round(float(ext.get("confidence_score") or 0.5), 2),
+        "embedding_text":    str(ext.get("embedding_text") or "").strip(),
         "ingested_at":      datetime.now(timezone.utc).isoformat(),
     }
 
