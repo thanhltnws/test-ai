@@ -44,7 +44,7 @@ def search(vector: list[float], top_k: int) -> list[dict]:
                     i.source,
                     i.source_url,
                     i.funnel_stage,
-                    e.chunk_text,
+                    e.embedding_text,
                     1 - (e.embedding <=> %s::vector) AS score
                 FROM insight_embeddings e
                 JOIN insights i ON i.id = e.insight_id
@@ -71,5 +71,5 @@ if __name__ == "__main__":
         for i, r in enumerate(results, 1):
             print(f"[{i}] score={r['score']:.4f}  source={r['source']}  stage={r['funnel_stage']}")
             print(f"     url  : {r['source_url']}")
-            print(f"     chunk: {r['chunk_text'][:120]}...")
+            print(f"     text : {r['embedding_text'][:120]}...")
             print()
