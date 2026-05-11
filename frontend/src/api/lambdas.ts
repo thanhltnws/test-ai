@@ -1,9 +1,37 @@
 import axios from 'axios'
-import type { SummaryData, RecommendationsData, ChatMessage, BeInsightResponse } from '../types'
+import type {
+  BatchRunResponse,
+  BeInsightResponse,
+  ChatMessage,
+  DashboardInsights,
+  RecommendationsData,
+  SummaryData,
+} from '../types'
 
-const BASE = import.meta.env.VITE_API_URL ?? '/api'
+const legacyBase = import.meta.env.VITE_API_URL ?? '/api'
+const dataSource = import.meta.env.VITE_DATA_SOURCE ?? 'mock'
+const useLambdaData = dataSource === 'lambda'
 
-// ── Mock data ──────────────────────────────────────────────────────────────────
+const apiBase = import.meta.env.VITE_API_LAMBDA_URL ?? legacyBase
+const chatBase = import.meta.env.VITE_CHAT_LAMBDA_URL ?? legacyBase
+const batchBase = import.meta.env.VITE_BATCH_LAMBDA_URL ?? legacyBase
+
+const recommendationsPath = import.meta.env.VITE_API_RECOMMENDATIONS_PATH ?? '/recommendations'
+const chatPath = import.meta.env.VITE_CHAT_PATH ?? '/chat'
+const batchPath = import.meta.env.VITE_BATCH_LAMBDA_URL
+  ? (import.meta.env.VITE_BATCH_PATH ?? '')
+  : (import.meta.env.VITE_BATCH_PATH ?? '/batch')
+
+function joinUrl(base: string, path = ''): string {
+  if (!path) return base
+  return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
+}
+
+export const lambdaEndpoints = {
+  api: joinUrl(apiBase, recommendationsPath),
+  chat: joinUrl(chatBase, chatPath),
+  batch: joinUrl(batchBase, batchPath),
+}
 
 const MOCK_SUMMARY: SummaryData = {
   period: 'weekly',
@@ -37,11 +65,14 @@ const MOCK_RECOMMENDATIONS: RecommendationsData = {
   ],
 }
 
-// ── Transform BE response → FE types ──────────────────────────────────────────
+const MOCK_DASHBOARD_INSIGHTS: DashboardInsights = {
+  summary: MOCK_SUMMARY,
+  recommendations: MOCK_RECOMMENDATIONS,
+}
 
 function toSummary(raw: BeInsightResponse): SummaryData {
   return {
-    period: 'weekly',
+    period: 'daily',
     period_start: raw.period_start,
     funnel_distribution: raw.funnel_distribution.stages,
     top_pain_points: raw.pain_points_summary.top_items.map(p => ({
@@ -62,42 +93,46 @@ function toRecommendations(raw: BeInsightResponse): RecommendationsData {
   }
 }
 
-// ── API calls ──────────────────────────────────────────────────────────────────
-// Hiện tại: fallback về mock data khi API lỗi (dùng cho dev/demo)
-// Khi go-live: xóa try/catch + MOCK_* objects, dùng version bên dưới
+async function fetchInsightResponse(): Promise<BeInsightResponse> {
+  const res = await axios.get<BeInsightResponse>(lambdaEndpoints.api)
+  return res.data
+}
 
-export async function fetchSummary(): Promise<SummaryData> {
-  try {
-    const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
-    return toSummary(res.data)
-  } catch {
-    return MOCK_SUMMARY
+export async function fetchDashboardInsights(): Promise<DashboardInsights> {
+  if (!useLambdaData) {
+    return MOCK_DASHBOARD_INSIGHTS
+  }
+
+  const raw = await fetchInsightResponse()
+  return {
+    summary: toSummary(raw),
+    recommendations: toRecommendations(raw),
   }
 }
 
-// [GO-LIVE] export async function fetchSummary(): Promise<SummaryData> {
-//   const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
-//   return toSummary(res.data)
-// }
-
-export async function fetchRecommendations(): Promise<RecommendationsData> {
-  try {
-    const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
-    return toRecommendations(res.data)
-  } catch {
-    return MOCK_RECOMMENDATIONS
+export async function runBatch(): Promise<BatchRunResponse> {
+  if (!useLambdaData) {
+    return {
+      period_start: MOCK_SUMMARY.period_start,
+      written: 0,
+    }
   }
-}
 
-// [GO-LIVE] export async function fetchRecommendations(): Promise<RecommendationsData> {
-//   const res = await axios.get<BeInsightResponse>(`${BASE}/insights/summary`)
-//   return toRecommendations(res.data)
-// }
+  const res = await axios.post<BatchRunResponse>(lambdaEndpoints.batch, {})
+  return res.data
+}
 
 export async function sendChat(
   question: string,
   history: ChatMessage[],
 ): Promise<{ answer: string; references: ChatMessage['references'] }> {
-  const res = await axios.post(`${BASE}/chat`, { question, history })
+  if (!useLambdaData) {
+    return {
+      answer: `Mock response for: "${question}". Set VITE_DATA_SOURCE=lambda to call the chat Lambda.`,
+      references: [],
+    }
+  }
+
+  const res = await axios.post(lambdaEndpoints.chat, { question, history })
   return res.data
 }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { sendChat } from '../api/client'
+import { sendChat } from '../api/lambdas'
 import type { ChatMessage, Reference } from '../types'
 
 const SUGGESTED = [

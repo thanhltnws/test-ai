@@ -41,6 +41,18 @@ export interface RecommendationsData {
   computed_at?: string
 }
 
+export interface DashboardInsights {
+  summary: SummaryData
+  recommendations: RecommendationsData
+}
+
+export interface BatchRunResponse {
+  period_start?: string
+  written?: number
+  body?: string
+  statusCode?: number
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
