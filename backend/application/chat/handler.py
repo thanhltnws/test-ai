@@ -189,7 +189,9 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
     embeddings = []
     for text in texts:
         resp = client.invoke_model(
-            modelId="amazon.titan-embed-text-v2:0",
+            modelId=os.environ.get(
+                "BEDROCK_EMBEDDING_MODEL_ID", "apac.amazon.titan-embed-text-v2:0"
+            ),
             contentType="application/json",
             accept="application/json",
             body=json.dumps({"inputText": text, "dimensions": 1024, "normalize": True}),
@@ -296,7 +298,7 @@ def _call_bedrock(prompt_text: str) -> str:
     })
     resp = client.invoke_model(
         modelId=os.environ.get(
-            "BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20241022-v2:0"
+            "BEDROCK_MODEL_ID", "apac.anthropic.claude-3-5-sonnet-20241022-v2:0"
         ),
         body=body,
     )
