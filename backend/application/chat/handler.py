@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from prompt import build_chat_prompt
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+_VECTOR_TOP_K = 8
 
 _STOP_WORDS = {
     "what", "are", "the", "is", "in", "of", "for", "and", "to", "a", "an",
@@ -157,65 +158,116 @@ def query_aurora(conn, question: str) -> dict:
         cur.close()
 
 
-# ── pgvector query (comment out — bảng insight_embedding chưa được tạo) ────────
+# ── pgvector query ─────────────────────────────────────────────────────────────
 
-# def _embed_question(question: str) -> list[float]:
-#     """
-#     Embed câu hỏi để query pgvector.
-#     Embedding model sẽ được chốt khi tạo bảng insight_embedding.
-#     """
-#     raise NotImplementedError("Chưa chốt embedding model")
-#
-#
-# def query_pgvector(conn, question: str) -> list[dict]:
-#     """
-#     Semantic search trên bảng insight_embedding (pgvector).
-#     Bảng dự kiến:
-#
-#       CREATE TABLE insight_embedding (
-#           id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-#           insights_id  UUID REFERENCES insights(id),
-#           chunk_text   TEXT NOT NULL,
-#           embedding    vector(768),   -- chiều phụ thuộc embedding model
-#           chunk_index  INT DEFAULT 0
-#       );
-#       CREATE INDEX ON insight_embedding USING ivfflat (embedding vector_cosine_ops);
-#
-#     Uncomment khi:
-#       1. Bảng insight_embedding đã được tạo và đã seed dữ liệu.
-#       2. Embedding model đã được chốt và _embed_question() đã được implement.
-#     """
-#     question_vec = _embed_question(question)
-#     cur = conn.cursor()
-#     try:
-#         cur.execute(
-#             """
-#             SELECT ie.chunk_text, i.source_url, i.funnel_stage,
-#                    1 - (ie.embedding <=> %s::vector) AS score
-#             FROM insight_embedding ie
-#             JOIN insights i ON ie.insights_id = i.id
-#             ORDER BY ie.embedding <=> %s::vector
-#             LIMIT 8
-#             """,
-#             (question_vec, question_vec),
-#         )
-#         return [
-#             {
-#                 "chunk_text": r[0],
-#                 "source_url": r[1],
-#                 "funnel_stage": r[2],
-#                 "score": round(float(r[3]), 3),
-#             }
-#             for r in cur.fetchall()
-#         ]
-#     finally:
-#         cur.close()
+def _embed_gemini(texts: list[str]) -> list[list[float]]:
+    from google import genai
+    from google.genai import types
+
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    embeddings = []
+    for text in texts:
+        result = client.models.embed_content(
+            model="gemini-embedding-001",
+            contents=text,
+            config=types.EmbedContentConfig(
+                task_type="RETRIEVAL_QUERY",
+                output_dimensionality=1024,
+            ),
+        )
+        embeddings.append(result.embeddings[0].values)
+    return embeddings
+
+
+def _embed_bedrock(texts: list[str]) -> list[list[float]]:
+    import boto3
+
+    client = boto3.client(
+        "bedrock-runtime",
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+    )
+    embeddings = []
+    for text in texts:
+        resp = client.invoke_model(
+            modelId=os.environ.get(
+                "BEDROCK_EMBEDDING_MODEL_ID", "apac.amazon.titan-embed-text-v2:0"
+            ),
+            contentType="application/json",
+            accept="application/json",
+            body=json.dumps({"inputText": text, "dimensions": 1024, "normalize": True}),
+        )
+        embeddings.append(json.loads(resp["body"].read())["embedding"])
+    return embeddings
+
+
+def _embed_queries(texts: list[str]) -> list[list[float]]:
+    if _is_dev():
+        print("Embeddings: Gemini (dev/local)")
+        return _embed_gemini(texts)
+    print("Embeddings: Bedrock (prod)")
+    return _embed_bedrock(texts)
+
+
+def query_pgvector(conn, question: str) -> list[dict]:
+    try:
+        question_vector = _embed_queries([question])[0]
+    except Exception as exc:
+        print(f"pgvector embedding skipped: {exc}")
+        return []
+
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            """
+            SELECT
+                e.insight_id,
+                i.source,
+                i.source_url,
+                i.funnel_stage,
+                e.embedding_text,
+                1 - (e.embedding <=> %s::vector) AS score
+            FROM insight_embeddings e
+            JOIN insights i ON i.id = e.insight_id
+            ORDER BY e.embedding <=> %s::vector
+            LIMIT %s
+            """,
+            (str(question_vector), str(question_vector), _VECTOR_TOP_K),
+        )
+        return [
+            {
+                "insight_id": str(r[0]),
+                "score": round(float(r[5]), 3),
+                "source": r[1],
+                "source_url": r[2],
+                "funnel_stage": r[3],
+                "embedding_text": r[4],
+            }
+            for r in cur.fetchall()
+        ]
+    except Exception as exc:
+        print(f"pgvector query skipped: {exc}")
+        return []
+    finally:
+        cur.close()
 
 
 # ── llm calls ──────────────────────────────────────────────────────────────────
 
 def _is_dev() -> bool:
-    return bool(os.environ.get("GEMINI_API_KEY"))
+    env = (
+        os.environ.get("APP_ENV")
+        or os.environ.get("ENVIRONMENT")
+        or os.environ.get("ENV")
+        or os.environ.get("STAGE")
+        or ""
+    ).strip().lower()
+    if env:
+        return env in {"local", "dev", "development", "test"}
+
+    return not (
+        os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
+        or os.environ.get("DB_SECRET_ARN")
+    )
 
 
 def _call_gemini(prompt_text: str) -> str:
@@ -246,7 +298,7 @@ def _call_bedrock(prompt_text: str) -> str:
     })
     resp = client.invoke_model(
         modelId=os.environ.get(
-            "BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20241022-v2:0"
+            "BEDROCK_MODEL_ID", "apac.anthropic.claude-3-5-sonnet-20241022-v2:0"
         ),
         body=body,
     )
@@ -310,13 +362,13 @@ def lambda_handler(event=None, context=None):
     conn = _pg_connect()
     try:
         sql_ctx = query_aurora(conn, question)
-        vector_ctx: list[dict] = []  # pgvector disabled — insight_embedding table not yet created
-        # vector_ctx = query_pgvector(conn, question)
+        vector_ctx = query_pgvector(conn, question)
 
         print(
             f"Aurora: {sql_ctx['total_insights']} total insights, "
             f"{len(sql_ctx['relevant_insights'])} keyword-matched rows"
         )
+        print(f"pgvector: {len(vector_ctx)} semantic chunks")
 
         prompt = build_chat_prompt(question, sql_ctx, vector_ctx)
         raw = call_llm(prompt)
@@ -343,7 +395,7 @@ def lambda_handler(event=None, context=None):
 
 
 if __name__ == "__main__":
-    question = " ".join(sys.argv[1:]) or "What are the top pain points in fintech?"
+    question = " ".join(sys.argv[1:]) or "What are the main software pain points?"
     result = lambda_handler(
         {"body": json.dumps({"question": question})},
         None,

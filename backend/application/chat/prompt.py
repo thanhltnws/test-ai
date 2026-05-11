@@ -58,7 +58,7 @@ def build_chat_prompt(
     vector_section = (
         json.dumps(vector_ctx, indent=2, ensure_ascii=False)
         if vector_ctx
-        else "(pgvector not yet available — insight_embedding table not created)"
+        else "(no vector data available - pgvector returned no semantic chunks)"
     )
 
     return _CHAT_TEMPLATE.format(

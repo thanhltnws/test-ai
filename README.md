@@ -112,7 +112,7 @@ pip install -r requirements.txt
 
 ### 3. Start the local database
 
-Requires Docker. Starts a PostgreSQL 16 container and runs the schema DDL automatically on first boot.
+Requires Docker. Starts a PostgreSQL 17 container with pgvector and runs the schema DDL automatically on first boot.
 
 ```bash
 docker compose -f dev/docker-compose.yml up -d
@@ -123,6 +123,15 @@ Add to `.env`:
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_insight_hub
 ```
+
+When a new table is added after your local database already exists, re-run the idempotent schema file:
+
+```bash
+docker compose -f dev/docker-compose.yml up -d
+docker compose -f dev/docker-compose.yml exec -T db psql -U postgres -d ai_insight_hub -f /docker-entrypoint-initdb.d/init.sql
+```
+
+This is only for syncing new tables without affecting existing tables/data. Do not use this flow for changing existing tables.
 
 To wipe and recreate the database from scratch: `docker compose -f dev/docker-compose.yml down -v && docker compose -f dev/docker-compose.yml up -d`
 

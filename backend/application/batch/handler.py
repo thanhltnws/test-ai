@@ -2,7 +2,7 @@
 Batch compute Lambda — Feature 1 (Dashboard).
 
 EventBridge triggers this daily. Queries Aurora (structured aggregates) and
-Cloudflare Vectorize (semantic pattern context) in parallel, enriches a prompt
+Aurora pgvector (semantic pattern context), enriches a prompt
 with both, then calls Gemini (dev) or Bedrock (prod) and appends a new row to
 the recommendations table.
 
@@ -12,12 +12,10 @@ Local run:
 import json
 import os
 import sys
-# from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
 
 import pg8000.dbapi
-# import requests  # used by query_vectorize (disabled)
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 
@@ -30,12 +28,14 @@ GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 # Cached across Lambda invocations within the same container
 _db_url_cache: str | None = None
 
-# # Seed queries used to pull semantic pattern context from Vectorize
-# _VECTOR_QUERIES = [
-#     "customer pain points and challenges",
-#     "sales objections and friction",
-#     "product use cases and applications",
-# ]
+# Seed queries used to pull semantic pattern context from pgvector.
+_VECTOR_QUERIES = [
+    "customer pain points and challenges",
+    "sales objections and friction",
+    "product use cases and applications",
+]
+
+_VECTOR_TOP_K_PER_QUERY = 10
 
 
 # ── db url ────────────────────────────────────────────────────────────────────
@@ -188,81 +188,125 @@ def query_aurora(conn, period_start: date) -> dict:
         cur.close()
 
 
-# ── vectorize queries (disabled) ───────────────────────────────────────────────
+# pgvector queries
 
-# def _embed(text: str, embed_url: str, headers: dict) -> list[float]:
-#     resp = requests.post(embed_url, headers=headers, json={"text": [text]}, timeout=30)
-#     resp.raise_for_status()
-#     return resp.json()["result"]["data"][0]
-#
-#
-# def _vector_query(vector: list[float], query_url: str, headers: dict) -> list[dict]:
-#     resp = requests.post(
-#         query_url,
-#         headers=headers,
-#         json={"vector": vector, "topK": 10, "returnMetadata": "all"},
-#         timeout=30,
-#     )
-#     resp.raise_for_status()
-#     return resp.json()["result"].get("matches", [])
-#
-#
-# def query_vectorize() -> list[dict]:
-#     account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
-#     api_token  = os.environ.get("CLOUDFLARE_API_TOKEN")
-#     index_name = os.environ.get("VECTORIZE_INDEX_NAME")
-#     if not all([account_id, api_token, index_name]):
-#         print("Vectorize skipped — creds not set")
-#         return []
-#
-#     headers   = {"Authorization": f"Bearer {api_token}"}
-#     embed_url = (
-#         f"https://api.cloudflare.com/client/v4/accounts/{account_id}"
-#         f"/ai/run/@cf/baai/bge-m3"
-#     )
-#     query_url = (
-#         f"https://api.cloudflare.com/client/v4/accounts/{account_id}"
-#         f"/vectorize/v2/indexes/{index_name}/query"
-#     )
-#
-#     seen_ids: set[str] = set()
-#     chunks: list[dict] = []
-#
-#     def fetch_one(query_text: str) -> list[dict]:
-#         vector  = _embed(query_text, embed_url, headers)
-#         matches = _vector_query(vector, query_url, headers)
-#         results = []
-#         for m in matches:
-#             meta = m.get("metadata") or {}
-#             uid  = meta.get("unified_id") or m["id"]
-#             results.append({"uid": uid, "score": round(m["score"], 3), "meta": meta})
-#         return results
-#
-#     try:
-#         with ThreadPoolExecutor(max_workers=len(_VECTOR_QUERIES)) as ex:
-#             futures = {ex.submit(fetch_one, q): q for q in _VECTOR_QUERIES}
-#             for fut in as_completed(futures):
-#                 for item in fut.result():
-#                     if item["uid"] not in seen_ids:
-#                         seen_ids.add(item["uid"])
-#                         meta = item["meta"]
-#                         chunks.append({
-#                             "score":        item["score"],
-#                             "source":       meta.get("source"),
-#                             "source_url":   meta.get("source_url"),
-#                             "funnel_stage": meta.get("funnel_stage"),
-#                         })
-#     except Exception as exc:
-#         print(f"Vectorize error: {exc}")
-#
-#     chunks.sort(key=lambda x: x["score"], reverse=True)
-#     return chunks
+def _embed_gemini(texts: list[str]) -> list[list[float]]:
+    from google import genai
+    from google.genai import types
+
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    embeddings = []
+    for text in texts:
+        result = client.models.embed_content(
+            model="gemini-embedding-001",
+            contents=text,
+            config=types.EmbedContentConfig(
+                task_type="RETRIEVAL_QUERY",
+                output_dimensionality=1024,
+            ),
+        )
+        embeddings.append(result.embeddings[0].values)
+    return embeddings
+
+
+def _embed_bedrock(texts: list[str]) -> list[list[float]]:
+    import boto3
+
+    client = boto3.client(
+        "bedrock-runtime",
+        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+    )
+    embeddings = []
+    for text in texts:
+        resp = client.invoke_model(
+            modelId=os.environ.get(
+                "BEDROCK_EMBEDDING_MODEL_ID", "apac.amazon.titan-embed-text-v2:0"
+            ),
+            contentType="application/json",
+            accept="application/json",
+            body=json.dumps({"inputText": text, "dimensions": 1024, "normalize": True}),
+        )
+        embeddings.append(json.loads(resp["body"].read())["embedding"])
+    return embeddings
+
+
+def _embed_queries(texts: list[str]) -> list[list[float]]:
+    if _is_dev():
+        print("Embeddings: Gemini (dev/local)")
+        return _embed_gemini(texts)
+    print("Embeddings: Bedrock (prod)")
+    return _embed_bedrock(texts)
+
+
+def query_pgvector(conn, period_start: date) -> list[dict]:
+    try:
+        query_vectors = _embed_queries(_VECTOR_QUERIES)
+    except Exception as exc:
+        print(f"pgvector embedding skipped: {exc}")
+        return []
+
+    seen_ids: set[str] = set()
+    chunks: list[dict] = []
+    cur = conn.cursor()
+    try:
+        for query_text, vector in zip(_VECTOR_QUERIES, query_vectors):
+            cur.execute(
+                """
+                SELECT
+                    e.insight_id,
+                    i.source,
+                    i.source_url,
+                    i.funnel_stage,
+                    e.embedding_text,
+                    1 - (e.embedding <=> %s::vector) AS score
+                FROM insight_embeddings e
+                JOIN insights i ON i.id = e.insight_id
+                WHERE i.extracted_at >= %s
+                ORDER BY e.embedding <=> %s::vector
+                LIMIT %s
+                """,
+                (str(vector), period_start, str(vector), _VECTOR_TOP_K_PER_QUERY),
+            )
+            for row in cur.fetchall():
+                uid = str(row[0])
+                if uid in seen_ids:
+                    continue
+                seen_ids.add(uid)
+                chunks.append({
+                    "query": query_text,
+                    "score": round(float(row[5]), 3),
+                    "source": row[1],
+                    "source_url": row[2],
+                    "funnel_stage": row[3],
+                    "embedding_text": row[4],
+                })
+    except Exception as exc:
+        print(f"pgvector query skipped: {exc}")
+        return []
+    finally:
+        cur.close()
+
+    chunks.sort(key=lambda x: x["score"], reverse=True)
+    return chunks
 
 
 # ── llm calls ──────────────────────────────────────────────────────────────────
 
 def _is_dev() -> bool:
-    return bool(os.environ.get("GEMINI_API_KEY"))
+    env = (
+        os.environ.get("APP_ENV")
+        or os.environ.get("ENVIRONMENT")
+        or os.environ.get("ENV")
+        or os.environ.get("STAGE")
+        or ""
+    ).strip().lower()
+    if env:
+        return env in {"local", "dev", "development", "test"}
+
+    return not (
+        os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
+        or os.environ.get("DB_SECRET_ARN")
+    )
 
 
 def _call_gemini(prompt_text: str) -> str:
@@ -293,7 +337,7 @@ def _call_bedrock(prompt_text: str) -> str:
     })
     resp = client.invoke_model(
         modelId=os.environ.get(
-            "BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307-v1:0"
+            "BEDROCK_MODEL_ID", "apac.anthropic.claude-3-haiku-20240307-v1:0"
         ),
         body=body,
     )
@@ -362,25 +406,18 @@ def handler(event=None, context=None):
 
     conn = _pg_connect()
     try:
-        sql_ctx    = query_aurora(conn, period_start)
-        vector_ctx: list[dict] = []  # Vectorize disabled
-
-        # # Query Aurora and Vectorize in parallel
-        # with ThreadPoolExecutor(max_workers=2) as ex:
-        #     sql_fut    = ex.submit(query_aurora, conn, period_start)
-        #     vector_fut = ex.submit(query_vectorize)
-        #     sql_ctx    = sql_fut.result()
-        #     vector_ctx = vector_fut.result()
+        sql_ctx = query_aurora(conn, period_start)
 
         total = sql_ctx["summary"]["total_insights"]
         print(
             f"Aurora: {total} insights, avg_confidence={sql_ctx['summary']['avg_confidence']}"
         )
-        # print(f"Vectorize: {len(vector_ctx)} semantic chunks")
-
         if total == 0:
             print("No insights in period window — skipping LLM call.")
             return {"statusCode": 200, "body": "no data"}
+
+        vector_ctx = query_pgvector(conn, period_start)
+        print(f"pgvector: {len(vector_ctx)} semantic chunks")
 
         prompt  = build_batch_prompt(sql_ctx, vector_ctx, PERIOD)
         raw     = call_llm(prompt)

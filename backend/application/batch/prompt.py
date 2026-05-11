@@ -7,7 +7,7 @@ Below is aggregated customer insight data from today's batch run.
 === STRUCTURED DATA (SQL aggregates from Aurora) ===
 {sql_context}
 
-=== SEMANTIC CONTEXT (top matching chunks from Vectorize vector search) ===
+=== SEMANTIC CONTEXT (top matching chunks from pgvector semantic search) ===
 {vector_context}
 
 Analyze the combined data above and return ONLY valid JSON (no markdown, no explanation) \
@@ -53,7 +53,7 @@ def build_batch_prompt(
     vector_section = (
         json.dumps(vector_context, indent=2, ensure_ascii=False)
         if vector_context
-        else "(no vector data available — Vectorize not configured)"
+        else "(no vector data available - pgvector returned no semantic chunks)"
     )
     return _BATCH_TEMPLATE.format(
         period=period,

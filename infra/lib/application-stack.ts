@@ -5,10 +5,12 @@ import {
   aws_scheduler as scheduler,
   aws_ec2 as ec2,
   aws_rds as rds,
+  custom_resources as cr,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as crypto from 'crypto';
 import { spawnSync } from 'child_process';
 
 export class ApplicationStack extends cdk.Stack {
@@ -64,6 +66,62 @@ export class ApplicationStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.SNAPSHOT,
     });
 
+    // ── DB schema bootstrap ───────────────────────────────────────────────────
+    // Runs the idempotent MVP schema against Aurora after the cluster is ready.
+    // This creates pgvector, insights, insight_embeddings, and recommendations.
+    const dbInitDir = path.join(__dirname, '../lambda/db-init');
+    const dbInitHash = crypto
+      .createHash('sha256')
+      .update(fs.readFileSync(path.join(dbInitDir, 'handler.py')))
+      .digest('hex');
+
+    const dbInitFn = new lambda.Function(this, 'DbInitFn', {
+      functionName: 'ai-insight-hub-db-init',
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'handler.handler',
+      code: lambda.Code.fromAsset(dbInitDir, {
+        bundling: {
+          image: lambda.Runtime.PYTHON_3_12.bundlingImage,
+          command: [
+            'bash', '-c',
+            'pip install -r requirements.txt -t /asset-output --quiet && cp -r . /asset-output',
+          ],
+          local: {
+            tryBundle(outputDir: string): boolean {
+              if (process.platform === 'win32') return false;
+              const pip = spawnSync('pip', [
+                'install', '-r', 'requirements.txt',
+                '-t', outputDir, '--quiet',
+              ], { cwd: dbInitDir, stdio: 'inherit' });
+              if (pip.status !== 0) return false;
+              fs.cpSync(dbInitDir, outputDir, { recursive: true });
+              return true;
+            },
+          },
+        },
+      }),
+      timeout: cdk.Duration.minutes(2),
+      memorySize: 256,
+      environment: {
+        DB_SECRET_ARN: cluster.secret!.secretArn,
+      },
+      description: 'Custom resource handler: initialize Aurora schema for MVP/PoC',
+    });
+
+    cluster.secret!.grantRead(dbInitFn);
+
+    const dbInitProvider = new cr.Provider(this, 'DbInitProvider', {
+      onEventHandler: dbInitFn,
+    });
+
+    const dbInit = new cdk.CustomResource(this, 'DbSchema', {
+      serviceToken: dbInitProvider.serviceToken,
+      properties: {
+        SchemaHash: dbInitHash,
+      },
+    });
+    dbInit.node.addDependency(cluster);
+
     // ── Batch Lambda ───────────────────────────────────────────────────────────
     // Lambda is NOT in a VPC — has full internet access for Bedrock.
     // Reads DB credentials from Secrets Manager at cold start via DB_SECRET_ARN.
@@ -78,10 +136,11 @@ export class ApplicationStack extends cdk.Stack {
             image: lambda.Runtime.PYTHON_3_12.bundlingImage,
             command: [
               'bash', '-c',
-              'pip install -r requirements.txt -t /asset-output --quiet && cp -au . /asset-output',
+              'pip install -r requirements.txt -t /asset-output --quiet && cp -r . /asset-output',
             ],
             local: {
               tryBundle(outputDir: string): boolean {
+                if (process.platform === 'win32') return false;
                 const srcDir = path.join(__dirname, '../../backend/application/batch');
                 const pip = spawnSync('pip', [
                   'install', '-r', 'requirements.txt',
@@ -99,13 +158,15 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
-        BEDROCK_MODEL_ID: 'anthropic.claude-3-haiku-20240307-v1:0',
+        BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-haiku-20240307-v1:0',
+        BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
       },
       description: 'Daily batch: Aurora aggregates + Bedrock → recommendations table',
     });
 
     // Grant Lambda read access to the Aurora credentials secret
     cluster.secret!.grantRead(batchFn);
+    batchFn.node.addDependency(dbInit);
 
     batchFn.addToRolePolicy(new iam.PolicyStatement({
       sid: 'BedrockInvokeModel',
@@ -133,6 +194,9 @@ export class ApplicationStack extends cdk.Stack {
     new scheduler.CfnSchedule(this, 'DailyBatchSchedule', {
       name: 'ai-insight-hub-daily-batch',
       description: 'Trigger daily insight batch compute at 02:00 UTC',
+      // TODO: Enable this for a live environment. Disabled for MVP demos so
+      // batch runs are triggered manually through the Function URL.
+      state: 'DISABLED',
       scheduleExpression: 'cron(0 2 * * ? *)',
       scheduleExpressionTimezone: 'UTC',
       flexibleTimeWindow: { mode: 'OFF' },
@@ -158,10 +222,11 @@ export class ApplicationStack extends cdk.Stack {
             image: lambda.Runtime.PYTHON_3_12.bundlingImage,
             command: [
               'bash', '-c',
-              'pip install -r requirements.txt --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 -t /asset-output --quiet && cp -au . /asset-output',
+              'pip install -r requirements.txt --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 -t /asset-output --quiet && cp -r . /asset-output',
             ],
             local: {
               tryBundle(outputDir: string): boolean {
+                if (process.platform === 'win32') return false;
                 const srcDir = path.join(__dirname, '../../backend/application/api');
                 const pip = spawnSync('pip', [
                   'install', '-r', 'requirements.txt',
@@ -184,6 +249,7 @@ export class ApplicationStack extends cdk.Stack {
     });
 
     cluster.secret!.grantRead(apiFn);
+    apiFn.node.addDependency(dbInit);
 
     const apiUrl = apiFn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
@@ -206,10 +272,11 @@ export class ApplicationStack extends cdk.Stack {
             image: lambda.Runtime.PYTHON_3_12.bundlingImage,
             command: [
               'bash', '-c',
-              'pip install -r requirements.txt -t /asset-output --quiet && cp -au . /asset-output',
+              'pip install -r requirements.txt -t /asset-output --quiet && cp -r . /asset-output',
             ],
             local: {
               tryBundle(outputDir: string): boolean {
+                if (process.platform === 'win32') return false;
                 const srcDir = path.join(__dirname, '../../backend/application/chat');
                 const pip = spawnSync('pip', [
                   'install', '-r', 'requirements.txt',
@@ -227,12 +294,14 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
-        BEDROCK_MODEL_ID: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+        BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
+        BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
       },
       description: 'Chat endpoint: POST /chat → Aurora + pgvector context → Bedrock Sonnet → { answer, references }',
     });
 
     cluster.secret!.grantRead(chatFn);
+    chatFn.node.addDependency(dbInit);
 
     chatFn.addToRolePolicy(new iam.PolicyStatement({
       sid: 'BedrockInvokeModelChat',

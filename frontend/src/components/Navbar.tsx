@@ -1,0 +1,73 @@
+import { NavLink } from 'react-router-dom'
+import Logo from './Logo'
+
+const links = [
+  { to: '/', label: 'Overview', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+    </svg>
+  )},
+  { to: '/chat', label: 'AI Chat', icon: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  )},
+]
+
+export default function Navbar() {
+  return (
+    <nav style={{
+      width: 240,
+      minWidth: 240,
+      background: 'var(--surface)',
+      borderRight: '1px solid var(--border)',
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '20px 16px',
+      gap: 4,
+      boxShadow: 'var(--shadow)',
+    }}>
+      {/* Brand */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28, padding: '4px 8px' }}>
+        <Logo size={32} />
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>AI Insight Hub</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Customer Intelligence</div>
+        </div>
+      </div>
+
+      <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 8px', marginBottom: 4 }}>
+        Navigation
+      </div>
+
+      {links.map(({ to, label, icon }) => (
+        <NavLink
+          key={to}
+          to={to}
+          end
+          style={({ isActive }) => ({
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '9px 12px',
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: 500,
+            background: isActive ? 'var(--accent-bg)' : 'transparent',
+            color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+            transition: 'all 0.15s',
+          })}
+        >
+          {icon}
+          {label}
+        </NavLink>
+      ))}
+
+      {/* Footer */}
+      <div style={{ marginTop: 'auto', padding: '12px 8px', borderTop: '1px solid var(--border)' }}>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Internal Demo · v0.1</div>
+      </div>
+    </nav>
+  )
+}

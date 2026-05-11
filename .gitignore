@@ -229,6 +229,7 @@ cdk.out/
 .cdk.staging/
 dist/
 .vite/
+frontend/dist-ssr
 
 # Local env overrides (base .env already ignored above)
 .env.local
@@ -242,4 +243,3 @@ backend/seed/data/
 # Un-ignore CDK source dirs caught by Python lib/ and dist/ rules above
 !infra/lib/
 !infra/bin/
-!infra/dist/
