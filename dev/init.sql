@@ -20,8 +20,7 @@ CREATE TABLE IF NOT EXISTS insights (
     confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0 AND 1),
     embedding_text   TEXT,
     ingested_at      TIMESTAMPTZ,
-    extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    embedding_text   TEXT
+    extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
 DO $$

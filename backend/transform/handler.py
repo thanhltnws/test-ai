@@ -147,23 +147,25 @@ def _get_conn():
     return _DB_CONN
 
 
-def _insert_insights(rows: list[dict]) -> tuple[int, list[str]]:
-    """Upsert into Aurora insights. Returns (upserted_count, actual_db_ids).
-    Uses RETURNING id so downstream embedding insert gets the real UUID,
-    not the pre-assigned one (which differs on conflict/update path).
+def _insert_insights(rows: list[dict]) -> tuple[int, dict[str, str]]:
+    """Upsert into Aurora insights. Returns (upserted_count, {pre_assigned_id: actual_db_id}).
+    RETURNING id captures the real UUID on both insert and conflict-update paths so the
+    embedding step can use the correct FK regardless of which path was taken.
     """
     conn = _get_conn()
     upserted = 0
-    upserted_ids: list[str] = []
+    id_map: dict[str, str] = {}  # pre-assigned row["id"] → actual DB id
     with conn.cursor() as cur:
         for row in rows:
             cur.execute(
                 """
-                INSERT INTO insights
-                    (id, source, source_id, source_url, raw_text,
-                     pain_points, objections, use_cases, icp,
-                     funnel_stage, confidence_score, embedding_text, ingested_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO insights (
+                    id, source, source_id, source_url, raw_text,
+                    pain_points, objections, use_cases, icp,
+                    funnel_stage, confidence_score, embedding_text,
+                    ingested_at, extracted_at
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (source, source_id) DO UPDATE SET
                     source_url       = EXCLUDED.source_url,
                     raw_text         = EXCLUDED.raw_text,
@@ -174,8 +176,7 @@ def _insert_insights(rows: list[dict]) -> tuple[int, list[str]]:
                     funnel_stage     = EXCLUDED.funnel_stage,
                     confidence_score = EXCLUDED.confidence_score,
                     embedding_text   = EXCLUDED.embedding_text,
-                    ingested_at      = EXCLUDED.ingested_at,
-                    extracted_at     = now()
+                    extracted_at     = EXCLUDED.extracted_at
                 RETURNING id
                 """,
                 (
@@ -184,22 +185,23 @@ def _insert_insights(rows: list[dict]) -> tuple[int, list[str]]:
                     row["source_id"],
                     row["source_url"],
                     row["raw_text"],
-                    row["pain_points"],
-                    row["objections"],
-                    row["use_cases"],
-                    PgJson(row["icp"]),        # JSONB — use psycopg2 Json wrapper, not a string
-                    row["funnel_stage"],
-                    row["confidence_score"],
-                    row["embedding_text"] or None,
-                    row["ingested_at"],
+                    row.get("pain_points") or [],
+                    row.get("objections") or [],
+                    row.get("use_cases") or [],
+                    PgJson(row.get("icp") or {}),
+                    row.get("funnel_stage"),
+                    row.get("confidence_score"),
+                    str(row.get("embedding_text") or "").strip() or None,
+                    row.get("ingested_at"),
+                    datetime.now(timezone.utc),
                 ),
             )
             result = cur.fetchone()
             if result:
                 upserted += 1
-                upserted_ids.append(str(result[0]))
+                id_map[row["id"]] = str(result[0])
     conn.commit()
-    return upserted, upserted_ids
+    return upserted, id_map
 
 
 # ── embed helpers ────────────────────────────────────────────────────────────
@@ -258,25 +260,59 @@ def _embed_rows(rows: list[dict]) -> dict[str, list[float]]:
     return result
 
 
-def _insert_embeddings(inserted_ids: list[str], vectors: dict[str, list[float]]) -> int:
-    """Insert into insight_embeddings for rows that landed in Aurora."""
-    pairs = [(id_, vectors[id_]) for id_ in inserted_ids if id_ in vectors]
-    if not pairs:
+def _insert_embeddings(
+    rows: list[dict],
+    id_map: dict[str, str],
+    vectors: dict[str, list[float]],
+) -> int:
+    """Upsert insight_embeddings for rows that landed in Aurora.
+
+    id_map maps the pre-assigned row["id"] → actual DB id returned by RETURNING, so
+    this correctly handles both the fresh-insert and conflict-update Aurora paths.
+    Rows with empty embedding_text have their embedding deleted (keeps vectors in sync).
+    """
+    id_to_row = {row["id"]: row for row in rows}
+
+    embedding_rows: list[tuple[str, str, dict, list[float]]] = []
+    empty_db_ids: list[str] = []
+
+    for pre_id, db_id in id_map.items():
+        row = id_to_row.get(pre_id)
+        if not row:
+            continue
+        embedding_text = str(row.get("embedding_text") or "").strip()
+        if not embedding_text or pre_id not in vectors:
+            empty_db_ids.append(db_id)
+            continue
+        metadata = {
+            "source":       row["source"],
+            "funnel_stage": row.get("funnel_stage"),
+            "source_url":   row.get("source_url"),
+        }
+        embedding_rows.append((db_id, embedding_text, metadata, vectors[pre_id]))
+
+    if not embedding_rows and not empty_db_ids:
         return 0
 
     conn = _get_conn()
     inserted = 0
     with conn.cursor() as cur:
-        for insight_id, vector in pairs:
+        if empty_db_ids:
+            cur.execute(
+                "DELETE FROM insight_embeddings WHERE insight_id = ANY(%s::uuid[])",
+                (empty_db_ids,),
+            )
+        for db_id, embedding_text, metadata, vector in embedding_rows:
             cur.execute(
                 """
-                INSERT INTO insight_embeddings (insight_id, embedding)
-                VALUES (%s, %s::vector)
+                INSERT INTO insight_embeddings (insight_id, embedding_text, embedding, metadata)
+                VALUES (%s, %s, %s::vector, %s)
                 ON CONFLICT (insight_id) DO UPDATE SET
-                    embedding   = EXCLUDED.embedding,
-                    embedded_at = now()
+                    embedding_text = EXCLUDED.embedding_text,
+                    embedding      = EXCLUDED.embedding,
+                    metadata       = EXCLUDED.metadata
                 """,
-                (insight_id, str(vector)),
+                (db_id, embedding_text, str(vector), PgJson(metadata)),
             )
             if cur.rowcount:
                 inserted += 1
@@ -466,10 +502,10 @@ def handler(event: dict, context=None) -> dict:
                 aurora_fut = ex.submit(_insert_insights, rows)
                 embed_fut  = ex.submit(_embed_rows, rows)
 
-            upserted, upserted_ids = aurora_fut.result()
-            vectors                = embed_fut.result()
+            upserted, id_map = aurora_fut.result()
+            vectors          = embed_fut.result()
 
-            vec_upserted = _insert_embeddings(upserted_ids, vectors)
+            vec_upserted = _insert_embeddings(rows, id_map, vectors)
             if upserted > 0:
                 _mark_processed(bucket, s3_key)
             print(

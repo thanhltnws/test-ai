@@ -151,6 +151,21 @@ python backend/seed/import.py
 `--limit 5` is recommended for first-time setup to verify the pipeline works. Increase or drop it once you have a model with higher quota (default: `gemini-3.1-flash-lite-preview`, free tier RPD = 500).
 
 ---
+## Running each component locall
+
+**Full pipeline (ingestion → transform)**
+
+```bash
+docker compose -f dev/docker-compose.yml up -d          # 1. start DB
+python backend/ingestion/hubspot/handler.py             # 2a. upload HubSpot to S3
+python backend/ingestion/jira/handler.py                # 2b. upload Jira to S3
+# 2c. update events/s3_transform.json with the S3 key from step 2a
+sam build && sam local invoke TransformFunction \
+    -e events/s3_transform.json                          # 2d. run transform
+python backend/application/batch/handler.py             # 3. compute recommendations
+```
+
+---
 
 ## Docs
 
