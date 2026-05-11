@@ -9,7 +9,7 @@
 AI Insight Hub aggregates customer insights scattered across HubSpot, Jira/Redmine, email, and manual notes into a insights store, then surfaces them through a dashboard and a natural-language chatbox.
 
 ```
-Data Sources → Ingestion (Lambda + S3) → Transform (Glue + Bedrock) → Aurora + Vectorize → Application (Feature 1 + Feature 2)
+Data Sources → Ingestion (Lambda + S3) → Transform (Glue + Bedrock) → Aurora + pgvector → Application (Feature 1 + Feature 2)
 ```
 
 ---
@@ -56,15 +56,15 @@ Processes unstructured text (call notes, email body, ops notes). Two parallel ou
 
 `source_url` is mandatory — every row in `insights` must have it. Reject any INSERT missing this field.
 
-**Output B — Vector embedding → Cloudflare Vectorize**
+**Output B — Vector embedding → Aurora pgvector (`insight_embeddings`)**
 
-Raw text chunks are embedded and stored in Vectorize with `source_url` in metadata. Enables semantic search at the Application layer.
+`embedding_text` (AI-generated NL summary) is embedded and stored in `insight_embeddings` with `source_url` in metadata. Enables semantic search at the Application layer.
 
 ---
 
 ## Tier 3 — Application
 
-Built on API Gateway + Lambda. Two independent features. Both enrich the Bedrock prompt using context from **Aurora** (structured) and **Vectorize** (semantic) before generating a response.
+Built on API Gateway + Lambda. Two independent features. Both enrich the Bedrock prompt using context from **Aurora** (structured) and **pgvector** (semantic) before generating a response.
 
 ### Feature 1 · Dashboard (batch)
 
@@ -74,7 +74,7 @@ EventBridge triggers Lambda daily.
 EventBridge scheduler
   → Lambda batch compute
       → SQL query Aurora insights          (structured aggregates)
-      → Vectorize semantic search         (pattern context)
+      → pgvector semantic search           (pattern context)
       → enrich prompt with both contexts
       → Bedrock / Claude
           Case A → top pain points, funnel distribution
@@ -92,7 +92,7 @@ User submits a free-text question. Lambda retrieves context from both stores, en
 POST /chat
   → Lambda RAG
       → SQL query Aurora insights          (structured fields + source_url)
-      → Vectorize semantic search         (relevant raw chunks + source_url)
+      → pgvector semantic search           (relevant chunks + source_url)
       → merge context → enrich prompt
   → Bedrock / Claude
   → streaming JSON { answer, references }
@@ -112,7 +112,7 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 | Transform | AWS Glue ETL | Schema normalize, dedup, field map |
 | Transform | Bedrock / Claude | AI field extraction from unstructured text |
 | Store | Aurora PostgreSQL | `insights` table (source of truth) + `recommendations` (pre-computed) |
-| Store | Cloudflare Vectorize | Vector index — raw text chunks + source_url metadata |
+| Store | Aurora pgvector | Vector index — `insight_embeddings` + source_url metadata |
 | Store | ElastiCache Redis | API response cache |
 | Application | EventBridge | Batch scheduler |
 | Application | Lambda | Batch compute + RAG handler |
@@ -124,19 +124,19 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 
 ## Key Design Decisions
 
-- **`source_url` is mandatory in `insights` and Vectorize metadata** — every response in both features links back to the exact Jira ticket or HubSpot deal that produced the insight.
-- **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich Bedrock prompt with context from Aurora (structured) and Vectorize (semantic) before generating output.
+- **`source_url` is mandatory in `insights` and pgvector metadata** — every response in both features links back to the exact Jira ticket or HubSpot deal that produced the insight.
+- **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich Bedrock prompt with context from Aurora (structured) and pgvector (semantic) before generating output.
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
 - **Fixed SQL is primary for Aurora queries** — Text-to-SQL deferred as fallback only, due to hallucination risk on complex queries.
 - **Bedrock called directly, no Comprehend pre-filter** — simpler for demo scope. Comprehend can be added later to reduce token cost.
-- **No ingestion pipeline for demo** — seed data imported directly into Aurora and Vectorize, bypassing Tier 1 and Tier 2 entirely.
+- **No ingestion pipeline for demo** — seed data imported directly into Aurora and pgvector, bypassing Tier 1 and Tier 2 entirely.
 
 ---
 
 ## Known Gaps
 
 - External customer workspaces (Jira, Slack) lose access when a project ends — ingestion must capture data before access is revoked.
-- OpenSearch and Titan Embeddings deferred — Cloudflare Vectorize covers semantic search needs for demo scope.
+- OpenSearch deferred — Aurora pgvector covers semantic search needs for demo scope.
 - Kinesis real-time stream deferred — batch ingestion is sufficient for demo.
 - Text-to-SQL hallucination risk — no validation layer yet. Mitigate by prioritizing fixed SQL and logging generated queries.
 - No data quality gate — Bedrock extraction output is not validated before INSERT. Schema validation in Lambda recommended before going beyond demo.
