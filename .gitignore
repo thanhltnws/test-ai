@@ -229,6 +229,7 @@ cdk.out/
 .cdk.staging/
 dist/
 .vite/
+frontend/dist-ssr
 
 # Local env overrides (base .env already ignored above)
 .env.local

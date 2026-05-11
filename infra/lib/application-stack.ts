@@ -158,7 +158,8 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
-        BEDROCK_MODEL_ID: 'anthropic.claude-3-haiku-20240307-v1:0',
+        BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-haiku-20240307-v1:0',
+        BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
       },
       description: 'Daily batch: Aurora aggregates + Bedrock → recommendations table',
     });
@@ -293,7 +294,8 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
-        BEDROCK_MODEL_ID: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
+        BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
+        BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
       },
       description: 'Chat endpoint: POST /chat → Aurora + pgvector context → Bedrock Sonnet → { answer, references }',
     });
