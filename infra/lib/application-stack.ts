@@ -5,6 +5,7 @@ import {
   aws_scheduler as scheduler,
   aws_ec2 as ec2,
   aws_rds as rds,
+  aws_s3 as s3,
   custom_resources as cr,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -196,6 +197,59 @@ export class ApplicationStack extends cdk.Stack {
       },
     });
     dbInit.node.addDependency(cluster);
+
+    // ── S3 raw landing zone ───────────────────────────────────────────────────
+    const rawBucket = new s3.Bucket(this, 'RawBucket', {
+      bucketName: `ai-insight-hub-raw-${this.account}-${this.region}`,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+
+    // ── Ingestion Lambda ───────────────────────────────────────────────────────
+    // Reads sources.json + mock/ files → writes raw JSON to S3.
+    // Triggered manually via Function URL for demo (no schedule).
+    const ingestionFn = new lambda.Function(this, 'IngestionFn', {
+      functionName: 'ai-insight-hub-ingestion',
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'handler.handler',
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, '../../backend/ingestion'),
+        {
+          bundling: {
+            image: lambda.Runtime.PYTHON_3_12.bundlingImage,
+            command: [
+              'bash', '-c',
+              'pip install -r requirements.txt --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 -t /asset-output --quiet && cp -r . /asset-output',
+            ],
+            local: {
+              tryBundle(outputDir: string): boolean {
+                const srcDir = path.join(__dirname, '../../backend/ingestion');
+                return tryLocalPythonBundle(srcDir, 'requirements.txt', outputDir, [
+                  { source: '.', target: '.' },
+                ]);
+              },
+            },
+          },
+        },
+      ),
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 256,
+      environment: {
+        S3_BUCKET: rawBucket.bucketName,
+      },
+      description: 'Ingestion: read sources.json → write raw JSON to S3 raw/',
+    });
+
+    rawBucket.grantPut(ingestionFn);
+
+    const ingestionUrl = ingestionFn.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedOrigins: ['*'],
+        allowedMethods: [lambda.HttpMethod.POST],
+        allowedHeaders: ['Content-Type'],
+      },
+    });
 
     // ── Batch Lambda ───────────────────────────────────────────────────────────
     // Lambda is NOT in a VPC — has full internet access for Bedrock.
@@ -420,6 +474,16 @@ export class ApplicationStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'ChatFunctionUrl', {
       value: chatUrl.url,
       description: 'POST /chat — { question } → { answer, references }',
+    });
+
+    new cdk.CfnOutput(this, 'IngestionFunctionUrl', {
+      value: ingestionUrl.url,
+      description: 'POST to manually trigger ingestion run → writes raw/ to S3',
+    });
+
+    new cdk.CfnOutput(this, 'RawBucketName', {
+      value: rawBucket.bucketName,
+      description: 'S3 bucket for raw ingestion data',
     });
   }
 }
