@@ -235,8 +235,8 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
         APP_AUTH_TOKEN: appAuthToken,
-        BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-haiku-20240307-v1:0',
-        BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
+        BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+        BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
       description: 'Daily batch: Aurora aggregates + Bedrock → recommendations table',
     });
@@ -368,8 +368,8 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
         APP_AUTH_TOKEN: appAuthToken,
-        BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
-        BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
+        BEDROCK_MODEL_ID: 'global.anthropic.claude-sonnet-4-6',
+        BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
       description: 'Chat endpoint: POST /chat → Aurora + pgvector context → Bedrock Sonnet → { answer, references }',
     });

@@ -185,21 +185,17 @@ def _embed_gemini(texts: list[str]) -> list[list[float]]:
 def _embed_bedrock(texts: list[str]) -> list[list[float]]:
     import boto3
 
-    client = boto3.client(
-        "bedrock-runtime",
-        region_name=os.environ.get("AWS_REGION", "us-east-1"),
-    )
+    client = boto3.client("bedrock-runtime", region_name=os.environ.get("AWS_REGION", "ap-southeast-1"))
+    model_id = os.environ.get("BEDROCK_EMBEDDING_MODEL_ID", "cohere.embed-multilingual-v3")
     embeddings = []
     for text in texts:
         resp = client.invoke_model(
-            modelId=os.environ.get(
-                "BEDROCK_EMBEDDING_MODEL_ID", "apac.amazon.titan-embed-text-v2:0"
-            ),
+            modelId=model_id,
             contentType="application/json",
             accept="application/json",
-            body=json.dumps({"inputText": text, "dimensions": 1024, "normalize": True}),
+            body=json.dumps({"texts": [text], "input_type": "search_query", "embedding_types": ["float"]}),
         )
-        embeddings.append(json.loads(resp["body"].read())["embedding"])
+        embeddings.append(json.loads(resp["body"].read())["embeddings"]["float"][0])
     return embeddings
 
 
