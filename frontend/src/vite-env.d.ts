@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_API_RECOMMENDATIONS_PATH?: string
   readonly VITE_CHAT_PATH?: string
   readonly VITE_BATCH_PATH?: string
+  readonly VITE_AUTH_TOKEN_STORAGE_KEY?: string
 }
 
 interface ImportMeta {

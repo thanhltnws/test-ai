@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Legend,
 } from 'recharts'
-import { fetchDashboardInsights, runBatch } from '../api/lambdas'
+import { fetchDashboardInsights } from '../api/lambdas'
 import type { SummaryData, RecommendationsData } from '../types'
 
 const FUNNEL_COLORS: Record<string, string> = {
@@ -37,10 +37,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
-  const [batchLoading, setBatchLoading] = useState(false)
-  const [batchMessage, setBatchMessage] = useState<string | null>(null)
-  const batchTriggerEnabled = false
-
   useEffect(() => {
     setLoading(true)
     setError(null)
@@ -55,24 +51,6 @@ export default function Dashboard() {
         setLoading(false)
       })
   }, [retryCount])
-
-  async function handleRunBatch() {
-    if (!batchTriggerEnabled) return
-    setBatchLoading(true)
-    setBatchMessage(null)
-
-    try {
-      const result = await runBatch()
-      const written = result.written ?? 0
-      const periodStart = result.period_start ? ` for ${result.period_start}` : ''
-      setBatchMessage(`Batch completed${periodStart}. Wrote ${written} result rows.`)
-      setRetryCount(c => c + 1)
-    } catch (err) {
-      setBatchMessage(err instanceof Error ? err.message : 'Batch run failed. Please try again.')
-    } finally {
-      setBatchLoading(false)
-    }
-  }
 
   if (loading) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
@@ -122,54 +100,10 @@ export default function Dashboard() {
     <div style={{ flex: 1, overflowY: 'auto', padding: 32, display: 'flex', flexDirection: 'column', gap: 24, background: 'var(--bg)' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Customer Insight Overview</h1>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-            Period: <strong>{data.period}</strong> · Starting {data.period_start}
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button
-              onClick={handleRunBatch}
-              disabled={!batchTriggerEnabled || batchLoading}
-              style={{
-                background: 'var(--accent)',
-                color: '#fff',
-                borderRadius: 8,
-                padding: '8px 14px',
-                fontSize: 13,
-                fontWeight: 600,
-                opacity: !batchTriggerEnabled || batchLoading ? 0.45 : 1,
-                cursor: batchTriggerEnabled && !batchLoading ? 'pointer' : 'not-allowed',
-              }}
-            >
-              {batchLoading ? 'Running Batch...' : 'Run Batch'}
-            </button>
-            <div style={{
-              background: 'var(--accent-bg)',
-              border: '1px solid #bfdbfe',
-              color: 'var(--accent)',
-              borderRadius: 20,
-              padding: '4px 12px',
-              fontSize: 12,
-              fontWeight: 600,
-            }}>
-              Live Data
-            </div>
-          </div>
-          {(batchMessage || !batchTriggerEnabled) && (
-            <div style={{
-              maxWidth: 360,
-              textAlign: 'right',
-              color: batchMessage?.includes('failed') ? '#dc2626' : 'var(--text-muted)',
-              fontSize: 12,
-              lineHeight: 1.4,
-            }}>
-              {batchMessage ?? 'Manual daily batch trigger is temporarily disabled.'}
-            </div>
-          )}
+      <div>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Customer Insight Overview</h1>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+          Period: <strong>{data.period}</strong> · Starting {data.period_start}
         </div>
       </div>
 

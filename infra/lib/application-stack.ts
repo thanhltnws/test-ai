@@ -13,9 +13,89 @@ import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { spawnSync } from 'child_process';
 
+type BundleCopy = {
+  source: string;
+  target?: string;
+};
+
+function tryLocalPythonBundle(
+  cwd: string,
+  requirementsPath: string,
+  outputDir: string,
+  copies: BundleCopy[],
+): boolean {
+  fs.rmSync(outputDir, { recursive: true, force: true });
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  const pipArgs = [
+    'install',
+    '-r',
+    requirementsPath,
+    '--platform',
+    'manylinux2014_x86_64',
+    '--implementation',
+    'cp',
+    '--python-version',
+    '3.12',
+    '--only-binary=:all:',
+    '-t',
+    outputDir,
+    '--quiet',
+  ];
+
+  const candidates = [
+    {
+      command: 'python3',
+      args: ['-m', 'pip', ...pipArgs],
+      probeArgs: ['-m', 'pip', '--version'],
+    },
+    {
+      command: 'python',
+      args: ['-m', 'pip', ...pipArgs],
+      probeArgs: ['-m', 'pip', '--version'],
+    },
+    {
+      command: 'pip',
+      args: pipArgs,
+      probeArgs: ['--version'],
+    },
+  ];
+
+  const commands = candidates.filter(({ command, probeArgs }) => {
+    const probe = spawnSync(command, probeArgs, { cwd, stdio: 'ignore' });
+    return probe.status === 0;
+  });
+
+  const pip = commands
+    .map(({ command, args }) =>
+      spawnSync(command, args, { cwd, stdio: 'inherit' }),
+    )
+    .find((result) => result.status === 0);
+
+  if (!pip) {
+    return false;
+  }
+
+  try {
+    for (const copy of copies) {
+      fs.cpSync(
+        path.join(cwd, copy.source),
+        path.join(outputDir, copy.target ?? copy.source),
+        { recursive: true },
+      );
+    }
+  } catch (error) {
+    console.warn('Local Lambda bundling copy failed:', error);
+    return false;
+  }
+
+  return true;
+}
+
 export class ApplicationStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+    const appAuthToken = process.env.APP_AUTH_TOKEN ?? '';
 
     // ── VPC (public subnets only, no NAT Gateway) ──────────────────────────────
     // Aurora sits here with publiclyAccessible=true.
@@ -88,14 +168,9 @@ export class ApplicationStack extends cdk.Stack {
           ],
           local: {
             tryBundle(outputDir: string): boolean {
-              if (process.platform === 'win32') return false;
-              const pip = spawnSync('pip', [
-                'install', '-r', 'requirements.txt',
-                '-t', outputDir, '--quiet',
-              ], { cwd: dbInitDir, stdio: 'inherit' });
-              if (pip.status !== 0) return false;
-              fs.cpSync(dbInitDir, outputDir, { recursive: true });
-              return true;
+              return tryLocalPythonBundle(dbInitDir, 'requirements.txt', outputDir, [
+                { source: '.', target: '.' },
+              ]);
             },
           },
         },
@@ -130,25 +205,26 @@ export class ApplicationStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_12,
       handler: 'handler.handler',
       code: lambda.Code.fromAsset(
-        path.join(__dirname, '../../backend/application/batch'),
+        path.join(__dirname, '../../backend/application'),
         {
           bundling: {
             image: lambda.Runtime.PYTHON_3_12.bundlingImage,
             command: [
               'bash', '-c',
-              'pip install -r requirements.txt -t /asset-output --quiet && cp -r . /asset-output',
+              'pip install -r batch/requirements.txt -t /asset-output --quiet && cp -r batch/. /asset-output && cp -r common /asset-output/common',
             ],
             local: {
               tryBundle(outputDir: string): boolean {
-                if (process.platform === 'win32') return false;
-                const srcDir = path.join(__dirname, '../../backend/application/batch');
-                const pip = spawnSync('pip', [
-                  'install', '-r', 'requirements.txt',
-                  '-t', outputDir, '--quiet',
-                ], { cwd: srcDir, stdio: 'inherit' });
-                if (pip.status !== 0) return false;
-                fs.cpSync(srcDir, outputDir, { recursive: true });
-                return true;
+                const srcDir = path.join(__dirname, '../../backend/application');
+                return tryLocalPythonBundle(
+                  srcDir,
+                  'batch/requirements.txt',
+                  outputDir,
+                  [
+                    { source: 'batch/.', target: '.' },
+                    { source: 'common', target: 'common' },
+                  ],
+                );
               },
             },
           },
@@ -158,6 +234,7 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
+        APP_AUTH_TOKEN: appAuthToken,
         BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-haiku-20240307-v1:0',
         BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
       },
@@ -180,7 +257,7 @@ export class ApplicationStack extends cdk.Stack {
       cors: {
         allowedOrigins: ['*'],
         allowedMethods: [lambda.HttpMethod.POST],
-        allowedHeaders: ['Content-Type'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Token'],
       },
     });
 
@@ -226,15 +303,10 @@ export class ApplicationStack extends cdk.Stack {
             ],
             local: {
               tryBundle(outputDir: string): boolean {
-                if (process.platform === 'win32') return false;
                 const srcDir = path.join(__dirname, '../../backend/application/api');
-                const pip = spawnSync('pip', [
-                  'install', '-r', 'requirements.txt',
-                  '-t', outputDir, '--quiet',
-                ], { cwd: srcDir, stdio: 'inherit' });
-                if (pip.status !== 0) return false;
-                fs.cpSync(srcDir, outputDir, { recursive: true });
-                return true;
+                return tryLocalPythonBundle(srcDir, 'requirements.txt', outputDir, [
+                  { source: '.', target: '.' },
+                ]);
               },
             },
           },
@@ -266,25 +338,26 @@ export class ApplicationStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_12,
       handler: 'handler.lambda_handler',
       code: lambda.Code.fromAsset(
-        path.join(__dirname, '../../backend/application/chat'),
+        path.join(__dirname, '../../backend/application'),
         {
           bundling: {
             image: lambda.Runtime.PYTHON_3_12.bundlingImage,
             command: [
               'bash', '-c',
-              'pip install -r requirements.txt -t /asset-output --quiet && cp -r . /asset-output',
+              'pip install -r chat/requirements.txt -t /asset-output --quiet && cp -r chat/. /asset-output && cp -r common /asset-output/common',
             ],
             local: {
               tryBundle(outputDir: string): boolean {
-                if (process.platform === 'win32') return false;
-                const srcDir = path.join(__dirname, '../../backend/application/chat');
-                const pip = spawnSync('pip', [
-                  'install', '-r', 'requirements.txt',
-                  '-t', outputDir, '--quiet',
-                ], { cwd: srcDir, stdio: 'inherit' });
-                if (pip.status !== 0) return false;
-                fs.cpSync(srcDir, outputDir, { recursive: true });
-                return true;
+                const srcDir = path.join(__dirname, '../../backend/application');
+                return tryLocalPythonBundle(
+                  srcDir,
+                  'chat/requirements.txt',
+                  outputDir,
+                  [
+                    { source: 'chat/.', target: '.' },
+                    { source: 'common', target: 'common' },
+                  ],
+                );
               },
             },
           },
@@ -294,6 +367,7 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
+        APP_AUTH_TOKEN: appAuthToken,
         BEDROCK_MODEL_ID: 'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
         BEDROCK_EMBEDDING_MODEL_ID: 'apac.amazon.titan-embed-text-v2:0',
       },
@@ -314,7 +388,7 @@ export class ApplicationStack extends cdk.Stack {
       cors: {
         allowedOrigins: ['*'],
         allowedMethods: [lambda.HttpMethod.POST],
-        allowedHeaders: ['Content-Type'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Token'],
       },
     });
 

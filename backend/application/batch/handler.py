@@ -20,6 +20,8 @@ from dotenv import load_dotenv
 from urllib.parse import urlparse
 
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parents[1]))
+from common.auth import auth_error, is_options_request, options_response
 from prompt import build_batch_prompt
 
 PERIOD       = "daily"
@@ -86,10 +88,9 @@ def query_aurora(conn, period_start: date) -> dict:
     ctx: dict = {}
     cur = conn.cursor()
     try:
-        cur.execute(
-            "SELECT COUNT(*), AVG(confidence_score) FROM insights WHERE extracted_at >= %s",
-            (period_start,),
-        )
+        # Demo mode: aggregate all currently imported insights. A production
+        # version should reintroduce explicit daily/weekly/monthly windows.
+        cur.execute("SELECT COUNT(*), AVG(confidence_score) FROM insights")
         row = cur.fetchone()
         ctx["summary"] = {
             "total_insights": row[0],
@@ -100,12 +101,11 @@ def query_aurora(conn, period_start: date) -> dict:
             """
             SELECT pain_point, COUNT(*) AS cnt
             FROM insights, unnest(pain_points) AS pain_point
-            WHERE extracted_at >= %s AND pain_point <> ''
+            WHERE pain_point <> ''
             GROUP BY pain_point
             ORDER BY cnt DESC
             LIMIT 20
-            """,
-            (period_start,),
+            """
         )
         ctx["top_pain_points"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
 
@@ -113,12 +113,11 @@ def query_aurora(conn, period_start: date) -> dict:
             """
             SELECT objection, COUNT(*) AS cnt
             FROM insights, unnest(objections) AS objection
-            WHERE extracted_at >= %s AND objection <> ''
+            WHERE objection <> ''
             GROUP BY objection
             ORDER BY cnt DESC
             LIMIT 15
-            """,
-            (period_start,),
+            """
         )
         ctx["top_objections"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
 
@@ -126,12 +125,11 @@ def query_aurora(conn, period_start: date) -> dict:
             """
             SELECT use_case, COUNT(*) AS cnt
             FROM insights, unnest(use_cases) AS use_case
-            WHERE extracted_at >= %s AND use_case <> ''
+            WHERE use_case <> ''
             GROUP BY use_case
             ORDER BY cnt DESC
             LIMIT 15
-            """,
-            (period_start,),
+            """
         )
         ctx["top_use_cases"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
 
@@ -139,11 +137,10 @@ def query_aurora(conn, period_start: date) -> dict:
             """
             SELECT funnel_stage, COUNT(*) AS cnt
             FROM insights
-            WHERE extracted_at >= %s AND funnel_stage IS NOT NULL
+            WHERE funnel_stage IS NOT NULL
             GROUP BY funnel_stage
             ORDER BY cnt DESC
-            """,
-            (period_start,),
+            """
         )
         rows = cur.fetchall()
         total = sum(r[1] for r in rows)
@@ -165,12 +162,11 @@ def query_aurora(conn, period_start: date) -> dict:
                 icp->>'region'       AS region,
                 COUNT(*)             AS cnt
             FROM insights
-            WHERE extracted_at >= %s AND icp IS NOT NULL
+            WHERE icp IS NOT NULL
             GROUP BY sector, company_size, deal_size, region
             ORDER BY cnt DESC
             LIMIT 15
-            """,
-            (period_start,),
+            """
         )
         ctx["icp_breakdown"] = [
             {
@@ -261,11 +257,10 @@ def query_pgvector(conn, period_start: date) -> list[dict]:
                     1 - (e.embedding <=> %s::vector) AS score
                 FROM insight_embeddings e
                 JOIN insights i ON i.id = e.insight_id
-                WHERE i.extracted_at >= %s
                 ORDER BY e.embedding <=> %s::vector
                 LIMIT %s
                 """,
-                (str(vector), period_start, str(vector), _VECTOR_TOP_K_PER_QUERY),
+                (str(vector), str(vector), _VECTOR_TOP_K_PER_QUERY),
             )
             for row in cur.fetchall():
                 uid = str(row[0])
@@ -400,6 +395,14 @@ def write_recommendations(
 
 def handler(event=None, context=None):
     load_dotenv()
+    event = event or {}
+
+    if is_options_request(event):
+        return options_response()
+
+    auth_failure = auth_error(event, allow_non_http=True)
+    if auth_failure:
+        return auth_failure
 
     period_start = get_period_start()
     print(f"Period: {PERIOD}, period_start: {period_start}")
