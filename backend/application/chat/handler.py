@@ -19,10 +19,13 @@ import pg8000.dbapi
 from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parents[1]))
+from common.auth import auth_error, cors_headers, error_response, is_options_request, options_response
 from prompt import build_chat_prompt
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 _VECTOR_TOP_K = 8
+_MAX_QUESTION_CHARS = 2000
 
 _STOP_WORDS = {
     "what", "are", "the", "is", "in", "of", "for", "and", "to", "a", "an",
@@ -182,21 +185,17 @@ def _embed_gemini(texts: list[str]) -> list[list[float]]:
 def _embed_bedrock(texts: list[str]) -> list[list[float]]:
     import boto3
 
-    client = boto3.client(
-        "bedrock-runtime",
-        region_name=os.environ.get("AWS_REGION", "us-east-1"),
-    )
+    client = boto3.client("bedrock-runtime", region_name=os.environ.get("AWS_REGION", "ap-southeast-1"))
+    model_id = os.environ.get("BEDROCK_EMBEDDING_MODEL_ID", "cohere.embed-multilingual-v3")
     embeddings = []
     for text in texts:
         resp = client.invoke_model(
-            modelId=os.environ.get(
-                "BEDROCK_EMBEDDING_MODEL_ID", "apac.amazon.titan-embed-text-v2:0"
-            ),
+            modelId=model_id,
             contentType="application/json",
             accept="application/json",
-            body=json.dumps({"inputText": text, "dimensions": 1024, "normalize": True}),
+            body=json.dumps({"texts": [text], "input_type": "search_query", "embedding_types": ["float"]}),
         )
-        embeddings.append(json.loads(resp["body"].read())["embedding"])
+        embeddings.append(json.loads(resp["body"].read())["embeddings"]["float"][0])
     return embeddings
 
 
@@ -326,36 +325,30 @@ def parse_json_response(text: str) -> dict:
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
-def _cors_headers() -> dict:
-    return {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-    }
-
-
-def _error(status: int, message: str) -> dict:
-    return {
-        "statusCode": status,
-        "headers": _cors_headers(),
-        "body": json.dumps({"error": message}),
-    }
-
-
 # ── lambda handler ─────────────────────────────────────────────────────────────
 
 def lambda_handler(event=None, context=None):
     load_dotenv()
+    event = event or {}
+
+    if is_options_request(event):
+        return options_response()
+
+    auth_failure = auth_error(event)
+    if auth_failure:
+        return auth_failure
 
     # Parse request body
     try:
         body = json.loads(event.get("body") or "{}")
         question = (body.get("question") or "").strip()
     except (json.JSONDecodeError, AttributeError):
-        return _error(400, "Invalid JSON body")
+        return error_response(400, "Invalid JSON body")
 
     if not question:
-        return _error(400, "Field 'question' is required and must not be empty")
+        return error_response(400, "Field 'question' is required and must not be empty")
+    if len(question) > _MAX_QUESTION_CHARS:
+        return error_response(413, f"Question is too long. Max {_MAX_QUESTION_CHARS} characters.")
 
     print(f"Question: {question!r}")
 
@@ -370,6 +363,8 @@ def lambda_handler(event=None, context=None):
         )
         print(f"pgvector: {len(vector_ctx)} semantic chunks")
 
+        # TODO: Re-evaluate lightweight conversation history for demo UX.
+        # Current chat is intentionally stateless to keep prompts predictable and cost-bounded.
         prompt = build_chat_prompt(question, sql_ctx, vector_ctx)
         raw = call_llm(prompt)
         result = parse_json_response(raw)
@@ -380,7 +375,7 @@ def lambda_handler(event=None, context=None):
 
         return {
             "statusCode": 200,
-            "headers": _cors_headers(),
+            "headers": cors_headers(),
             "body": json.dumps(
                 {"answer": answer, "references": references},
                 ensure_ascii=False,
@@ -389,7 +384,7 @@ def lambda_handler(event=None, context=None):
 
     except Exception as exc:
         print(f"Error: {exc}")
-        return _error(500, str(exc))
+        return error_response(500, str(exc))
     finally:
         conn.close()
 

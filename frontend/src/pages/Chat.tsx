@@ -51,10 +51,10 @@ export default function Chat() {
         content: res.answer,
         references: res.references,
       }])
-    } catch {
+    } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Không thể kết nối tới server. Vui lòng kiểm tra backend.',
+        content: err instanceof Error ? err.message : 'Unable to reach the server. Please check the backend.',
       }])
     } finally {
       setLoading(false)
@@ -281,3 +281,4 @@ export default function Chat() {
     </div>
   )
 }
+

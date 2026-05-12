@@ -79,10 +79,7 @@ def get_recommendations(conn) -> dict:
 def _ok(body: dict) -> dict:
     return {
         "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-        },
+        "headers": {"Content-Type": "application/json"},
         "body": json.dumps(body, default=str),
     }
 
@@ -90,10 +87,7 @@ def _ok(body: dict) -> dict:
 def _err(status: int, message: str) -> dict:
     return {
         "statusCode": status,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-        },
+        "headers": {"Content-Type": "application/json"},
         "body": json.dumps({"error": message}),
     }
 
