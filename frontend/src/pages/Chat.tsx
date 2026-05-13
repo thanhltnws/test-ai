@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { sendChat } from '../api/lambdas'
 import type { ChatMessage, Reference } from '../types'
 
@@ -115,7 +116,19 @@ export default function Chat() {
                     color: msg.role === 'user' ? '#fff' : 'var(--text)',
                     boxShadow: 'var(--shadow)',
                   }}>
-                    {msg.content}
+                    {msg.role === 'assistant' ? (
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p style={{ margin: '0 0 8px 0' }}>{children}</p>,
+                          ul: ({ children }) => <ul style={{ margin: '4px 0', paddingLeft: 20 }}>{children}</ul>,
+                          ol: ({ children }) => <ol style={{ margin: '4px 0', paddingLeft: 20 }}>{children}</ol>,
+                          li: ({ children }) => <li style={{ marginBottom: 4 }}>{children}</li>,
+                          strong: ({ children }) => <strong style={{ fontWeight: 600 }}>{children}</strong>,
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    ) : msg.content}
                   </div>
                 </div>
               ))}
