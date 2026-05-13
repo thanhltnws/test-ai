@@ -237,6 +237,8 @@ frontend/dist-ssr
 
 # Seed — generated output only; raw/ is committed
 backend/seed/data/
+# SAM build artifacts
+.aws-sam/
 
 # Un-ignore CDK source dirs caught by Python lib/ and dist/ rules above
 !infra/lib/

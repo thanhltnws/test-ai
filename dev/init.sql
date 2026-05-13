@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS insights (
     id               UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     source           TEXT         NOT NULL,
     source_id        TEXT         NOT NULL,
-    source_url       TEXT         NOT NULL,
+    source_url       TEXT,
     raw_text         TEXT,
     pain_points      TEXT[],
     objections       TEXT[],
@@ -22,18 +22,6 @@ CREATE TABLE IF NOT EXISTS insights (
     ingested_at      TIMESTAMPTZ,
     extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
-
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint
-        WHERE conname = 'insights_source_url_nonempty'
-          AND conrelid = 'insights'::regclass
-    ) THEN
-        ALTER TABLE insights ADD CONSTRAINT insights_source_url_nonempty
-            CHECK (source_url IS NOT NULL AND source_url <> '');
-    END IF;
-END $$;
 
 DO $$
 BEGIN

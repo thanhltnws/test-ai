@@ -1,0 +1,13 @@
+version = 0.1
+
+# Usage:
+#   sam build
+#   sam local invoke TransformFunction
+#
+# Env vars được khai báo trực tiếp trong template.yaml (Environment.Variables)
+
+[default.build.parameters]
+use_container = true
+
+[default.local_invoke.parameters]
+event = "events/s3_transform.json"

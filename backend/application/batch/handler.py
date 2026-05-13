@@ -41,6 +41,7 @@ _VECTOR_TOP_K_PER_QUERY = 10
 
 
 # ── db url ────────────────────────────────────────────────────────────────────
+# TODO: extract _get_db_url + _pg_connect to common/db.py — identical copy exists in chat/handler.py
 
 def _get_db_url() -> str:
     global _db_url_cache
