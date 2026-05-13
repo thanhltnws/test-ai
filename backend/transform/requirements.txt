@@ -1,6 +1,6 @@
 anthropic[bedrock]
 instructor[anthropic]
 pydantic>=2.0
-psycopg2-binary>=2.9
+pg8000>=1.31
 python-dotenv>=1.0
 google-genai>=0.3

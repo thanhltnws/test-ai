@@ -54,7 +54,7 @@ Processes unstructured text (call notes, email body, ops notes). Two parallel ou
 | `confidence_score` | Model confidence in the extraction |
 | `source_url` | Link back to the originating Jira ticket or HubSpot deal |
 
-`source_url` is mandatory — every row in `insights` must have it. Reject any INSERT missing this field.
+`source_url` is optional — populated when the source has an external URL (CRM deal, Jira/Redmine ticket). NULL for sources with no deep link (email body, form submission, ops notes).
 
 **Output B — Vector embedding → Aurora pgvector (`insight_embeddings`)**
 
@@ -124,7 +124,8 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 
 ## Key Design Decisions
 
-- **`source_url` is mandatory in `insights` and pgvector metadata** — every response in both features links back to the exact Jira ticket or HubSpot deal that produced the insight.
+- **`source_url` in `insights` and pgvector metadata** — links back to the originating CRM/Jira/Redmine record when available; optional, NULL for sources without an external URL.
+- **Two-layer idempotency in Transform Lambda** — S3 object tag `processed=true` is the file-level guard: on duplicate S3 events the tag is checked first and the Lambda returns early (Bedrock never called). `ON CONFLICT (source, source_id) DO UPDATE` in Aurora is the record-level guard: re-processing the same file overwrites existing rows with the latest extraction result rather than creating duplicates. The UPSERT semantics are intentional — re-running with an updated prompt or model produces better extractions that should replace the old ones.
 - **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich Bedrock prompt with context from Aurora (structured) and pgvector (semantic) before generating output.
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
 - **Fixed SQL is primary for Aurora queries** — Text-to-SQL deferred as fallback only, due to hallucination risk on complex queries.

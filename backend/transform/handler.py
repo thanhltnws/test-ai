@@ -26,8 +26,8 @@ from typing import Any
 
 import boto3
 import instructor
-import psycopg2
-from psycopg2.extras import Json as PgJson
+import pg8000.dbapi
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
 
@@ -124,25 +124,30 @@ def _mark_processed(bucket: str, s3_key: str) -> None:
 
 def _get_conn():
     global _DB_CONN
-    if _DB_CONN is None or _DB_CONN.closed:
+    if _DB_CONN is None:
         secret_arn = os.environ.get("DB_SECRET_ARN")
         if secret_arn:
             secret_str = _SM.get_secret_value(SecretId=secret_arn)["SecretString"]
             creds = json.loads(secret_str)
-            _DB_CONN = psycopg2.connect(
+            _DB_CONN = pg8000.dbapi.connect(
                 host=creds["host"],
                 port=creds.get("port", 5432),
-                dbname=creds.get("dbname", "ai_insight_hub"),
+                database=creds.get("dbname", "ai_insight_hub"),
                 user=creds["username"],
                 password=creds["password"],
-                connect_timeout=5,
-                sslmode="require",
             )
         else:
             db_url = os.environ.get("DATABASE_URL")
             if not db_url:
                 raise RuntimeError("Set DB_SECRET_ARN (AWS) or DATABASE_URL (local dev)")
-            _DB_CONN = psycopg2.connect(db_url, connect_timeout=5)
+            u = urlparse(db_url)
+            _DB_CONN = pg8000.dbapi.connect(
+                host=u.hostname,
+                port=u.port or 5432,
+                database=u.path.lstrip("/"),
+                user=u.username,
+                password=u.password,
+            )
         _DB_CONN.autocommit = False
     return _DB_CONN
 
@@ -165,7 +170,7 @@ def _insert_insights(rows: list[dict]) -> tuple[int, dict[str, str]]:
                     funnel_stage, confidence_score, embedding_text,
                     ingested_at, extracted_at
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s, %s)
                 ON CONFLICT (source, source_id) DO UPDATE SET
                     source_url       = EXCLUDED.source_url,
                     raw_text         = EXCLUDED.raw_text,
@@ -188,7 +193,7 @@ def _insert_insights(rows: list[dict]) -> tuple[int, dict[str, str]]:
                     row.get("pain_points") or [],
                     row.get("objections") or [],
                     row.get("use_cases") or [],
-                    PgJson(row.get("icp") or {}),
+                    json.dumps(row.get("icp") or {}),
                     row.get("funnel_stage"),
                     row.get("confidence_score"),
                     str(row.get("embedding_text") or "").strip() or None,
@@ -306,13 +311,13 @@ def _insert_embeddings(
             cur.execute(
                 """
                 INSERT INTO insight_embeddings (insight_id, embedding_text, embedding, metadata)
-                VALUES (%s, %s, %s::vector, %s)
+                VALUES (%s, %s, %s::vector, %s::jsonb)
                 ON CONFLICT (insight_id) DO UPDATE SET
                     embedding_text = EXCLUDED.embedding_text,
                     embedding      = EXCLUDED.embedding,
                     metadata       = EXCLUDED.metadata
                 """,
-                (db_id, embedding_text, str(vector), PgJson(metadata)),
+                (db_id, embedding_text, str(vector), json.dumps(metadata)),
             )
             if cur.rowcount:
                 inserted += 1
@@ -360,11 +365,7 @@ def normalize(raw_records: list[dict], s3_key: str, ingested_at: datetime) -> li
             continue
         seen.add(h)
 
-        source_url = rec.get("url") or rec.get("source_url") or ""
-        if not source_url:
-            # source_url is mandatory per schema constraint — skip records without a real deep link
-            print(f"  SKIP record (no source_url): source_id={rec.get('id') or h}")
-            continue
+        source_url = rec.get("url") or rec.get("source_url") or None
 
         out.append({
             "source":      source,

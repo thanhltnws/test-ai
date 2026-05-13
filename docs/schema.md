@@ -15,7 +15,7 @@ CREATE TABLE insights (
     id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     source           TEXT        NOT NULL,
     source_id        TEXT        NOT NULL,
-    source_url       TEXT        NOT NULL,
+    source_url       TEXT,
     raw_text         TEXT,
     pain_points      TEXT[],
     objections       TEXT[],
@@ -34,7 +34,7 @@ CREATE TABLE insights (
 | `id`               | UUID         | Surrogate key                                                                                                              |
 | `source`           | TEXT         | `hubspot` · `jira` · `crm` · `email` · `form`                                                                              |
 | `source_id`        | TEXT         | Original record ID in source system                                                                                        |
-| `source_url`       | TEXT         | **Mandatory.** Deep link to originating record — HubSpot deal URL, Jira ticket URL, etc. INSERT rejected if NULL or empty. |
+| `source_url`       | TEXT         | Optional. Deep link to originating record — HubSpot deal URL, Jira/Redmine ticket URL, etc. Populated when available; NULL if the source has no external URL (e.g. form submission, email). |
 | `raw_text`         | TEXT         | Original unstructured text passed to Bedrock/Gemini                                                                        |
 | `pain_points`      | TEXT[]       | Extracted customer pain points                                                                                             |
 | `objections`       | TEXT[]       | Sales objections raised                                                                                                    |
@@ -65,10 +65,6 @@ CREATE TABLE insights (
 | `region`       | `Vietnam` · `Southeast Asia` · `International`                      |
 
 ```sql
--- Reject INSERT without source_url at DB level
-ALTER TABLE insights ADD CONSTRAINT insights_source_url_nonempty
-    CHECK (source_url IS NOT NULL AND source_url <> '');
-
 -- Enforce valid funnel stages
 ALTER TABLE insights ADD CONSTRAINT insights_funnel_stage_valid
     CHECK (funnel_stage IN ('awareness', 'consideration', 'negotiation', 'won', 'lost'));

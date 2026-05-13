@@ -34,7 +34,7 @@ from prompt import build_classify_prompt, build_extract_prompt
 
 # ── constants ─────────────────────────────────────────────────────────────────
 
-MAX_BATCH_CHARS    = 300_000   # ~75K tokens input — safe for Gemini Flash 1.5 (1M limit)
+MAX_BATCH_CHARS    = 150_000   # ~37K tokens — aligned with transform/handler.py
 MAX_BATCH_RECORDS  = 40        # 8192 output tokens / ~200 tokens per record
 API_DELAY_S        = 5.0   # Gemini free tier: 15 RPM → min 4s between calls
 CONTEXT_CHAR_LIMIT = 10_000    # chars of context file content sent per batch

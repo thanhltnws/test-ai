@@ -35,7 +35,7 @@ def get_db_connection():
 
 # ── postgres ──────────────────────────────────────────────────────────────────
 
-def import_to_postgres(records: list[dict]) -> None:
+def insert_insights(records: list[dict]) -> None:
     conn = get_db_connection()
     try:
         with conn:
@@ -164,7 +164,7 @@ def _embed_batch(texts: list[str]) -> list[list[float]]:
     return _embed_bedrock(texts)
 
 
-def import_to_pgvector(records: list[dict]) -> None:
+def insert_embeddings(records: list[dict]) -> None:
     provider = _get_embedding_provider()
     print(f"Embedding provider: {provider}")
 
@@ -238,8 +238,8 @@ def main() -> None:
             rec["id"] = str(uuid.uuid4())
 
     print(f"Loaded {len(records)} records from {DATA_PATH}")
-    import_to_postgres(records)
-    import_to_pgvector(records)
+    insert_insights(records)
+    insert_embeddings(records)
 
 
 if __name__ == "__main__":
