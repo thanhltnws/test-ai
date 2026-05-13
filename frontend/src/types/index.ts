@@ -62,5 +62,4 @@ export interface ChatMessage {
 export interface Reference {
   title: string
   url: string
-  source: string
 }

@@ -8,24 +8,6 @@ const SUGGESTED = [
   'Deal đang ở giai đoạn Consideration có điểm chung gì?',
 ]
 
-function refType(ref: Reference): { emoji: string; label: string; color: string } {
-  const s = (ref.source ?? '').toLowerCase()
-  const t = (ref.title ?? '').toLowerCase()
-  if (s.includes('pain') || t.includes('pain')) return { emoji: '🔴', label: 'Pain Point', color: '#dc2626' }
-  if (s.includes('objection') || t.includes('object')) return { emoji: '🟡', label: 'Objection', color: '#d97706' }
-  if (s.includes('win') || s.includes('won')) return { emoji: '🟢', label: 'Win Signal', color: '#16a34a' }
-  if (s.includes('hubspot')) return { emoji: '🔵', label: 'HubSpot Deal', color: '#2563eb' }
-  if (s.includes('jira')) return { emoji: '🟣', label: 'Jira Task', color: '#7c3aed' }
-  return { emoji: '📎', label: 'Insight', color: '#64748b' }
-}
-
-function sourceIcon(source: string) {
-  const s = source.toLowerCase()
-  if (s.includes('hubspot')) return '🔗'
-  if (s.includes('jira')) return '🎫'
-  if (s.includes('email')) return '✉️'
-  return '📄'
-}
 
 export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -237,42 +219,32 @@ export default function Chat() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {lastRefs.map((ref, i) => {
-                const { emoji, label, color } = refType(ref)
-                return (
-                  <div key={i} style={{
-                    background: 'var(--surface2)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 10,
-                    padding: '12px 14px',
-                    borderLeft: `3px solid ${color}`,
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                      <span style={{ fontSize: 13 }}>{emoji}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
-                    </div>
-                    <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5, marginBottom: 8 }}>
-                      "{ref.title}"
-                    </div>
-                    <a
-                      href={ref.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        fontSize: 11,
-                        color: 'var(--accent)',
-                        fontWeight: 500,
-                      }}
-                    >
-                      <span>{sourceIcon(ref.source)}</span>
-                      <span>{ref.source}</span>
-                    </a>
+              {lastRefs.map((ref, i) => (
+                <div key={i} style={{
+                  background: 'var(--surface2)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 10,
+                  padding: '12px 14px',
+                  borderLeft: '3px solid var(--accent)',
+                }}>
+                  <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5, marginBottom: 8 }}>
+                    "{ref.title}"
                   </div>
-                )
-              })}
+                  <a
+                    href={ref.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: 11,
+                      color: 'var(--accent)',
+                      fontWeight: 500,
+                      wordBreak: 'break-all',
+                    }}
+                  >
+                    {ref.url}
+                  </a>
+                </div>
+              ))}
             </div>
           )}
         </div>

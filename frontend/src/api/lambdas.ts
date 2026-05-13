@@ -159,5 +159,12 @@ export async function sendChat(
   }
 
   const res = await axios.post(lambdaEndpoints.chat, { question, history }, { headers: requireAuthHeaders() })
-  return res.data
+  const raw = res.data
+  return {
+    answer: raw.answer ?? '',
+    references: (raw.references ?? []).map((r: { title: string; source_url: string }) => ({
+      title: r.title,
+      url: r.source_url,
+    })),
+  }
 }
