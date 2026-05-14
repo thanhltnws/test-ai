@@ -1,5 +1,7 @@
 # AI Insight Hub — Phân tích bài toán
 
+> AI Insight Hub - hệ thống tổng hợp và phân tích insight KH Xây dựng nền tảng AI Insight Hub nhằm giảm sự phân mảnh dữ liệu giữa các bộ phận Sales, Marketing và Vận hành bằng cách tự động thu thập, chuẩn hóa thông tin từ nhiều nguồn hiện có (CRM, Email, Call-note, Form, tool triển khai dự án). Hệ thống ứng dụng AI để xử lý dữ liệu dạng text và trích xuất các yếu tố cốt lõi như nỗi đau (pain point, nhu cầu, rào cản quyết định mua (objections) và các trường hợp sử dụng thực tế (use cases), trong đó đặc biệt tận dung insight từ quá trình triển khai dự án của bộ phận vận hành để bổ sung dữ liệu thực tế cho Marketing và Sales. Trên cơ sở đó, hệ thống hình thành nguồn insight tập trung, phân loại theo market, ICP và funnel stage, đồng thời cung cấp gợi ý hành động cụ thể cho hoạt động Marketing và Sales, kết hợp dashboard theo dõi sự thay đổi insight theo thời gian nhằm hỗ trợ tối ưu hiệu quả tạo lead và chuyển đổi.
+
 ---
 
 ## Break 1 · Phân mảnh data

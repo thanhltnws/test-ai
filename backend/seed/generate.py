@@ -44,7 +44,7 @@ GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 
 _HERE       = Path(__file__).parent
 RAW_DIR     = _HERE / "raw"
-OUTPUT_PATH = _HERE / "data" / "insights_seed.json"
+OUTPUT_PATH = _HERE / "data" / "signals_seed.json"
 
 
 # ── subfolder discovery ───────────────────────────────────────────────────────

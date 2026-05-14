@@ -1,5 +1,5 @@
 """
-Import backend/seed/data/insights_seed.json into Aurora PostgreSQL + pgvector.
+Import backend/seed/data/signals_seed.json into Aurora PostgreSQL + pgvector.
 
 Usage:
     python backend/seed/import.py
@@ -16,7 +16,7 @@ import requests
 from dotenv import load_dotenv
 
 _HERE     = Path(__file__).parent
-DATA_PATH = _HERE / "data" / "insights_seed.json"
+DATA_PATH = _HERE / "data" / "signals_seed.json"
 
 # Chunking is intentionally disabled for now: embedding_text is expected to be
 # a short natural-language summary. Keep this here in case summaries become
@@ -35,7 +35,7 @@ def get_db_connection():
 
 # ── postgres ──────────────────────────────────────────────────────────────────
 
-def insert_insights(records: list[dict]) -> None:
+def insert_signals(records: list[dict]) -> None:
     conn = get_db_connection()
     try:
         with conn:
@@ -43,7 +43,7 @@ def insert_insights(records: list[dict]) -> None:
                 for rec in records:
                     cur.execute(
                         """
-                        INSERT INTO insights (
+                        INSERT INTO signals (
                             id, source, source_id, source_url, raw_text,
                             pain_points, objections, use_cases,
                             icp, funnel_stage, confidence_score, embedding_text,
@@ -82,7 +82,7 @@ def insert_insights(records: list[dict]) -> None:
                     )
                     # sync rec["id"] with the actual DB id (handles conflict case)
                     rec["id"] = str(cur.fetchone()[0])
-        print(f"Imported {len(records)} records into insights.")
+        print(f"Imported {len(records)} records into signals.")
     finally:
         conn.close()
 
@@ -191,7 +191,7 @@ def insert_embeddings(records: list[dict]) -> None:
         batch = [r[1] for r in embedding_rows[start:start + 100]]
         embeddings.extend(_embed_batch(batch))
 
-    # upsert into insight_embeddings
+    # upsert into signal_embeddings
     conn = get_db_connection()
     try:
         with conn:
@@ -203,23 +203,23 @@ def insert_embeddings(records: list[dict]) -> None:
                 ]
                 if empty_ids:
                     cur.execute(
-                        "DELETE FROM insight_embeddings WHERE insight_id = ANY(%s::uuid[])",
+                        "DELETE FROM signal_embeddings WHERE signal_id = ANY(%s::uuid[])",
                         (empty_ids,),
                     )
 
-                for (insight_id, embedding_text, metadata), values in zip(embedding_rows, embeddings):
+                for (signal_id, embedding_text, metadata), values in zip(embedding_rows, embeddings):
                     cur.execute(
                         """
-                        INSERT INTO insight_embeddings (insight_id, embedding_text, embedding, metadata)
+                        INSERT INTO signal_embeddings (signal_id, embedding_text, embedding, metadata)
                         VALUES (%s, %s, %s::vector, %s)
-                        ON CONFLICT (insight_id) DO UPDATE SET
+                        ON CONFLICT (signal_id) DO UPDATE SET
                             embedding_text = EXCLUDED.embedding_text,
                             embedding      = EXCLUDED.embedding,
                             metadata       = EXCLUDED.metadata
                         """,
-                        (insight_id, embedding_text, str(values), psycopg2.extras.Json(metadata)),
+                        (signal_id, embedding_text, str(values), psycopg2.extras.Json(metadata)),
                     )
-        print(f"Upserted {len(embedding_rows)} embeddings into insight_embeddings; skipped {skipped} records.")
+        print(f"Upserted {len(embedding_rows)} embeddings into signal_embeddings; skipped {skipped} records.")
     finally:
         conn.close()
 
@@ -238,7 +238,7 @@ def main() -> None:
             rec["id"] = str(uuid.uuid4())
 
     print(f"Loaded {len(records)} records from {DATA_PATH}")
-    insert_insights(records)
+    insert_signals(records)
     insert_embeddings(records)
 
 

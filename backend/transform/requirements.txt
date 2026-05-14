@@ -1,5 +1,5 @@
 anthropic[bedrock]
-instructor[anthropic]
+instructor[anthropic]>=1.0.0
 pydantic>=2.0
 pg8000>=1.31
 python-dotenv>=1.0

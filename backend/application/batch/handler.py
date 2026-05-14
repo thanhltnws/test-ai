@@ -4,7 +4,7 @@ Batch compute Lambda — Feature 1 (Dashboard).
 EventBridge triggers this daily. Queries Aurora (structured aggregates) and
 Aurora pgvector (semantic pattern context), enriches a prompt
 with both, then calls Gemini (dev) or Bedrock (prod) and appends a new row to
-the recommendations table.
+the insights table.
 
 Local run:
     python backend/application/batch/handler.py
@@ -89,19 +89,19 @@ def query_aurora(conn, period_start: date) -> dict:
     ctx: dict = {}
     cur = conn.cursor()
     try:
-        # Demo mode: aggregate all currently imported insights. A production
+        # Demo mode: aggregate all currently imported signals. A production
         # version should reintroduce explicit daily/weekly/monthly windows.
-        cur.execute("SELECT COUNT(*), AVG(confidence_score) FROM insights")
+        cur.execute("SELECT COUNT(*), AVG(confidence_score) FROM signals")
         row = cur.fetchone()
         ctx["summary"] = {
-            "total_insights": row[0],
+            "total_signals": row[0],
             "avg_confidence": round(float(row[1] or 0), 2),
         }
 
         cur.execute(
             """
             SELECT pain_point, COUNT(*) AS cnt
-            FROM insights, unnest(pain_points) AS pain_point
+            FROM signals, unnest(pain_points) AS pain_point
             WHERE pain_point <> ''
             GROUP BY pain_point
             ORDER BY cnt DESC
@@ -113,7 +113,7 @@ def query_aurora(conn, period_start: date) -> dict:
         cur.execute(
             """
             SELECT objection, COUNT(*) AS cnt
-            FROM insights, unnest(objections) AS objection
+            FROM signals, unnest(objections) AS objection
             WHERE objection <> ''
             GROUP BY objection
             ORDER BY cnt DESC
@@ -125,7 +125,7 @@ def query_aurora(conn, period_start: date) -> dict:
         cur.execute(
             """
             SELECT use_case, COUNT(*) AS cnt
-            FROM insights, unnest(use_cases) AS use_case
+            FROM signals, unnest(use_cases) AS use_case
             WHERE use_case <> ''
             GROUP BY use_case
             ORDER BY cnt DESC
@@ -137,7 +137,7 @@ def query_aurora(conn, period_start: date) -> dict:
         cur.execute(
             """
             SELECT funnel_stage, COUNT(*) AS cnt
-            FROM insights
+            FROM signals
             WHERE funnel_stage IS NOT NULL
             GROUP BY funnel_stage
             ORDER BY cnt DESC
@@ -162,7 +162,7 @@ def query_aurora(conn, period_start: date) -> dict:
                 icp->>'deal_size'    AS deal_size,
                 icp->>'region'       AS region,
                 COUNT(*)             AS cnt
-            FROM insights
+            FROM signals
             WHERE icp IS NOT NULL
             GROUP BY sector, company_size, deal_size, region
             ORDER BY cnt DESC
@@ -246,14 +246,14 @@ def query_pgvector(conn, period_start: date) -> list[dict]:
             cur.execute(
                 """
                 SELECT
-                    e.insight_id,
+                    e.signal_id,
                     i.source,
                     i.source_url,
                     i.funnel_stage,
                     e.embedding_text,
                     1 - (e.embedding <=> %s::vector) AS score
-                FROM insight_embeddings e
-                JOIN insights i ON i.id = e.insight_id
+                FROM signal_embeddings e
+                JOIN signals i ON i.id = e.signal_id
                 ORDER BY e.embedding <=> %s::vector
                 LIMIT %s
                 """,
@@ -365,7 +365,7 @@ RESULT_TYPES = [
 ]
 
 
-def write_recommendations(
+def write_insights(
     conn, results: dict, period: str, period_start: date
 ) -> int:
     written = 0
@@ -376,7 +376,7 @@ def write_recommendations(
                 continue
             cur.execute(
                 """
-                INSERT INTO recommendations (period, period_start, result_type, payload)
+                INSERT INTO insights (period, period_start, result_type, payload)
                 VALUES (%s, %s, %s, %s)
                 """,
                 (period, period_start, rt, json.dumps(results[rt])),
@@ -408,12 +408,12 @@ def handler(event=None, context=None):
     try:
         sql_ctx = query_aurora(conn, period_start)
 
-        total = sql_ctx["summary"]["total_insights"]
+        total = sql_ctx["summary"]["total_signals"]
         print(
-            f"Aurora: {total} insights, avg_confidence={sql_ctx['summary']['avg_confidence']}"
+            f"Aurora: {total} signals, avg_confidence={sql_ctx['summary']['avg_confidence']}"
         )
         if total == 0:
-            print("No insights in period window — skipping LLM call.")
+            print("No signals in period window — skipping LLM call.")
             return {"statusCode": 200, "body": "no data"}
 
         vector_ctx = query_pgvector(conn, period_start)
@@ -422,8 +422,8 @@ def handler(event=None, context=None):
         prompt  = build_batch_prompt(sql_ctx, vector_ctx, PERIOD)
         raw     = call_llm(prompt)
         results = parse_json_response(raw)
-        written = write_recommendations(conn, results, PERIOD, period_start)
-        print(f"Wrote {written} recommendation rows for {period_start}.")
+        written = write_insights(conn, results, PERIOD, period_start)
+        print(f"Wrote {written} insight rows for {period_start}.")
 
         return {
             "statusCode": 200,
