@@ -51,9 +51,10 @@ END $$;
 CREATE TABLE IF NOT EXISTS insights (
     id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     computed_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    period       TEXT        NOT NULL,
+    period       TEXT        NOT NULL,        -- weekly · monthly · quarterly · yearly
     period_start DATE        NOT NULL,
-    result_type  TEXT        NOT NULL,
+    period_end   DATE        NOT NULL,        -- = today at compute time (open period) or last day of period (closed)
+    result_type  TEXT        NOT NULL,        -- pain_points_summary · funnel_distribution · icp_narrative · recommendations
     payload      JSONB       NOT NULL
 );
 
@@ -67,8 +68,8 @@ CREATE INDEX IF NOT EXISTS signals_icp_idx ON signals USING GIN (icp);
 CREATE INDEX IF NOT EXISTS signals_pain_points_idx ON signals USING GIN (pain_points);
 
 CREATE INDEX IF NOT EXISTS insights_computed_at_idx ON insights (computed_at DESC);
-CREATE INDEX IF NOT EXISTS insights_period_period_start_result_type_idx
-    ON insights (period, period_start DESC, result_type);
+CREATE INDEX IF NOT EXISTS insights_period_result_type_idx ON insights (period, result_type, computed_at DESC);
+CREATE INDEX IF NOT EXISTS insights_period_start_idx ON insights (period, period_start, result_type);
 
 -- ── vector store ──────────────────────────────────────────────────────────────
 

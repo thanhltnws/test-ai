@@ -88,6 +88,7 @@ CREATE TABLE insights (
     computed_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     period       TEXT        NOT NULL,
     period_start DATE        NOT NULL,
+    period_end   DATE        NOT NULL,
     result_type  TEXT        NOT NULL,
     payload      JSONB       NOT NULL
 );
@@ -95,10 +96,11 @@ CREATE TABLE insights (
 
 | Column         | Type  | Notes                                                                               |
 | -------------- | ----- | ----------------------------------------------------------------------------------- |
-| `period`       | TEXT  | `daily`                                                                             |
-| `period_start` | DATE  | Start of the compute window                                                         |
+| `period`       | TEXT  | `weekly` · `monthly` · `quarterly` · `yearly`                                       |
+| `period_start` | DATE  | First day of the compute window                                                     |
+| `period_end`   | DATE  | `= today` when period is open (still running); `= last day of period` when closed  |
 | `result_type`  | TEXT  | `pain_points_summary` · `funnel_distribution` · `icp_narrative` · `recommendations` |
-| `payload`      | JSONB | Full Bedrock response for this result type                                          |
+| `payload`      | JSONB | LLM response for this result type                                                   |
 
 ---
 
@@ -151,9 +153,10 @@ CREATE INDEX ON signals (source_url);
 CREATE INDEX ON signals USING GIN (icp);          -- JSONB field queries
 CREATE INDEX ON signals USING GIN (pain_points);  -- array contains queries
 
--- insights: each day appends new rows, query by recency
+-- insights: append-only snapshots, query latest per (period, result_type)
 CREATE INDEX ON insights (computed_at DESC);
-CREATE INDEX ON insights (period, period_start DESC, result_type);
+CREATE INDEX ON insights (period, result_type, computed_at DESC);
+CREATE INDEX ON insights (period, period_start, result_type);
 ```
 
 ---
