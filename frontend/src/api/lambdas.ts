@@ -15,13 +15,13 @@ const authTokenStorageKey = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY ?? 'ai-i
 
 const apiBase = import.meta.env.VITE_API_LAMBDA_URL ?? legacyBase
 const chatBase = import.meta.env.VITE_CHAT_LAMBDA_URL ?? legacyBase
-const batchBase = import.meta.env.VITE_BATCH_LAMBDA_URL ?? legacyBase
+const insightsBuilderBase = import.meta.env.VITE_INSIGHTS_BUILDER_LAMBDA_URL ?? legacyBase
 
-const recommendationsPath = import.meta.env.VITE_API_RECOMMENDATIONS_PATH ?? '/recommendations'
+const insightsPath = import.meta.env.VITE_API_INSIGHTS_PATH ?? '/insights'
 const chatPath = import.meta.env.VITE_CHAT_PATH ?? '/chat'
-const batchPath = import.meta.env.VITE_BATCH_LAMBDA_URL
-  ? (import.meta.env.VITE_BATCH_PATH ?? '')
-  : (import.meta.env.VITE_BATCH_PATH ?? '/batch')
+const insightsBuilderPath = import.meta.env.VITE_INSIGHTS_BUILDER_LAMBDA_URL
+  ? (import.meta.env.VITE_INSIGHTS_BUILDER_PATH ?? '')
+  : (import.meta.env.VITE_INSIGHTS_BUILDER_PATH ?? '/insights-builder')
 
 function joinUrl(base: string, path = ''): string {
   if (!path) return base
@@ -29,9 +29,9 @@ function joinUrl(base: string, path = ''): string {
 }
 
 export const lambdaEndpoints = {
-  api: joinUrl(apiBase, recommendationsPath),
+  api: joinUrl(apiBase, insightsPath),
   chat: joinUrl(chatBase, chatPath),
-  batch: joinUrl(batchBase, batchPath),
+  insightsBuilder: joinUrl(insightsBuilderBase, insightsBuilderPath),
 }
 
 export const isLambdaDataSource = useLambdaData
@@ -143,7 +143,7 @@ export async function runBatch(): Promise<BatchRunResponse> {
     }
   }
 
-  const res = await axios.post<BatchRunResponse>(lambdaEndpoints.batch, {}, { headers: requireAuthHeaders() })
+  const res = await axios.post<BatchRunResponse>(lambdaEndpoints.insightsBuilder, {}, { headers: requireAuthHeaders() })
   return res.data
 }
 

@@ -1,5 +1,5 @@
 """
-Test vector similarity search against insight_embeddings in the DB.
+Test vector similarity search against signal_embeddings in the DB.
 
 Usage:
     python backend/seed/test_search.py
@@ -46,8 +46,8 @@ def search(vector: list[float], top_k: int) -> list[dict]:
                     i.funnel_stage,
                     e.embedding_text,
                     1 - (e.embedding <=> %s::vector) AS score
-                FROM insight_embeddings e
-                JOIN insights i ON i.id = e.insight_id
+                FROM signal_embeddings e
+                JOIN signals i ON i.id = e.signal_id
                 ORDER BY e.embedding <=> %s::vector
                 LIMIT %s
                 """,
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     results = search(vector, TOP_K)
 
     if not results:
-        print("No results — insight_embeddings may be empty.")
+        print("No results — signal_embeddings may be empty.")
     else:
         for i, r in enumerate(results, 1):
             print(f"[{i}] score={r['score']:.4f}  source={r['source']}  stage={r['funnel_stage']}")

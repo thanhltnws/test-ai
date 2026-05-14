@@ -1,5 +1,5 @@
 """
-Lambda: S3 ObjectCreated (raw/) → normalize → Bedrock extract → Aurora insights
+Lambda: S3 ObjectCreated (raw/) → normalize → Bedrock extract → Aurora signals
 
 Triggered by S3 event on raw/{source}/{date}/{timestamp}.json
 
@@ -152,8 +152,8 @@ def _get_conn():
     return _DB_CONN
 
 
-def _insert_insights(rows: list[dict]) -> tuple[int, dict[str, str]]:
-    """Upsert into Aurora insights. Returns (upserted_count, {pre_assigned_id: actual_db_id}).
+def _insert_signals(rows: list[dict]) -> tuple[int, dict[str, str]]:
+    """Upsert into Aurora signals. Returns (upserted_count, {pre_assigned_id: actual_db_id}).
     RETURNING id captures the real UUID on both insert and conflict-update paths so the
     embedding step can use the correct FK regardless of which path was taken.
     """
@@ -165,7 +165,7 @@ def _insert_insights(rows: list[dict]) -> tuple[int, dict[str, str]]:
         for row in rows:
             cur.execute(
                 """
-                INSERT INTO insights (
+                INSERT INTO signals (
                     id, source, source_id, source_url, raw_text,
                     pain_points, objections, use_cases, icp,
                     funnel_stage, confidence_score, embedding_text,
@@ -273,7 +273,7 @@ def _insert_embeddings(
     id_map: dict[str, str],
     vectors: dict[str, list[float]],
 ) -> int:
-    """Upsert insight_embeddings for rows that landed in Aurora.
+    """Upsert signal_embeddings for rows that landed in Aurora.
 
     id_map maps the pre-assigned row["id"] → actual DB id returned by RETURNING, so
     this correctly handles both the fresh-insert and conflict-update Aurora paths.
@@ -308,15 +308,15 @@ def _insert_embeddings(
     try:
         if empty_db_ids:
             cur.execute(
-                "DELETE FROM insight_embeddings WHERE insight_id = ANY(%s::uuid[])",
+                "DELETE FROM signal_embeddings WHERE signal_id = ANY(%s::uuid[])",
                 (empty_db_ids,),
             )
         for db_id, embedding_text, metadata, vector in embedding_rows:
             cur.execute(
                 """
-                INSERT INTO insight_embeddings (insight_id, embedding_text, embedding, metadata)
+                INSERT INTO signal_embeddings (signal_id, embedding_text, embedding, metadata)
                 VALUES (%s, %s, %s::vector, %s::jsonb)
-                ON CONFLICT (insight_id) DO UPDATE SET
+                ON CONFLICT (signal_id) DO UPDATE SET
                     embedding_text = EXCLUDED.embedding_text,
                     embedding      = EXCLUDED.embedding,
                     metadata       = EXCLUDED.metadata
@@ -506,7 +506,7 @@ def handler(event: dict, context=None) -> dict:
             # Aurora INSERT and embedding API calls run concurrently.
             # _embed_rows does no DB access, so sharing the global conn is safe.
             with ThreadPoolExecutor(max_workers=2) as ex:
-                aurora_fut = ex.submit(_insert_insights, rows)
+                aurora_fut = ex.submit(_insert_signals, rows)
                 embed_fut  = ex.submit(_embed_rows, rows)
 
             upserted, id_map = aurora_fut.result()
@@ -516,7 +516,7 @@ def handler(event: dict, context=None) -> dict:
             if upserted > 0:
                 _mark_processed(bucket, s3_key)
             print(
-                f"OK {s3_key}: {upserted}/{len(rows)} Aurora rows, "
+                f"OK {s3_key}: {upserted}/{len(rows)} signals upserted, "
                 f"{vec_upserted} vectors upserted"
             )
             total_inserted += upserted

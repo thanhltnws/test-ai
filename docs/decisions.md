@@ -70,10 +70,10 @@ Intended data sources (HubSpot deals, Jira tickets, internal email) do not conta
 Need a vector store for semantic search to support the RAG chatbox.
 
 **Decision:**
-Use pgvector on Aurora (`insight_embeddings` table). Cloudflare Vectorize dropped.
+Use pgvector on Aurora (`signal_embeddings` table). Cloudflare Vectorize dropped.
 
 **Reason:**
-pgvector runs as an extension on the same Aurora instance — no extra service. Local dev uses Docker PostgreSQL + pgvector, identical to Aurora: no mock, no external API call during dev. Referential integrity enforced via FK (`insight_id → insights.id`), which Vectorize cannot provide. Coupling argument (original rejection reason) does not apply — `insight_embeddings` is inherently tied to `insights` and benefits from CASCADE DELETE.
+pgvector runs as an extension on the same Aurora instance — no extra service. Local dev uses Docker PostgreSQL + pgvector, identical to Aurora: no mock, no external API call during dev. Referential integrity enforced via FK (`signal_id → signals.id`), which Vectorize cannot provide. Coupling argument (original rejection reason) does not apply — `signal_embeddings` is inherently tied to `signals` and benefits from CASCADE DELETE.
 
 **Rejected:**
 
@@ -108,7 +108,7 @@ Use Gemini API (free tier) during local dev. Switch to Bedrock on AWS deploy —
 The RAG chatbox needs to retrieve context from the data store to enrich the prompt before calling Bedrock. Two options: Text-to-SQL on Aurora, or semantic search on pgvector.
 
 **Decision:**
-pgvector semantic search on `insight_embeddings` is primary. SQL query on Aurora is secondary — fixed SQL only, no Text-to-SQL. Both contexts are merged to enrich the prompt.
+pgvector semantic search on `signal_embeddings` is primary. SQL query on Aurora is secondary — fixed SQL only, no Text-to-SQL. Both contexts are merged to enrich the prompt.
 
 **Reason:**
 Text-to-SQL hallucinates on ambiguous questions — silent failure: no crash, but wrong results returned. pgvector similarity search does not carry this risk. SQL is still needed for structured fields (funnel_stage, icp) but only with pre-defined fixed queries.

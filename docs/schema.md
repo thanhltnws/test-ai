@@ -6,12 +6,12 @@ Aurora PostgreSQL Serverless v2. Local dev: PostgreSQL via psycopg2.
 
 ## Tables
 
-### `insights`
+### `signals`
 
-Core table. One row per insight extracted by AI from a source record.
+Core table. One row per signal extracted by AI from a source record.
 
 ```sql
-CREATE TABLE insights (
+CREATE TABLE signals (
     id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     source           TEXT        NOT NULL,
     source_id        TEXT        NOT NULL,
@@ -66,23 +66,23 @@ CREATE TABLE insights (
 
 ```sql
 -- Enforce valid funnel stages
-ALTER TABLE insights ADD CONSTRAINT insights_funnel_stage_valid
+ALTER TABLE signals ADD CONSTRAINT signals_funnel_stage_valid
     CHECK (funnel_stage IN ('awareness', 'consideration', 'negotiation', 'won', 'lost'));
 
 -- Dedup: one AI extraction per source record
-ALTER TABLE insights ADD CONSTRAINT insights_source_record_unique
+ALTER TABLE signals ADD CONSTRAINT signals_source_record_unique
     UNIQUE (source, source_id);
 
 ```
 
 ---
 
-### `recommendations`
+### `insights`
 
 Pre-computed batch results from Feature 1 (Dashboard). Written by the EventBridge-triggered Lambda, read by `GET /insights/summary`.
 
 ```sql
-CREATE TABLE recommendations (
+CREATE TABLE insights (
     id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     computed_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     period       TEXT        NOT NULL,
@@ -101,25 +101,25 @@ CREATE TABLE recommendations (
 
 ---
 
-### `insight_embeddings`
+### `signal_embeddings`
 
-Vector store for semantic search (RAG). One row per insight that has a non-NULL `embedding_text`.
+Vector store for semantic search (RAG). One row per signal that has a non-NULL `embedding_text`.
 
 Requires the `pgvector` extension: `CREATE EXTENSION IF NOT EXISTS vector;`
 
 ```sql
-CREATE TABLE insight_embeddings (
+CREATE TABLE signal_embeddings (
     id           UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-    insight_id   UUID         NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
+    signal_id    UUID         NOT NULL REFERENCES signals(id) ON DELETE CASCADE,
     embedding    vector(1024) NOT NULL,
     embedded_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    CONSTRAINT insight_embeddings_insight_id_unique UNIQUE (insight_id)
+    CONSTRAINT signal_embeddings_signal_id_unique UNIQUE (signal_id)
 );
 ```
 
 | Column        | Type         | Notes                                                                                                                                            |
 | ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `insight_id`  | UUID         | FK → `insights.id`. One embedding per insight row.                                                                                               |
+| `signal_id`   | UUID         | FK → `signals.id`. One embedding per signal row.                                                                                                 |
 | `embedding`   | vector(1024) | Bedrock Titan Embeddings V2 (prod). Local dev: Gemini `gemini-embedding-001` with `output_dimensionality=1024`. Both environments use 1024 dims. |
 | `embedded_at` | TIMESTAMPTZ  | When the vector was written                                                                                                                      |
 
@@ -128,12 +128,12 @@ CREATE TABLE insight_embeddings (
 ```sql
 -- Migration: add table on existing DBs
 CREATE EXTENSION IF NOT EXISTS vector;
-CREATE TABLE IF NOT EXISTS insight_embeddings (
+CREATE TABLE IF NOT EXISTS signal_embeddings (
     id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-    insight_id  UUID         NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
+    signal_id   UUID         NOT NULL REFERENCES signals(id) ON DELETE CASCADE,
     embedding   vector(1024) NOT NULL,
     embedded_at TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    CONSTRAINT insight_embeddings_insight_id_unique UNIQUE (insight_id)
+    CONSTRAINT signal_embeddings_signal_id_unique UNIQUE (signal_id)
 );
 ```
 
@@ -142,42 +142,42 @@ CREATE TABLE IF NOT EXISTS insight_embeddings (
 ## Indexes
 
 ```sql
--- insights: common filter and join patterns
-CREATE INDEX ON insights (source);
-CREATE INDEX ON insights (funnel_stage);
-CREATE INDEX ON insights (extracted_at DESC);
-CREATE INDEX ON insights (source_url);
-CREATE INDEX ON insights USING GIN (icp);          -- JSONB field queries
-CREATE INDEX ON insights USING GIN (pain_points);  -- array contains queries
+-- signals: common filter and join patterns
+CREATE INDEX ON signals (source);
+CREATE INDEX ON signals (funnel_stage);
+CREATE INDEX ON signals (extracted_at DESC);
+CREATE INDEX ON signals (source_url);
+CREATE INDEX ON signals USING GIN (icp);          -- JSONB field queries
+CREATE INDEX ON signals USING GIN (pain_points);  -- array contains queries
 
--- recommendations: each day appends new rows, query by recency
-CREATE INDEX ON recommendations (computed_at DESC);
-CREATE INDEX ON recommendations (period, period_start DESC, result_type);
+-- insights: each day appends new rows, query by recency
+CREATE INDEX ON insights (computed_at DESC);
+CREATE INDEX ON insights (period, period_start DESC, result_type);
 ```
 
 ---
 
-### `insight_embeddings`
+### `signal_embeddings` — pgvector detail
 
-pgvector store. One row per insight — only inserted when `embedding_text` is non-empty.
+pgvector store. One row per signal — only inserted when `embedding_text` is non-empty.
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS vector;
 
-CREATE TABLE insight_embeddings (
-    insight_id     UUID         PRIMARY KEY REFERENCES insights(id) ON DELETE CASCADE,
+CREATE TABLE signal_embeddings (
+    signal_id      UUID         PRIMARY KEY REFERENCES signals(id) ON DELETE CASCADE,
     embedding_text TEXT         NOT NULL,
     embedding      vector(1024) NOT NULL,
     metadata       JSONB
 );
 
-CREATE INDEX ON insight_embeddings USING hnsw (embedding vector_cosine_ops);
-CREATE INDEX ON insight_embeddings USING GIN (metadata);
+CREATE INDEX ON signal_embeddings USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX ON signal_embeddings USING GIN (metadata);
 ```
 
 | Column           | Type         | Notes                                                                                      |
 | ---------------- | ------------ | ------------------------------------------------------------------------------------------ |
-| `insight_id`     | UUID         | PK + FK → `insights.id`. 1:1 relationship.                                                 |
+| `signal_id`      | UUID         | PK + FK → `signals.id`. 1:1 relationship.                                                  |
 | `embedding_text` | TEXT         | Natural language summary generated by Transform — input to the embedder                    |
 | `embedding`      | vector(1024) | 1024-dim vector. Local dev: Bedrock `titan-embed-text-v2`. AWS: same.                      |
 | `metadata`       | JSONB        | `source`, `funnel_stage`, `source_url` — for filtered similarity search and RAG references |

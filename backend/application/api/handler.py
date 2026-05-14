@@ -1,7 +1,7 @@
 """
-API Lambda — GET /recommendations
+API Lambda — GET /insights
 
-Returns the latest pre-computed batch results from the recommendations table.
+Returns the latest pre-computed batch results from the insights table.
 Each result_type (pain_points_summary, funnel_distribution, icp_narrative,
 recommendations) is a key in the response payload.
 
@@ -50,14 +50,14 @@ def _pg_connect():
     )
 
 
-def get_recommendations(conn) -> dict:
+def get_insights(conn) -> dict:
     cur = conn.cursor()
     try:
         cur.execute(
             """
             SELECT result_type, payload, period_start, computed_at
-            FROM recommendations
-            WHERE period_start = (SELECT MAX(period_start) FROM recommendations)
+            FROM insights
+            WHERE period_start = (SELECT MAX(period_start) FROM insights)
             ORDER BY result_type
             """
         )
@@ -95,17 +95,17 @@ def _err(status: int, message: str) -> dict:
 def handler(event=None, context=None):
     load_dotenv()
 
-    path = (event or {}).get("rawPath", "/recommendations")
+    path = (event or {}).get("rawPath", "/insights")
 
-    if path != "/recommendations":
+    if path != "/insights":
         return _err(404, f"Unknown path: {path}")
 
     conn = _pg_connect()
     try:
-        return _ok(get_recommendations(conn))
+        return _ok(get_insights(conn))
     finally:
         conn.close()
 
 
 if __name__ == "__main__":
-    print(json.dumps(handler({"rawPath": "/recommendations"}), indent=2))
+    print(json.dumps(handler({"rawPath": "/insights"}), indent=2))

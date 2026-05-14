@@ -150,7 +150,7 @@ export class ApplicationStack extends cdk.Stack {
 
     // ── DB schema bootstrap ───────────────────────────────────────────────────
     // Runs the idempotent MVP schema against Aurora after the cluster is ready.
-    // This creates pgvector, insights, insight_embeddings, and recommendations.
+    // This creates pgvector, signals, signal_embeddings, and insights.
     const dbInitDir = path.join(__dirname, '../lambda/db-init');
     const dbInitHash = crypto
       .createHash('sha256')
@@ -307,7 +307,7 @@ export class ApplicationStack extends cdk.Stack {
         DB_SECRET_ARN: cluster.secret!.secretArn,
         BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
       },
-      description: 'Transform: S3 ObjectCreated raw/ → normalize → Bedrock extract → Aurora insights + pgvector',
+      description: 'Transform: S3 ObjectCreated raw/ → normalize → Bedrock extract → Aurora signals + pgvector',
     });
 
     cluster.secret!.grantRead(transformFn);
@@ -333,11 +333,11 @@ export class ApplicationStack extends cdk.Stack {
       { prefix: 'raw/' },
     );
 
-    // ── Batch Lambda ───────────────────────────────────────────────────────────
+    // ── Insights Builder Lambda ────────────────────────────────────────────────
     // Lambda is NOT in a VPC — has full internet access for Bedrock.
     // Reads DB credentials from Secrets Manager at cold start via DB_SECRET_ARN.
-    const batchFn = new lambda.Function(this, 'BatchFn', {
-      functionName: 'ai-insight-hub-batch',
+    const insightsBuilderFn = new lambda.Function(this, 'InsightsBuilderFn', {
+      functionName: 'ai-insight-hub-insights-builder',
       runtime: lambda.Runtime.PYTHON_3_12,
       handler: 'handler.handler',
       code: lambda.Code.fromAsset(
@@ -374,21 +374,21 @@ export class ApplicationStack extends cdk.Stack {
         BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
         BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
-      description: 'Daily batch: Aurora aggregates + Bedrock → recommendations table',
+      description: 'Insights builder: Aurora signals aggregates + Bedrock → insights table',
     });
 
     // Grant Lambda read access to the Aurora credentials secret
-    cluster.secret!.grantRead(batchFn);
-    batchFn.node.addDependency(dbInit);
+    cluster.secret!.grantRead(insightsBuilderFn);
+    insightsBuilderFn.node.addDependency(dbInit);
 
-    batchFn.addToRolePolicy(new iam.PolicyStatement({
+    insightsBuilderFn.addToRolePolicy(new iam.PolicyStatement({
       sid: 'BedrockInvokeModel',
       actions: ['bedrock:InvokeModel'],
       resources: ['*'],
     }));
 
     // ── Lambda Function URL ────────────────────────────────────────────────────
-    const batchUrl = batchFn.addFunctionUrl({
+    const insightsBuilderUrl = insightsBuilderFn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
         allowedOrigins: ['*'],
@@ -400,21 +400,21 @@ export class ApplicationStack extends cdk.Stack {
     // ── EventBridge Scheduler ──────────────────────────────────────────────────
     const schedulerRole = new iam.Role(this, 'SchedulerRole', {
       assumedBy: new iam.ServicePrincipal('scheduler.amazonaws.com'),
-      description: 'Allows EventBridge Scheduler to invoke the batch Lambda',
+      description: 'Allows EventBridge Scheduler to invoke the insights-builder Lambda',
     });
-    batchFn.grantInvoke(schedulerRole);
+    insightsBuilderFn.grantInvoke(schedulerRole);
 
-    new scheduler.CfnSchedule(this, 'DailyBatchSchedule', {
-      name: 'ai-insight-hub-daily-batch',
-      description: 'Trigger daily insight batch compute at 02:00 UTC',
+    new scheduler.CfnSchedule(this, 'DailyInsightsBuilderSchedule', {
+      name: 'ai-insight-hub-daily-insights-builder',
+      description: 'Trigger daily insights-builder compute at 02:00 UTC',
       // TODO: Enable this for a live environment. Disabled for MVP demos so
-      // batch runs are triggered manually through the Function URL.
+      // insights-builder runs are triggered manually through the Function URL.
       state: 'DISABLED',
       scheduleExpression: 'cron(0 2 * * ? *)',
       scheduleExpressionTimezone: 'UTC',
       flexibleTimeWindow: { mode: 'OFF' },
       target: {
-        arn: batchFn.functionArn,
+        arn: insightsBuilderFn.functionArn,
         roleArn: schedulerRole.roleArn,
         retryPolicy: {
           maximumRetryAttempts: 2,
@@ -424,8 +424,8 @@ export class ApplicationStack extends cdk.Stack {
     });
 
     // ── API Lambda ─────────────────────────────────────────────────────────────
-    const apiFn = new lambda.Function(this, 'ApiFn', {
-      functionName: 'ai-insight-hub-api',
+    const dashboardApiFn = new lambda.Function(this, 'DashboardApiFn', {
+      functionName: 'ai-insight-hub-dashboard-api',
       runtime: lambda.Runtime.PYTHON_3_12,
       handler: 'handler.handler',
       code: lambda.Code.fromAsset(
@@ -453,13 +453,13 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
       },
-      description: 'REST API: GET /recommendations',
+      description: 'Dashboard API: GET /insights',
     });
 
-    cluster.secret!.grantRead(apiFn);
-    apiFn.node.addDependency(dbInit);
+    cluster.secret!.grantRead(dashboardApiFn);
+    dashboardApiFn.node.addDependency(dbInit);
 
-    const apiUrl = apiFn.addFunctionUrl({
+    const dashboardApiUrl = dashboardApiFn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
         allowedOrigins: ['*'],
@@ -539,18 +539,18 @@ export class ApplicationStack extends cdk.Stack {
       description: 'Secrets Manager ARN - retrieve credentials via: aws secretsmanager get-secret-value --secret-id <arn>',
     });
 
-    new cdk.CfnOutput(this, 'BatchFunctionUrl', {
-      value: batchUrl.url,
-      description: 'POST to manually trigger a batch run',
+    new cdk.CfnOutput(this, 'InsightsBuilderFunctionUrl', {
+      value: insightsBuilderUrl.url,
+      description: 'POST to manually trigger insights-builder run',
     });
 
-    new cdk.CfnOutput(this, 'BatchFunctionArn', {
-      value: batchFn.functionArn,
+    new cdk.CfnOutput(this, 'InsightsBuilderFunctionArn', {
+      value: insightsBuilderFn.functionArn,
     });
 
-    new cdk.CfnOutput(this, 'ApiFunctionUrl', {
-      value: apiUrl.url,
-      description: 'GET /recommendations or GET /insights',
+    new cdk.CfnOutput(this, 'DashboardApiFunctionUrl', {
+      value: dashboardApiUrl.url,
+      description: 'GET /insights — dashboard data',
     });
 
     new cdk.CfnOutput(this, 'ChatFunctionUrl', {

@@ -9,7 +9,7 @@ import pg8000.dbapi
 SCHEMA_SQL = [
     "CREATE EXTENSION IF NOT EXISTS vector",
     """
-    CREATE TABLE IF NOT EXISTS insights (
+    CREATE TABLE IF NOT EXISTS signals (
         id               UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
         source           TEXT         NOT NULL,
         source_id        TEXT         NOT NULL,
@@ -28,7 +28,7 @@ SCHEMA_SQL = [
     )
     """,
     """
-    CREATE TABLE IF NOT EXISTS recommendations (
+    CREATE TABLE IF NOT EXISTS insights (
         id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
         computed_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
         period       TEXT        NOT NULL,
@@ -38,23 +38,23 @@ SCHEMA_SQL = [
     )
     """,
     """
-    CREATE TABLE IF NOT EXISTS insight_embeddings (
-        insight_id     UUID         PRIMARY KEY REFERENCES insights(id) ON DELETE CASCADE,
+    CREATE TABLE IF NOT EXISTS signal_embeddings (
+        signal_id      UUID         PRIMARY KEY REFERENCES signals(id) ON DELETE CASCADE,
         embedding_text TEXT         NOT NULL,
         embedding      vector(1024) NOT NULL,
         metadata       JSONB
     )
     """,
-    "CREATE INDEX IF NOT EXISTS insights_source_idx ON insights (source)",
-    "CREATE INDEX IF NOT EXISTS insights_funnel_stage_idx ON insights (funnel_stage)",
-    "CREATE INDEX IF NOT EXISTS insights_extracted_at_idx ON insights (extracted_at DESC)",
-    "CREATE INDEX IF NOT EXISTS insights_source_url_idx ON insights (source_url)",
-    "CREATE INDEX IF NOT EXISTS insights_icp_idx ON insights USING GIN (icp)",
-    "CREATE INDEX IF NOT EXISTS insights_pain_points_idx ON insights USING GIN (pain_points)",
-    "CREATE INDEX IF NOT EXISTS recommendations_computed_at_idx ON recommendations (computed_at DESC)",
-    "CREATE INDEX IF NOT EXISTS recommendations_period_period_start_result_type_idx ON recommendations (period, period_start DESC, result_type)",
-    "CREATE INDEX IF NOT EXISTS insight_embeddings_embedding_idx ON insight_embeddings USING hnsw (embedding vector_cosine_ops)",
-    "CREATE INDEX IF NOT EXISTS insight_embeddings_metadata_idx ON insight_embeddings USING GIN (metadata)",
+    "CREATE INDEX IF NOT EXISTS signals_source_idx ON signals (source)",
+    "CREATE INDEX IF NOT EXISTS signals_funnel_stage_idx ON signals (funnel_stage)",
+    "CREATE INDEX IF NOT EXISTS signals_extracted_at_idx ON signals (extracted_at DESC)",
+    "CREATE INDEX IF NOT EXISTS signals_source_url_idx ON signals (source_url)",
+    "CREATE INDEX IF NOT EXISTS signals_icp_idx ON signals USING GIN (icp)",
+    "CREATE INDEX IF NOT EXISTS signals_pain_points_idx ON signals USING GIN (pain_points)",
+    "CREATE INDEX IF NOT EXISTS insights_computed_at_idx ON insights (computed_at DESC)",
+    "CREATE INDEX IF NOT EXISTS insights_period_period_start_result_type_idx ON insights (period, period_start DESC, result_type)",
+    "CREATE INDEX IF NOT EXISTS signal_embeddings_embedding_idx ON signal_embeddings USING hnsw (embedding vector_cosine_ops)",
+    "CREATE INDEX IF NOT EXISTS signal_embeddings_metadata_idx ON signal_embeddings USING GIN (metadata)",
 ]
 
 
