@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS signals (
     funnel_stage     TEXT,
     confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0 AND 1),
     embedding_text   TEXT,
+    record_date      DATE,
     ingested_at      TIMESTAMPTZ,
     extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now()
 );

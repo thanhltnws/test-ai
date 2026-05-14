@@ -25,12 +25,14 @@ For each record below, extract:
 - confidence_score: float 0.0–1.0
 - source_id: a unique identifier you pick from the record's own fields (e.g. ID column, name, or index)
 - embedding_text: string - concise natural-language summary of the whole record for semantic search
+- record_date: string (YYYY-MM-DD) — the most semantically relevant date in the record (e.g. close_date, engage_date, LastRenewalDate, created_at, issue_date, submission_date). Return null if the record contains no date field.
 
 Rules:
 - Return [] for empty lists; default funnel_stage to "consideration" if unclear
 - embedding_text must be natural language, not flattened JSON or key-value dumps
 - embedding_text should summarize the meaningful customer/business signal, including pain points, objections, use cases, ICP, and funnel stage when available
 - Set embedding_text to "" if the record does not contain enough meaningful signal for semantic search
+- record_date must be exactly YYYY-MM-DD format or null — no other format accepted
 - sector choices: fintech | logistics | retail | healthcare | manufacturing | software | education | ict | other
 - company_size: 1-10 | 11-50 | 50-200 | 200-1000 | 1000+
 - deal_size: small | medium | large
