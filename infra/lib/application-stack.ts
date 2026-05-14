@@ -6,6 +6,7 @@ import {
   aws_ec2 as ec2,
   aws_rds as rds,
   aws_s3 as s3,
+  aws_s3_notifications as s3n,
   custom_resources as cr,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -250,6 +251,87 @@ export class ApplicationStack extends cdk.Stack {
         allowedHeaders: ['Content-Type'],
       },
     });
+
+    // Hourly schedule — DISABLED for demo (trigger manually via Function URL or
+    // upload JSON directly to S3 raw/ to kick off transform).
+    const ingestionSchedulerRole = new iam.Role(this, 'IngestionSchedulerRole', {
+      assumedBy: new iam.ServicePrincipal('scheduler.amazonaws.com'),
+      description: 'Allows EventBridge Scheduler to invoke the ingestion Lambda',
+    });
+    ingestionFn.grantInvoke(ingestionSchedulerRole);
+
+    new scheduler.CfnSchedule(this, 'HourlyIngestionSchedule', {
+      name: 'ai-insight-hub-hourly-ingestion',
+      description: 'Trigger ingestion Lambda hourly to pull from configured sources',
+      state: 'DISABLED',
+      scheduleExpression: 'cron(0 * * * ? *)',
+      scheduleExpressionTimezone: 'UTC',
+      flexibleTimeWindow: { mode: 'OFF' },
+      target: {
+        arn: ingestionFn.functionArn,
+        roleArn: ingestionSchedulerRole.roleArn,
+        retryPolicy: {
+          maximumRetryAttempts: 2,
+          maximumEventAgeInSeconds: 3600,
+        },
+      },
+    });
+
+    // ── Transform Lambda ──────────────────────────────────────────────────────
+    // Triggered by S3 ObjectCreated on raw/ prefix.
+    // Normalizes records, calls Bedrock for extraction + embedding, writes to Aurora.
+    const transformDir = path.join(__dirname, '../../backend/transform');
+    const transformFn = new lambda.Function(this, 'TransformFn', {
+      functionName: 'ai-insight-hub-transform',
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'handler.handler',
+      code: lambda.Code.fromAsset(transformDir, {
+        bundling: {
+          image: lambda.Runtime.PYTHON_3_12.bundlingImage,
+          command: [
+            'bash', '-c',
+            'pip install -r requirements.txt --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 -t /asset-output --quiet && cp -r . /asset-output',
+          ],
+          local: {
+            tryBundle(outputDir: string): boolean {
+              return tryLocalPythonBundle(transformDir, 'requirements.txt', outputDir, [
+                { source: '.', target: '.' },
+              ]);
+            },
+          },
+        },
+      }),
+      timeout: cdk.Duration.minutes(10),
+      memorySize: 512,
+      environment: {
+        DB_SECRET_ARN: cluster.secret!.secretArn,
+        BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+      },
+      description: 'Transform: S3 ObjectCreated raw/ → normalize → Bedrock extract → Aurora insights + pgvector',
+    });
+
+    cluster.secret!.grantRead(transformFn);
+    transformFn.node.addDependency(dbInit);
+
+    transformFn.addToRolePolicy(new iam.PolicyStatement({
+      sid: 'TransformBedrockInvoke',
+      actions: ['bedrock:InvokeModel'],
+      resources: ['*'],
+    }));
+
+    // Read raw files + manage processed=true tag for idempotency
+    rawBucket.grantRead(transformFn);
+    transformFn.addToRolePolicy(new iam.PolicyStatement({
+      sid: 'TransformS3Tags',
+      actions: ['s3:GetObjectTagging', 's3:PutObjectTagging'],
+      resources: [rawBucket.arnForObjects('*')],
+    }));
+
+    rawBucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED,
+      new s3n.LambdaDestination(transformFn),
+      { prefix: 'raw/' },
+    );
 
     // ── Batch Lambda ───────────────────────────────────────────────────────────
     // Lambda is NOT in a VPC — has full internet access for Bedrock.

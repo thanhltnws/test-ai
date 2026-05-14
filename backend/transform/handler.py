@@ -36,7 +36,7 @@ from prompt import build_extract_prompt
 
 load_dotenv()
 
-DEFAULT_MODEL_ID  = "us.anthropic.claude-3-haiku-20240307-v1:0"
+DEFAULT_MODEL_ID  = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
 MAX_BATCH_CHARS   = 150_000
 MAX_BATCH_RECORDS = 40
 API_DELAY_S       = 1.0
@@ -160,7 +160,8 @@ def _insert_insights(rows: list[dict]) -> tuple[int, dict[str, str]]:
     conn = _get_conn()
     upserted = 0
     id_map: dict[str, str] = {}  # pre-assigned row["id"] → actual DB id
-    with conn.cursor() as cur:
+    cur = conn.cursor()
+    try:
         for row in rows:
             cur.execute(
                 """
@@ -205,7 +206,9 @@ def _insert_insights(rows: list[dict]) -> tuple[int, dict[str, str]]:
             if result:
                 upserted += 1
                 id_map[row["id"]] = str(result[0])
-    conn.commit()
+        conn.commit()
+    finally:
+        cur.close()
     return upserted, id_map
 
 
@@ -301,7 +304,8 @@ def _insert_embeddings(
 
     conn = _get_conn()
     inserted = 0
-    with conn.cursor() as cur:
+    cur = conn.cursor()
+    try:
         if empty_db_ids:
             cur.execute(
                 "DELETE FROM insight_embeddings WHERE insight_id = ANY(%s::uuid[])",
@@ -321,7 +325,9 @@ def _insert_embeddings(
             )
             if cur.rowcount:
                 inserted += 1
-    conn.commit()
+        conn.commit()
+    finally:
+        cur.close()
     return inserted
 
 
