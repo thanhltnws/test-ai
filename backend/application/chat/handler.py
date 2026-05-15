@@ -2,8 +2,8 @@
 Chat Lambda — Feature 2 (Chatbox / RAG).
 
 Nhận câu hỏi free-text từ end user qua POST /chat, truy vấn Aurora (structured
-insights) và pgvector (semantic chunks — comment out, chờ bảng insight_embedding
-được tạo), merge context, gọi Gemini (dev) hoặc Bedrock Claude Sonnet (prod),
+signals) và pgvector (semantic chunks), merge context, gọi Gemini (dev) hoặc
+Bedrock Claude Sonnet (prod),
 trả về { answer, references }.
 
 Local run:
@@ -86,15 +86,15 @@ def query_aurora(conn, question: str) -> dict:
     cur = conn.cursor()
     try:
         # 1. Background aggregates — always included regardless of question
-        cur.execute("SELECT COUNT(*), AVG(confidence_score) FROM insights")
+        cur.execute("SELECT COUNT(*), AVG(confidence_score) FROM signals")
         row = cur.fetchone()
-        ctx["total_insights"] = row[0]
+        ctx["total_signals"] = row[0]
         ctx["avg_confidence"] = round(float(row[1] or 0), 2)
 
         cur.execute(
             """
             SELECT pain_point, COUNT(*) AS cnt
-            FROM insights, unnest(pain_points) AS pain_point
+            FROM signals, unnest(pain_points) AS pain_point
             WHERE pain_point <> ''
             GROUP BY pain_point
             ORDER BY cnt DESC LIMIT 15
@@ -105,7 +105,7 @@ def query_aurora(conn, question: str) -> dict:
         cur.execute(
             """
             SELECT use_case, COUNT(*) AS cnt
-            FROM insights, unnest(use_cases) AS use_case
+            FROM signals, unnest(use_cases) AS use_case
             WHERE use_case <> ''
             GROUP BY use_case
             ORDER BY cnt DESC LIMIT 10
@@ -116,7 +116,7 @@ def query_aurora(conn, question: str) -> dict:
         cur.execute(
             """
             SELECT funnel_stage, COUNT(*) AS cnt
-            FROM insights
+            FROM signals
             WHERE funnel_stage IS NOT NULL
             GROUP BY funnel_stage
             ORDER BY cnt DESC
@@ -137,13 +137,13 @@ def query_aurora(conn, question: str) -> dict:
             cur.execute(
                 f"""
                 SELECT source_url, pain_points, use_cases, funnel_stage, confidence_score
-                FROM insights
+                FROM signals
                 WHERE {conditions}
                 ORDER BY confidence_score DESC LIMIT 8
                 """,
                 params,
             )
-            ctx["relevant_insights"] = [
+            ctx["relevant_signals"] = [
                 {
                     "source_url": r[0],
                     "pain_points": r[1],
@@ -154,7 +154,7 @@ def query_aurora(conn, question: str) -> dict:
                 for r in cur.fetchall()
             ]
         else:
-            ctx["relevant_insights"] = []
+            ctx["relevant_signals"] = []
 
         return ctx
     finally:
@@ -219,14 +219,14 @@ def query_pgvector(conn, question: str) -> list[dict]:
         cur.execute(
             """
             SELECT
-                e.insight_id,
+                e.signal_id,
                 i.source,
                 i.source_url,
                 i.funnel_stage,
                 e.embedding_text,
                 1 - (e.embedding <=> %s::vector) AS score
-            FROM insight_embeddings e
-            JOIN insights i ON i.id = e.insight_id
+            FROM signal_embeddings e
+            JOIN signals i ON i.id = e.signal_id
             ORDER BY e.embedding <=> %s::vector
             LIMIT %s
             """,
@@ -234,7 +234,7 @@ def query_pgvector(conn, question: str) -> list[dict]:
         )
         return [
             {
-                "insight_id": str(r[0]),
+                "signal_id": str(r[0]),
                 "score": round(float(r[5]), 3),
                 "source": r[1],
                 "source_url": r[2],
@@ -358,8 +358,8 @@ def lambda_handler(event=None, context=None):
         vector_ctx = query_pgvector(conn, question)
 
         print(
-            f"Aurora: {sql_ctx['total_insights']} total insights, "
-            f"{len(sql_ctx['relevant_insights'])} keyword-matched rows"
+            f"Aurora: {sql_ctx['total_signals']} total signals, "
+            f"{len(sql_ctx['relevant_signals'])} keyword-matched rows"
         )
         print(f"pgvector: {len(vector_ctx)} semantic chunks")
 

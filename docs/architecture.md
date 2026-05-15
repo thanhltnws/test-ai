@@ -6,7 +6,7 @@
 
 ## Overview
 
-AI Insight Hub aggregates customer insights scattered across HubSpot, Jira/Redmine, email, and manual notes into a insights store, then surfaces them through a dashboard and a natural-language chatbox.
+AI Insight Hub aggregates customer insights scattered across HubSpot, Jira/Redmine, email, and manual notes into a signals store, then surfaces them through a dashboard and a natural-language chatbox.
 
 ```
 Data Sources → Ingestion (Lambda + S3) → Transform (Glue + Bedrock) → Aurora + pgvector → Application (Feature 1 + Feature 2)
@@ -42,7 +42,7 @@ Normalize schema, rule-based dedup, field mapping for structured fields (deal st
 
 Processes unstructured text (call notes, email body, ops notes). Two parallel outputs:
 
-**Output A — Structured extraction → Aurora PostgreSQL `insights` table**
+**Output A — Structured extraction → Aurora PostgreSQL `signals` table**
 
 | Field | Description |
 |---|---|
@@ -54,11 +54,11 @@ Processes unstructured text (call notes, email body, ops notes). Two parallel ou
 | `confidence_score` | Model confidence in the extraction |
 | `source_url` | Link back to the originating Jira ticket or HubSpot deal |
 
-`source_url` is mandatory — every row in `insights` must have it. Reject any INSERT missing this field.
+`source_url` is optional — populated when the source has an external URL (CRM deal, Jira/Redmine ticket). NULL for sources with no deep link (email body, form submission, ops notes).
 
-**Output B — Vector embedding → Aurora pgvector (`insight_embeddings`)**
+**Output B — Vector embedding → Aurora pgvector (`signal_embeddings`)**
 
-`embedding_text` (AI-generated NL summary) is embedded and stored in `insight_embeddings` with `source_url` in metadata. Enables semantic search at the Application layer.
+`embedding_text` (AI-generated NL summary) is embedded and stored in `signal_embeddings` with `source_url` in metadata. Enables semantic search at the Application layer.
 
 ---
 
@@ -68,30 +68,30 @@ Built on API Gateway + Lambda. Two independent features. Both enrich the Bedrock
 
 ### Feature 1 · Dashboard (batch)
 
-EventBridge triggers Lambda daily.
+EventBridge triggers `InsightsBuilderFn` (`ai-insight-hub-insights-builder`) daily.
 
 ```
 EventBridge scheduler
-  → Lambda batch compute
-      → SQL query Aurora insights          (structured aggregates)
+  → InsightsBuilderFn (ai-insight-hub-insights-builder)
+      → SQL query Aurora signals           (structured aggregates)
       → pgvector semantic search           (pattern context)
       → enrich prompt with both contexts
       → Bedrock / Claude
           Case A → top pain points, funnel distribution
           Case B → ICP narrative, action recommendations for Sales & Marketing
-  → Aurora recommendations (pre-computed results)
+  → Aurora insights (pre-computed results)
   → GET /insights/summary
   → Frontend · Dashboard (charts, ICP cards, recommendations)
 ```
 
 ### Feature 2 · Chatbox (RAG)
 
-User submits a free-text question. Lambda retrieves context from both stores, enriches the prompt, and streams the response back.
+User submits a free-text question. `DashboardApiFn` (`ai-insight-hub-dashboard-api`) retrieves context from both stores, enriches the prompt, and streams the response back.
 
 ```
 POST /chat
-  → Lambda RAG
-      → SQL query Aurora insights          (structured fields + source_url)
+  → DashboardApiFn (ai-insight-hub-dashboard-api)
+      → SQL query Aurora signals           (structured fields + source_url)
       → pgvector semantic search           (relevant chunks + source_url)
       → merge context → enrich prompt
   → Bedrock / Claude
@@ -111,11 +111,12 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 | Ingestion | S3 | Raw landing zone |
 | Transform | AWS Glue ETL | Schema normalize, dedup, field map |
 | Transform | Bedrock / Claude | AI field extraction from unstructured text |
-| Store | Aurora PostgreSQL | `insights` table (source of truth) + `recommendations` (pre-computed) |
-| Store | Aurora pgvector | Vector index — `insight_embeddings` + source_url metadata |
+| Store | Aurora PostgreSQL | `signals` table (source of truth) + `insights` (pre-computed) |
+| Store | Aurora pgvector | Vector index — `signal_embeddings` + source_url metadata |
 | Store | ElastiCache Redis | API response cache |
 | Application | EventBridge | Batch scheduler |
-| Application | Lambda | Batch compute + RAG handler |
+| Application | InsightsBuilderFn (`ai-insight-hub-insights-builder`) | Batch compute |
+| Application | DashboardApiFn (`ai-insight-hub-dashboard-api`) | RAG handler + REST API |
 | Application | Bedrock / Claude | Prompt enrichment, ICP narrative, recommendations, RAG answers |
 | Application | API Gateway | REST API layer |
 | Application | Amplify | Web frontend — React + Vite + Recharts |
@@ -124,7 +125,8 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 
 ## Key Design Decisions
 
-- **`source_url` is mandatory in `insights` and pgvector metadata** — every response in both features links back to the exact Jira ticket or HubSpot deal that produced the insight.
+- **`source_url` in `signals` and pgvector metadata** — links back to the originating CRM/Jira/Redmine record when available; optional, NULL for sources without an external URL.
+- **Two-layer idempotency in Transform Lambda** — S3 object tag `processed=true` is the file-level guard: on duplicate S3 events the tag is checked first and the Lambda returns early (Bedrock never called). `ON CONFLICT (source, source_id) DO UPDATE` in Aurora is the record-level guard: re-processing the same file overwrites existing rows with the latest extraction result rather than creating duplicates. The UPSERT semantics are intentional — re-running with an updated prompt or model produces better extractions that should replace the old ones.
 - **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich Bedrock prompt with context from Aurora (structured) and pgvector (semantic) before generating output.
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
 - **Fixed SQL is primary for Aurora queries** — Text-to-SQL deferred as fallback only, due to hallucination risk on complex queries.

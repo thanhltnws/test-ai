@@ -1,18 +1,19 @@
 """
 Batch compute Lambda — Feature 1 (Dashboard).
 
-EventBridge triggers this daily. Queries Aurora (structured aggregates) and
-Aurora pgvector (semantic pattern context), enriches a prompt
-with both, then calls Gemini (dev) or Bedrock (prod) and appends a new row to
-the recommendations table.
+EventBridge triggers this daily. For each granularity (weekly, monthly,
+quarterly, yearly) it decides whether to run based on the current date,
+queries Aurora + pgvector for that period window, calls the LLM, and
+appends new rows to the insights table (append-only, never overrides).
 
 Local run:
     python backend/application/batch/handler.py
 """
+import calendar
 import json
 import os
 import sys
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import pg8000.dbapi
@@ -24,13 +25,18 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 from common.auth import auth_error, is_options_request, options_response
 from prompt import build_batch_prompt
 
-PERIOD       = "daily"
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+
+RESULT_TYPES = [
+    "pain_points_summary",
+    "funnel_distribution",
+    "icp_narrative",
+    "recommendations",
+]
 
 # Cached across Lambda invocations within the same container
 _db_url_cache: str | None = None
 
-# Seed queries used to pull semantic pattern context from pgvector.
 _VECTOR_QUERIES = [
     "customer pain points and challenges",
     "sales objections and friction",
@@ -40,7 +46,8 @@ _VECTOR_QUERIES = [
 _VECTOR_TOP_K_PER_QUERY = 10
 
 
-# ── db url ────────────────────────────────────────────────────────────────────
+# ── db ────────────────────────────────────────────────────────────────────────
+# TODO: extract _get_db_url + _pg_connect to common/db.py — identical copy exists in chat/handler.py
 
 def _get_db_url() -> str:
     global _db_url_cache
@@ -76,71 +83,101 @@ def _pg_connect():
     )
 
 
-# ── period window ──────────────────────────────────────────────────────────────
+# ── granularity schedule ──────────────────────────────────────────────────────
 
-def get_period_start() -> date:
-    return date.today()
+def _period_start(granularity: str, today: date) -> date:
+    if granularity == "weekly":
+        return today - timedelta(days=today.weekday())
+    if granularity == "monthly":
+        return today.replace(day=1)
+    if granularity == "quarterly":
+        quarter_month = ((today.month - 1) // 3) * 3 + 1
+        return today.replace(month=quarter_month, day=1)
+    if granularity == "yearly":
+        return today.replace(month=1, day=1)
+    raise ValueError(f"Unknown granularity: {granularity}")
+
+
+def _is_last_day_of_quarter(d: date) -> bool:
+    return (d.month, d.day) in {(3, 31), (6, 30), (9, 30), (12, 31)}
+
+
+def _should_run(granularity: str, today: date) -> bool:
+    if granularity in ("weekly", "monthly"):
+        return True
+    if granularity == "quarterly":
+        # every Monday, plus the last day of each quarter for a clean final snapshot
+        return today.weekday() == 0 or _is_last_day_of_quarter(today)
+    if granularity == "yearly":
+        # 1st of each month, plus Dec 31 for the year-end snapshot
+        return today.day == 1 or (today.month == 12 and today.day == 31)
+    return False
 
 
 # ── aurora queries ─────────────────────────────────────────────────────────────
 
-def query_aurora(conn, period_start: date) -> dict:
+def query_aurora(conn, period_start: date, period_end: date) -> dict:
     ctx: dict = {}
     cur = conn.cursor()
     try:
-        # Demo mode: aggregate all currently imported insights. A production
-        # version should reintroduce explicit daily/weekly/monthly windows.
-        cur.execute("SELECT COUNT(*), AVG(confidence_score) FROM insights")
+        # COALESCE: use record_date when available, fall back to extracted_at date
+        date_filter = "COALESCE(record_date, extracted_at::date) BETWEEN %s AND %s"
+
+        cur.execute(
+            f"SELECT COUNT(*), AVG(confidence_score) FROM signals WHERE {date_filter}",
+            (period_start, period_end),
+        )
         row = cur.fetchone()
         ctx["summary"] = {
-            "total_insights": row[0],
+            "total_signals": row[0],
             "avg_confidence": round(float(row[1] or 0), 2),
         }
 
         cur.execute(
-            """
+            f"""
             SELECT pain_point, COUNT(*) AS cnt
-            FROM insights, unnest(pain_points) AS pain_point
-            WHERE pain_point <> ''
+            FROM signals, unnest(pain_points) AS pain_point
+            WHERE pain_point <> '' AND {date_filter}
             GROUP BY pain_point
             ORDER BY cnt DESC
-            LIMIT 20
-            """
+            """,
+            (period_start, period_end),
         )
         ctx["top_pain_points"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
 
         cur.execute(
-            """
+            f"""
             SELECT objection, COUNT(*) AS cnt
-            FROM insights, unnest(objections) AS objection
-            WHERE objection <> ''
+            FROM signals, unnest(objections) AS objection
+            WHERE objection <> '' AND {date_filter}
             GROUP BY objection
             ORDER BY cnt DESC
-            LIMIT 15
-            """
+            """,
+            (period_start, period_end),
         )
         ctx["top_objections"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
 
         cur.execute(
-            """
+            f"""
             SELECT use_case, COUNT(*) AS cnt
-            FROM insights, unnest(use_cases) AS use_case
-            WHERE use_case <> ''
+            FROM signals, unnest(use_cases) AS use_case
+            WHERE use_case <> '' AND {date_filter}
             GROUP BY use_case
             ORDER BY cnt DESC
-            LIMIT 15
-            """
+            """,
+            (period_start, period_end),
         )
         ctx["top_use_cases"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
 
         cur.execute(
-            """
+            f"""
             SELECT funnel_stage, COUNT(*) AS cnt
-            FROM insights
-            WHERE funnel_stage IS NOT NULL
+            FROM signals
+            WHERE funnel_stage IS NOT NULL AND {date_filter}
             GROUP BY funnel_stage
             ORDER BY cnt DESC
-            """
+            """,
+            (period_start, period_end),
         )
         rows = cur.fetchall()
         total = sum(r[1] for r in rows)
@@ -154,19 +191,19 @@ def query_aurora(conn, period_start: date) -> dict:
         ]
 
         cur.execute(
-            """
+            f"""
             SELECT
                 icp->>'sector'       AS sector,
                 icp->>'company_size' AS company_size,
                 icp->>'deal_size'    AS deal_size,
                 icp->>'region'       AS region,
                 COUNT(*)             AS cnt
-            FROM insights
-            WHERE icp IS NOT NULL
+            FROM signals
+            WHERE icp IS NOT NULL AND {date_filter}
             GROUP BY sector, company_size, deal_size, region
             ORDER BY cnt DESC
-            LIMIT 15
-            """
+            """,
+            (period_start, period_end),
         )
         ctx["icp_breakdown"] = [
             {
@@ -184,7 +221,7 @@ def query_aurora(conn, period_start: date) -> dict:
         cur.close()
 
 
-# pgvector queries
+# ── pgvector queries ───────────────────────────────────────────────────────────
 
 def _embed_gemini(texts: list[str]) -> list[list[float]]:
     from google import genai
@@ -224,13 +261,11 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
 
 def _embed_queries(texts: list[str]) -> list[list[float]]:
     if _is_dev():
-        print("Embeddings: Gemini (dev/local)")
         return _embed_gemini(texts)
-    print("Embeddings: Bedrock (prod)")
     return _embed_bedrock(texts)
 
 
-def query_pgvector(conn, period_start: date) -> list[dict]:
+def query_pgvector(conn, period_start: date, period_end: date) -> list[dict]:
     try:
         query_vectors = _embed_queries(_VECTOR_QUERIES)
     except Exception as exc:
@@ -245,18 +280,19 @@ def query_pgvector(conn, period_start: date) -> list[dict]:
             cur.execute(
                 """
                 SELECT
-                    e.insight_id,
+                    e.signal_id,
                     i.source,
                     i.source_url,
                     i.funnel_stage,
                     e.embedding_text,
                     1 - (e.embedding <=> %s::vector) AS score
-                FROM insight_embeddings e
-                JOIN insights i ON i.id = e.insight_id
+                FROM signal_embeddings e
+                JOIN signals i ON i.id = e.signal_id
+                WHERE COALESCE(i.record_date, i.extracted_at::date) BETWEEN %s AND %s
                 ORDER BY e.embedding <=> %s::vector
                 LIMIT %s
                 """,
-                (str(vector), str(vector), _VECTOR_TOP_K_PER_QUERY),
+                (str(vector), period_start, period_end, str(vector), _VECTOR_TOP_K_PER_QUERY),
             )
             for row in cur.fetchall():
                 uid = str(row[0])
@@ -293,7 +329,6 @@ def _is_dev() -> bool:
     ).strip().lower()
     if env:
         return env in {"local", "dev", "development", "test"}
-
     return not (
         os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
         or os.environ.get("DB_SECRET_ARN")
@@ -337,9 +372,7 @@ def _call_bedrock(prompt_text: str) -> str:
 
 def call_llm(prompt_text: str) -> str:
     if _is_dev():
-        print("LLM: Gemini (dev)")
         return _call_gemini(prompt_text)
-    print("LLM: Bedrock (prod)")
     return _call_bedrock(prompt_text)
 
 
@@ -356,16 +389,8 @@ def parse_json_response(text: str) -> dict:
 
 # ── write results ──────────────────────────────────────────────────────────────
 
-RESULT_TYPES = [
-    "pain_points_summary",
-    "funnel_distribution",
-    "icp_narrative",
-    "recommendations",
-]
-
-
-def write_recommendations(
-    conn, results: dict, period: str, period_start: date
+def write_insights(
+    conn, results: dict, granularity: str, period_start: date, period_end: date
 ) -> int:
     written = 0
     cur = conn.cursor()
@@ -375,10 +400,10 @@ def write_recommendations(
                 continue
             cur.execute(
                 """
-                INSERT INTO recommendations (period, period_start, result_type, payload)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO insights (period, period_start, period_end, result_type, payload)
+                VALUES (%s, %s, %s, %s, %s)
                 """,
-                (period, period_start, rt, json.dumps(results[rt])),
+                (granularity, period_start, period_end, rt, json.dumps(results[rt])),
             )
             written += 1
         conn.commit()
@@ -400,36 +425,47 @@ def handler(event=None, context=None):
     if auth_failure:
         return auth_failure
 
-    period_start = get_period_start()
-    print(f"Period: {PERIOD}, period_start: {period_start}")
+    today = date.today()
+    granularities = ["weekly", "monthly", "quarterly", "yearly"]
 
     conn = _pg_connect()
+    summary = {}
     try:
-        sql_ctx = query_aurora(conn, period_start)
+        for granularity in granularities:
+            if not _should_run(granularity, today):
+                print(f"[{granularity}] skipped (not due today)")
+                continue
 
-        total = sql_ctx["summary"]["total_insights"]
-        print(
-            f"Aurora: {total} insights, avg_confidence={sql_ctx['summary']['avg_confidence']}"
-        )
-        if total == 0:
-            print("No insights in period window — skipping LLM call.")
-            return {"statusCode": 200, "body": "no data"}
+            period_start = _period_start(granularity, today)
+            period_end   = today
+            print(f"[{granularity}] period {period_start} → {period_end}")
 
-        vector_ctx = query_pgvector(conn, period_start)
-        print(f"pgvector: {len(vector_ctx)} semantic chunks")
+            sql_ctx = query_aurora(conn, period_start, period_end)
+            total = sql_ctx["summary"]["total_signals"]
+            print(f"[{granularity}] {total} signals, avg_confidence={sql_ctx['summary']['avg_confidence']}")
 
-        prompt  = build_batch_prompt(sql_ctx, vector_ctx, PERIOD)
-        raw     = call_llm(prompt)
-        results = parse_json_response(raw)
-        written = write_recommendations(conn, results, PERIOD, period_start)
-        print(f"Wrote {written} recommendation rows for {period_start}.")
+            if total == 0:
+                print(f"[{granularity}] no signals in window — skipping LLM call")
+                summary[granularity] = {"written": 0, "skipped": "no data"}
+                continue
 
-        return {
-            "statusCode": 200,
-            "body": json.dumps({"period_start": str(period_start), "written": written}),
-        }
+            vector_ctx = query_pgvector(conn, period_start, period_end)
+            print(f"[{granularity}] {len(vector_ctx)} semantic chunks")
+
+            prompt  = build_batch_prompt(sql_ctx, vector_ctx, granularity, period_start, period_end)
+            raw     = call_llm(prompt)
+            results = parse_json_response(raw)
+            written = write_insights(conn, results, granularity, period_start, period_end)
+            print(f"[{granularity}] wrote {written} insight rows")
+            summary[granularity] = {"written": written, "period_start": str(period_start)}
+
     finally:
         conn.close()
+
+    return {
+        "statusCode": 200,
+        "body": json.dumps({"date": str(today), "granularities": summary}),
+    }
 
 
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
 import json
+from datetime import date
 
 _BATCH_TEMPLATE = """\
-You are an AI analyst for a B2B software company. \
-Below is aggregated customer insight data from today's batch run.
+You are an AI analyst for a B2B software company.
+Below is aggregated customer insight data for the {granularity} period \
+({period_start} to {period_end}).
 
 === STRUCTURED DATA (SQL aggregates from Aurora) ===
 {sql_context}
@@ -48,7 +50,9 @@ Rules:
 def build_batch_prompt(
     sql_context: dict,
     vector_context: list[dict],
-    period: str = "daily",
+    granularity: str,
+    period_start: date,
+    period_end: date,
 ) -> str:
     vector_section = (
         json.dumps(vector_context, indent=2, ensure_ascii=False)
@@ -56,7 +60,9 @@ def build_batch_prompt(
         else "(no vector data available - pgvector returned no semantic chunks)"
     )
     return _BATCH_TEMPLATE.format(
-        period=period,
+        granularity=granularity,
+        period_start=period_start,
+        period_end=period_end,
         sql_context=json.dumps(sql_context, indent=2, ensure_ascii=False),
         vector_context=vector_section,
     )

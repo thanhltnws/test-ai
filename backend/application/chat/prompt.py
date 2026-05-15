@@ -8,10 +8,10 @@ Do not invent data, statistics, or source references not present in the context.
 === USER QUESTION ===
 {question}
 
-=== STRUCTURED CONTEXT (Aurora — aggregates across all insights) ===
+=== STRUCTURED CONTEXT (Aurora — aggregates across all signals) ===
 {sql_aggregates}
 
-=== RELEVANT INSIGHTS (Aurora — keyword-matched rows) ===
+=== RELEVANT SIGNALS (Aurora — keyword-matched rows) ===
 {sql_relevant}
 
 === SEMANTIC CONTEXT (pgvector — similar text chunks) ===
@@ -41,18 +41,18 @@ def build_chat_prompt(
     vector_ctx: list[dict],
 ) -> str:
     aggregates = {
-        "total_insights": sql_ctx.get("total_insights", 0),
+        "total_signals": sql_ctx.get("total_signals", 0),
         "avg_confidence": sql_ctx.get("avg_confidence", 0),
         "top_pain_points": sql_ctx.get("top_pain_points", []),
         "top_use_cases": sql_ctx.get("top_use_cases", []),
         "funnel_distribution": sql_ctx.get("funnel_distribution", []),
     }
 
-    relevant = sql_ctx.get("relevant_insights", [])
+    relevant = sql_ctx.get("relevant_signals", [])
     relevant_section = (
         json.dumps(relevant, indent=2, ensure_ascii=False)
         if relevant
-        else "(no keyword-matched insights found)"
+        else "(no keyword-matched signals found)"
     )
 
     vector_section = (

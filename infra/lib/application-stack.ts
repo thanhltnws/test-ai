@@ -5,6 +5,8 @@ import {
   aws_scheduler as scheduler,
   aws_ec2 as ec2,
   aws_rds as rds,
+  aws_s3 as s3,
+  aws_s3_notifications as s3n,
   custom_resources as cr,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -148,7 +150,7 @@ export class ApplicationStack extends cdk.Stack {
 
     // ── DB schema bootstrap ───────────────────────────────────────────────────
     // Runs the idempotent MVP schema against Aurora after the cluster is ready.
-    // This creates pgvector, insights, insight_embeddings, and recommendations.
+    // This creates pgvector, signals, signal_embeddings, and insights.
     const dbInitDir = path.join(__dirname, '../lambda/db-init');
     const dbInitHash = crypto
       .createHash('sha256')
@@ -197,11 +199,145 @@ export class ApplicationStack extends cdk.Stack {
     });
     dbInit.node.addDependency(cluster);
 
-    // ── Batch Lambda ───────────────────────────────────────────────────────────
+    // ── S3 raw landing zone ───────────────────────────────────────────────────
+    const rawBucket = new s3.Bucket(this, 'RawBucket', {
+      bucketName: `ai-insight-hub-raw-${this.account}-${this.region}`,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+
+    // ── Ingestion Lambda ───────────────────────────────────────────────────────
+    // Reads sources.json + mock/ files → writes raw JSON to S3.
+    // Triggered manually via Function URL for demo (no schedule).
+    const ingestionFn = new lambda.Function(this, 'IngestionFn', {
+      functionName: 'ai-insight-hub-ingestion',
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'handler.handler',
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, '../../backend/ingestion'),
+        {
+          bundling: {
+            image: lambda.Runtime.PYTHON_3_12.bundlingImage,
+            command: [
+              'bash', '-c',
+              'pip install -r requirements.txt --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 -t /asset-output --quiet && cp -r . /asset-output',
+            ],
+            local: {
+              tryBundle(outputDir: string): boolean {
+                const srcDir = path.join(__dirname, '../../backend/ingestion');
+                return tryLocalPythonBundle(srcDir, 'requirements.txt', outputDir, [
+                  { source: '.', target: '.' },
+                ]);
+              },
+            },
+          },
+        },
+      ),
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 256,
+      environment: {
+        S3_BUCKET: rawBucket.bucketName,
+      },
+      description: 'Ingestion: read sources.json → write raw JSON to S3 raw/',
+    });
+
+    rawBucket.grantPut(ingestionFn);
+
+    const ingestionUrl = ingestionFn.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedOrigins: ['*'],
+        allowedMethods: [lambda.HttpMethod.POST],
+        allowedHeaders: ['Content-Type'],
+      },
+    });
+
+    // Hourly schedule — DISABLED for demo (trigger manually via Function URL or
+    // upload JSON directly to S3 raw/ to kick off transform).
+    const ingestionSchedulerRole = new iam.Role(this, 'IngestionSchedulerRole', {
+      assumedBy: new iam.ServicePrincipal('scheduler.amazonaws.com'),
+      description: 'Allows EventBridge Scheduler to invoke the ingestion Lambda',
+    });
+    ingestionFn.grantInvoke(ingestionSchedulerRole);
+
+    new scheduler.CfnSchedule(this, 'HourlyIngestionSchedule', {
+      name: 'ai-insight-hub-hourly-ingestion',
+      description: 'Trigger ingestion Lambda hourly to pull from configured sources',
+      state: 'DISABLED',
+      scheduleExpression: 'cron(0 * * * ? *)',
+      scheduleExpressionTimezone: 'UTC',
+      flexibleTimeWindow: { mode: 'OFF' },
+      target: {
+        arn: ingestionFn.functionArn,
+        roleArn: ingestionSchedulerRole.roleArn,
+        retryPolicy: {
+          maximumRetryAttempts: 2,
+          maximumEventAgeInSeconds: 3600,
+        },
+      },
+    });
+
+    // ── Transform Lambda ──────────────────────────────────────────────────────
+    // Triggered by S3 ObjectCreated on raw/ prefix.
+    // Normalizes records, calls Bedrock for extraction + embedding, writes to Aurora.
+    const transformDir = path.join(__dirname, '../../backend/transform');
+    const transformFn = new lambda.Function(this, 'TransformFn', {
+      functionName: 'ai-insight-hub-transform',
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'handler.handler',
+      code: lambda.Code.fromAsset(transformDir, {
+        bundling: {
+          image: lambda.Runtime.PYTHON_3_12.bundlingImage,
+          command: [
+            'bash', '-c',
+            'pip install -r requirements.txt --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.12 -t /asset-output --quiet && cp -r . /asset-output',
+          ],
+          local: {
+            tryBundle(outputDir: string): boolean {
+              return tryLocalPythonBundle(transformDir, 'requirements.txt', outputDir, [
+                { source: '.', target: '.' },
+              ]);
+            },
+          },
+        },
+      }),
+      timeout: cdk.Duration.minutes(10),
+      memorySize: 512,
+      environment: {
+        DB_SECRET_ARN: cluster.secret!.secretArn,
+        BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+      },
+      description: 'Transform: S3 ObjectCreated raw/ → normalize → Bedrock extract → Aurora signals + pgvector',
+    });
+
+    cluster.secret!.grantRead(transformFn);
+    transformFn.node.addDependency(dbInit);
+
+    transformFn.addToRolePolicy(new iam.PolicyStatement({
+      sid: 'TransformBedrockInvoke',
+      actions: ['bedrock:InvokeModel'],
+      resources: ['*'],
+    }));
+
+    // Read raw files + manage processed=true tag for idempotency
+    rawBucket.grantRead(transformFn);
+    transformFn.addToRolePolicy(new iam.PolicyStatement({
+      sid: 'TransformS3Tags',
+      actions: ['s3:GetObjectTagging', 's3:PutObjectTagging'],
+      resources: [rawBucket.arnForObjects('*')],
+    }));
+
+    rawBucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED,
+      new s3n.LambdaDestination(transformFn),
+      { prefix: 'raw/' },
+    );
+
+    // ── Insights Builder Lambda ────────────────────────────────────────────────
     // Lambda is NOT in a VPC — has full internet access for Bedrock.
     // Reads DB credentials from Secrets Manager at cold start via DB_SECRET_ARN.
-    const batchFn = new lambda.Function(this, 'BatchFn', {
-      functionName: 'ai-insight-hub-batch',
+    const insightsBuilderFn = new lambda.Function(this, 'InsightsBuilderFn', {
+      functionName: 'ai-insight-hub-insights-builder',
       runtime: lambda.Runtime.PYTHON_3_12,
       handler: 'handler.handler',
       code: lambda.Code.fromAsset(
@@ -238,21 +374,21 @@ export class ApplicationStack extends cdk.Stack {
         BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
         BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
-      description: 'Daily batch: Aurora aggregates + Bedrock → recommendations table',
+      description: 'Insights builder: Aurora signals aggregates + Bedrock → insights table',
     });
 
     // Grant Lambda read access to the Aurora credentials secret
-    cluster.secret!.grantRead(batchFn);
-    batchFn.node.addDependency(dbInit);
+    cluster.secret!.grantRead(insightsBuilderFn);
+    insightsBuilderFn.node.addDependency(dbInit);
 
-    batchFn.addToRolePolicy(new iam.PolicyStatement({
+    insightsBuilderFn.addToRolePolicy(new iam.PolicyStatement({
       sid: 'BedrockInvokeModel',
       actions: ['bedrock:InvokeModel'],
       resources: ['*'],
     }));
 
     // ── Lambda Function URL ────────────────────────────────────────────────────
-    const batchUrl = batchFn.addFunctionUrl({
+    const insightsBuilderUrl = insightsBuilderFn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
         allowedOrigins: ['*'],
@@ -264,21 +400,21 @@ export class ApplicationStack extends cdk.Stack {
     // ── EventBridge Scheduler ──────────────────────────────────────────────────
     const schedulerRole = new iam.Role(this, 'SchedulerRole', {
       assumedBy: new iam.ServicePrincipal('scheduler.amazonaws.com'),
-      description: 'Allows EventBridge Scheduler to invoke the batch Lambda',
+      description: 'Allows EventBridge Scheduler to invoke the insights-builder Lambda',
     });
-    batchFn.grantInvoke(schedulerRole);
+    insightsBuilderFn.grantInvoke(schedulerRole);
 
-    new scheduler.CfnSchedule(this, 'DailyBatchSchedule', {
-      name: 'ai-insight-hub-daily-batch',
-      description: 'Trigger daily insight batch compute at 02:00 UTC',
+    new scheduler.CfnSchedule(this, 'DailyInsightsBuilderSchedule', {
+      name: 'ai-insight-hub-daily-insights-builder',
+      description: 'Trigger daily insights-builder compute at 02:00 UTC',
       // TODO: Enable this for a live environment. Disabled for MVP demos so
-      // batch runs are triggered manually through the Function URL.
+      // insights-builder runs are triggered manually through the Function URL.
       state: 'DISABLED',
       scheduleExpression: 'cron(0 2 * * ? *)',
       scheduleExpressionTimezone: 'UTC',
       flexibleTimeWindow: { mode: 'OFF' },
       target: {
-        arn: batchFn.functionArn,
+        arn: insightsBuilderFn.functionArn,
         roleArn: schedulerRole.roleArn,
         retryPolicy: {
           maximumRetryAttempts: 2,
@@ -288,8 +424,8 @@ export class ApplicationStack extends cdk.Stack {
     });
 
     // ── API Lambda ─────────────────────────────────────────────────────────────
-    const apiFn = new lambda.Function(this, 'ApiFn', {
-      functionName: 'ai-insight-hub-api',
+    const dashboardApiFn = new lambda.Function(this, 'DashboardApiFn', {
+      functionName: 'ai-insight-hub-dashboard-api',
       runtime: lambda.Runtime.PYTHON_3_12,
       handler: 'handler.handler',
       code: lambda.Code.fromAsset(
@@ -317,13 +453,13 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
       },
-      description: 'REST API: GET /recommendations',
+      description: 'Dashboard API: GET /insights',
     });
 
-    cluster.secret!.grantRead(apiFn);
-    apiFn.node.addDependency(dbInit);
+    cluster.secret!.grantRead(dashboardApiFn);
+    dashboardApiFn.node.addDependency(dbInit);
 
-    const apiUrl = apiFn.addFunctionUrl({
+    const dashboardApiUrl = dashboardApiFn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
         allowedOrigins: ['*'],
@@ -403,23 +539,33 @@ export class ApplicationStack extends cdk.Stack {
       description: 'Secrets Manager ARN - retrieve credentials via: aws secretsmanager get-secret-value --secret-id <arn>',
     });
 
-    new cdk.CfnOutput(this, 'BatchFunctionUrl', {
-      value: batchUrl.url,
-      description: 'POST to manually trigger a batch run',
+    new cdk.CfnOutput(this, 'InsightsBuilderFunctionUrl', {
+      value: insightsBuilderUrl.url,
+      description: 'POST to manually trigger insights-builder run',
     });
 
-    new cdk.CfnOutput(this, 'BatchFunctionArn', {
-      value: batchFn.functionArn,
+    new cdk.CfnOutput(this, 'InsightsBuilderFunctionArn', {
+      value: insightsBuilderFn.functionArn,
     });
 
-    new cdk.CfnOutput(this, 'ApiFunctionUrl', {
-      value: apiUrl.url,
-      description: 'GET /recommendations or GET /insights',
+    new cdk.CfnOutput(this, 'DashboardApiFunctionUrl', {
+      value: dashboardApiUrl.url,
+      description: 'GET /insights — dashboard data',
     });
 
     new cdk.CfnOutput(this, 'ChatFunctionUrl', {
       value: chatUrl.url,
       description: 'POST /chat — { question } → { answer, references }',
+    });
+
+    new cdk.CfnOutput(this, 'IngestionFunctionUrl', {
+      value: ingestionUrl.url,
+      description: 'POST to manually trigger ingestion run → writes raw/ to S3',
+    });
+
+    new cdk.CfnOutput(this, 'RawBucketName', {
+      value: rawBucket.bucketName,
+      description: 'S3 bucket for raw ingestion data',
     });
   }
 }

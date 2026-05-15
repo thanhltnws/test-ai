@@ -22,7 +22,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -34,7 +34,7 @@ from prompt import build_classify_prompt, build_extract_prompt
 
 # ── constants ─────────────────────────────────────────────────────────────────
 
-MAX_BATCH_CHARS    = 300_000   # ~75K tokens input — safe for Gemini Flash 1.5 (1M limit)
+MAX_BATCH_CHARS    = 150_000   # ~37K tokens — aligned with transform/handler.py
 MAX_BATCH_RECORDS  = 40        # 8192 output tokens / ~200 tokens per record
 API_DELAY_S        = 5.0   # Gemini free tier: 15 RPM → min 4s between calls
 CONTEXT_CHAR_LIMIT = 10_000    # chars of context file content sent per batch
@@ -44,7 +44,7 @@ GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 
 _HERE       = Path(__file__).parent
 RAW_DIR     = _HERE / "raw"
-OUTPUT_PATH = _HERE / "data" / "insights_seed.json"
+OUTPUT_PATH = _HERE / "data" / "signals_seed.json"
 
 
 # ── subfolder discovery ───────────────────────────────────────────────────────
@@ -218,6 +218,16 @@ def extract_batch(
 
 # ── row assembler ─────────────────────────────────────────────────────────────
 
+def _parse_record_date(val) -> str | None:
+    """Parse YYYY-MM-DD string from AI output → date string for DB DATE column. None if absent/invalid."""
+    if val:
+        try:
+            return date.fromisoformat(str(val).strip()[:10]).isoformat()
+        except (ValueError, TypeError):
+            pass
+    return None
+
+
 def assemble_row(source: str, source_id: str, source_url: str,
                  raw_text: str, ext: dict) -> dict:
     return {
@@ -231,7 +241,8 @@ def assemble_row(source: str, source_id: str, source_url: str,
         "icp":              ext.get("icp") or {},
         "funnel_stage":     ext.get("funnel_stage") or "consideration",
         "confidence_score": round(float(ext.get("confidence_score") or 0.5), 2),
-        "embedding_text":    str(ext.get("embedding_text") or "").strip(),
+        "embedding_text":   str(ext.get("embedding_text") or "").strip(),
+        "record_date":      _parse_record_date(ext.get("record_date")),
         "ingested_at":      datetime.now(timezone.utc).isoformat(),
     }
 

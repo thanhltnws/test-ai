@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AI Insight Hub — local dev SAM template
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 300
+    MemorySize: 512
+
+Resources:
+  TransformFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ai-insight-hub-transform
+      CodeUri: backend/transform/
+      Handler: handler.handler
+      Description: S3 ObjectCreated (raw/) → normalize → Bedrock/Gemini extract → Aurora insights
+      Environment:
+        Variables:
+          AWS_REGION: ap-southeast-1
+          BEDROCK_MODEL_ID: us.anthropic.claude-haiku-4-5-20251001-v1:0
+          DATABASE_URL: postgresql://postgres:postgres@host.docker.internal:5431/ai_insight_hub
+          GEMINI_API_KEY: "AIzaSyD80w01IjX_mP0THqOQ2EqQCP2Ntn0efiQ"

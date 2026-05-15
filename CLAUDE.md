@@ -25,7 +25,7 @@ Gemini → Bedrock: swap endpoint + key only, logic unchanged.
 - Prompts always in `prompt.py`, never inline in `handler.py`
 - Each Lambda is self-contained with its own `requirements.txt`
 - Pipeline outputs JSON — never generate raw SQL strings
-- `source_url` is mandatory in every `insights` row — reject INSERT without it
+- `source_url` is optional — populated when the source has an external URL (CRM, Jira, Redmine); NULL is valid for email, form, and ops note sources
 
 ## Data situation
 

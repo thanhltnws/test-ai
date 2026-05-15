@@ -5,10 +5,10 @@ interface ImportMetaEnv {
   readonly VITE_API_URL?: string
   readonly VITE_API_LAMBDA_URL?: string
   readonly VITE_CHAT_LAMBDA_URL?: string
-  readonly VITE_BATCH_LAMBDA_URL?: string
-  readonly VITE_API_RECOMMENDATIONS_PATH?: string
+  readonly VITE_INSIGHTS_BUILDER_LAMBDA_URL?: string
+  readonly VITE_API_INSIGHTS_PATH?: string
   readonly VITE_CHAT_PATH?: string
-  readonly VITE_BATCH_PATH?: string
+  readonly VITE_INSIGHTS_BUILDER_PATH?: string
   readonly VITE_AUTH_TOKEN_STORAGE_KEY?: string
 }
 
