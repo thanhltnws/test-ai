@@ -1,0 +1,4800 @@
+[
+    {
+        "id":  "deal_2000",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_LOST",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-05",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-26T08:40:20Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-26T12:40:20Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-27T08:40:20Z"
+                           }
+                       ],
+        "lostReason":  "khách muốn thấy thêm case study trong domain tương tự"
+    },
+    {
+        "id":  "act_5001",
+        "entity":  "activity",
+        "company":  "ShopWave Korea",
+        "activityType":  "meeting",
+        "owner":  "trung.do",
+        "timestamp":  "2026-03-30T04:20:25Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "language_concern",
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2002",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-13",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-22T12:46:35Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "qa",
+                         "team_extension"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-04-22T16:46:35Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-04-23T12:46:35Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5003",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "note",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-03-30T14:49:07Z",
+        "summary":  "The client asked for a more predictable delivery cadence for EduSpring Japan.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "act_5004",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-04-01T23:08:38Z",
+        "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2005",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "DISCOVERY",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-06-06",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-05-08T09:52:13Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai",
+                         "mobile"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "Mira Commerce JP is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-05-08T13:52:13Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-09T09:52:13Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2006",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_LOST",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-04-11",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-30T20:58:44Z",
+        "source":  "referral",
+        "services":  [
+                         "ai",
+                         "mobile"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "Kirei Care KK wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-03-31T00:58:44Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-31T20:58:44Z"
+                           }
+                       ],
+        "lostReason":  "khách lo ngại ramp-up mất quá nhiều thời gian"
+    },
+    {
+        "id":  "deal_2007",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-04-19",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-19T05:19:22Z",
+        "source":  "referral",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "web"
+                     ],
+        "notes":  "Finamo KK is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-03-19T09:19:22Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-20T05:19:22Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2008",
+        "entity":  "deal",
+        "name":  "LMS Revamp - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "NEGOTIATION",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-25",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-25T08:45:04Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "ai"
+                     ],
+        "notes":  "PayFlow Systems is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "Bên PayFlow Systems đang so sánh với hai vendor khác trong khu vực.",
+                               "type":  "call",
+                               "at":  "2026-03-25T12:45:04Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-03-26T08:45:04Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5009",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "call",
+        "owner":  "trung.do",
+        "timestamp":  "2026-04-28T15:04:22Z",
+        "summary":  "Mira Commerce JP wants clearer ownership on QA and UAT support.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "timeline_risk",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "deal_2010",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-06-05",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-04T21:18:58Z",
+        "source":  "referral",
+        "services":  [
+                         "qa",
+                         "ai"
+                     ],
+        "notes":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới.",
+        "activities":  [
+                           {
+                               "summary":  "Bên PayFlow Systems đang so sánh với hai vendor khác trong khu vực.",
+                               "type":  "call",
+                               "at":  "2026-05-05T01:18:58Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-05T21:18:58Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5011",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "meeting",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-03-02T00:35:37Z",
+        "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "language_concern",
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "act_5012",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "proposal_review",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-04-08T01:42:20Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2013",
+        "entity":  "deal",
+        "name":  "LMS Revamp - PropVista SG",
+        "company":  "PropVista SG",
+        "stage":  "PROPOSAL",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-05-14",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-29T18:09:51Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "PropVista SG is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain real estate.",
+                               "type":  "call",
+                               "at":  "2026-03-29T22:09:51Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-30T18:09:51Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7014",
+        "entity":  "contact",
+        "company":  "Kirei Care KK",
+        "fullName":  "Yuki Tanaka",
+        "title":  "Engineering Manager",
+        "email":  "contact14@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+        "relationshipStatus":  "warm"
+    },
+    {
+        "id":  "deal_2015",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-04-22",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-27T20:40:43Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai",
+                         "mobile",
+                         "web"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-28T00:40:43Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-28T20:40:43Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2016",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-06-01",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-06T11:56:26Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "web",
+                         "ai"
+                     ],
+        "notes":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-05-06T15:56:26Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-07T11:56:26Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2017",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "PROPOSAL",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-04-30",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-29T17:01:46Z",
+        "source":  "referral",
+        "services":  [
+                         "team_extension",
+                         "ai",
+                         "web"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "Mira Commerce JP wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-03-29T21:01:46Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-30T17:01:46Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2018",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-04-25",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-27T09:47:09Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "qa",
+                         "mobile",
+                         "team_extension"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-03-27T13:47:09Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-28T09:47:09Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2019",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "CLOSED_LOST",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-04-27",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-25T09:18:13Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "web",
+                         "ai",
+                         "qa"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The client asked for a more predictable delivery cadence for PayFlow Systems.",
+                               "type":  "call",
+                               "at":  "2026-03-25T13:18:13Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-03-26T09:18:13Z"
+                           }
+                       ],
+        "lostReason":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery"
+    },
+    {
+        "id":  "deal_2020",
+        "entity":  "deal",
+        "name":  "QA Managed Service - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "NEGOTIATION",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-31",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-28T14:11:41Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "team_extension"
+                     ],
+        "notes":  "ShopWave Korea is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "ShopWave Korea wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-04-28T18:11:41Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-04-29T14:11:41Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5021",
+        "entity":  "activity",
+        "company":  "MedCore Korea",
+        "activityType":  "note",
+        "owner":  "hoa.pham",
+        "timestamp":  "2026-03-08T20:36:17Z",
+        "summary":  "MedCore Korea wants clearer ownership on QA and UAT support.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "contact_7022",
+        "entity":  "contact",
+        "company":  "MedCore Korea",
+        "fullName":  "Kim Minseo",
+        "title":  "CTO",
+        "email":  "contact22@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "MedCore Korea is sensitive to compliance and production support coverage.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "deal_2023",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-06-06",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-08T03:57:23Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "team_extension",
+                         "web",
+                         "mobile"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-05-08T07:57:23Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-05-09T03:57:23Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2024",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-04-18",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-17T00:17:23Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "qa"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-03-17T04:17:23Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-03-18T00:17:23Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5025",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "proposal_review",
+        "owner":  "hoa.pham",
+        "timestamp":  "2026-03-25T04:26:25Z",
+        "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2026",
+        "entity":  "deal",
+        "name":  "QA Managed Service - PropVista SG",
+        "company":  "PropVista SG",
+        "stage":  "PROPOSAL",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-19",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-25T08:38:03Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "ai"
+                     ],
+        "notes":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain real estate.",
+        "activities":  [
+                           {
+                               "summary":  "Bên PropVista SG đang so sánh với hai vendor khác trong khu vực.",
+                               "type":  "call",
+                               "at":  "2026-03-25T12:38:03Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-26T08:38:03Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5027",
+        "entity":  "activity",
+        "company":  "PayFlow Systems",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-03-25T11:46:11Z",
+        "summary":  "PayFlow Systems wants clearer ownership on QA and UAT support.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure",
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2028",
+        "entity":  "deal",
+        "name":  "Platform Modernization - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-06-15",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-08T08:25:41Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "mobile",
+                         "web"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-05-08T12:25:41Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-05-09T08:25:41Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5029",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "note",
+        "owner":  "trung.do",
+        "timestamp":  "2026-04-30T22:11:56Z",
+        "summary":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "language_concern",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "act_5030",
+        "entity":  "activity",
+        "company":  "Hanbit Platform",
+        "activityType":  "meeting",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-04-28T04:12:51Z",
+        "summary":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "timeline_risk",
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2031",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "CLOSED_LOST",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-27",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-04-27T22:56:53Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai",
+                         "web",
+                         "qa"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-04-28T02:56:53Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-04-28T22:56:53Z"
+                           }
+                       ],
+        "lostReason":  "giá của Newwave cao hơn vendor India khoảng 10-15%"
+    },
+    {
+        "id":  "contact_7032",
+        "entity":  "contact",
+        "company":  "Mira Commerce JP",
+        "fullName":  "Daniel Wong",
+        "title":  "Product Lead",
+        "email":  "contact32@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "Mira Commerce JP is sensitive to compliance and production support coverage.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "deal_2033",
+        "entity":  "deal",
+        "name":  "QA Managed Service - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "CLOSED_WON",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-04-14",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-23T03:05:43Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai",
+                         "mobile"
+                     ],
+        "notes":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-03-23T07:05:43Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-03-24T03:05:43Z"
+                           }
+                       ],
+        "wonReason":  "Proposal rõ scope và có kế hoạch handover từ vendor cũ."
+    },
+    {
+        "id":  "deal_2034",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "NEGOTIATION",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-21",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-06T10:39:29Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-05-06T14:39:29Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-05-07T10:39:29Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5035",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "proposal_review",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-05-08T16:16:50Z",
+        "summary":  "Kirei Care KK is sensitive to compliance and production support coverage.",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "deal_2036",
+        "entity":  "deal",
+        "name":  "LMS Revamp - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-04-27",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-25T19:32:24Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "mobile"
+                     ],
+        "notes":  "EduSpring Japan is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-03-25T23:32:24Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-03-26T19:32:24Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2037",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "PROPOSAL",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-30",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-08T02:07:22Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-05-08T06:07:22Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-09T02:07:22Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2038",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-30",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-04-30T03:39:41Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "mobile",
+                         "web"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-04-30T07:39:41Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-05-01T03:39:41Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2039",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "CLOSED_WON",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-06-05",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-05-08T01:01:48Z",
+        "source":  "referral",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-05-08T05:01:48Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-09T01:01:48Z"
+                           }
+                       ],
+        "wonReason":  "Proposal rõ scope và có kế hoạch handover từ vendor cũ."
+    },
+    {
+        "id":  "deal_2040",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "NEGOTIATION",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-04-17",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-27T21:58:09Z",
+        "source":  "referral",
+        "services":  [
+                         "qa",
+                         "mobile",
+                         "ai"
+                     ],
+        "notes":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo.",
+        "activities":  [
+                           {
+                               "summary":  "Bên PayFlow Systems đang so sánh với hai vendor khác trong khu vực.",
+                               "type":  "call",
+                               "at":  "2026-03-28T01:58:09Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-28T21:58:09Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5041",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "meeting",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-03-23T17:23:39Z",
+        "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (EduSpring Japan)",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "deal_2042",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "CLOSED_WON",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-04-20",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-24T11:12:59Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "team_extension",
+                         "ai",
+                         "web"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-03-24T15:12:59Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-25T11:12:59Z"
+                           }
+                       ],
+        "wonReason":  "Japanese-speaking BA tạo được niềm tin với stakeholder."
+    },
+    {
+        "id":  "deal_2043",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-11",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-27T00:23:19Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "web",
+                         "ai",
+                         "qa"
+                     ],
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-03-27T04:23:19Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-28T00:23:19Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5044",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-03-18T07:18:41Z",
+        "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "deal_2045",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_WON",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-03-16",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-05T13:19:05Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "team_extension",
+                         "mobile"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-05T17:19:05Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-06T13:19:05Z"
+                           }
+                       ],
+        "wonReason":  "Proposal rõ scope và có kế hoạch handover từ vendor cũ."
+    },
+    {
+        "id":  "deal_2046",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "CLOSED_WON",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-03",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-25T23:00:44Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai",
+                         "web",
+                         "team_extension"
+                     ],
+        "notes":  "The client asked for a more predictable delivery cadence for Hanbit Platform.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-03-26T03:00:44Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-26T23:00:44Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "act_5047",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "meeting",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-05-14T14:38:52Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "price_pressure",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "contact_7048",
+        "entity":  "contact",
+        "company":  "Mira Commerce JP",
+        "fullName":  "Kim Minseo",
+        "title":  "Product Lead",
+        "email":  "contact48@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "deal_2049",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-06-05",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-12T09:21:20Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai"
+                     ],
+        "notes":  "Finamo KK is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "Finamo KK is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-05-12T13:21:20Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-13T09:21:20Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2050",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Learnify APAC",
+        "company":  "Learnify APAC",
+        "stage":  "PROPOSAL",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-04-11",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-05T13:16:38Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "qa",
+                         "web"
+                     ],
+        "notes":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain e-learning.",
+        "activities":  [
+                           {
+                               "summary":  "Bên Learnify APAC đang so sánh với hai vendor khác trong khu vực.",
+                               "type":  "call",
+                               "at":  "2026-03-05T17:16:38Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-03-06T13:16:38Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5051",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "proposal_review",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-05-04T02:14:31Z",
+        "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Mira Commerce JP)",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2052",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - PropVista SG",
+        "company":  "PropVista SG",
+        "stage":  "DISCOVERY",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-05-05",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-27T01:23:31Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "team_extension"
+                     ],
+        "notes":  "PropVista SG wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain real estate.",
+                               "type":  "call",
+                               "at":  "2026-03-27T05:23:31Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-28T01:23:31Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7053",
+        "entity":  "contact",
+        "company":  "Learnify APAC",
+        "fullName":  "Aoi Sakamoto",
+        "title":  "CTO",
+        "email":  "contact53@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "Khách Learnify APAC muốn team chủ động hơn ở phần discovery.",
+        "relationshipStatus":  "warm"
+    },
+    {
+        "id":  "deal_2054",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-17",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-04-29T01:04:24Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web",
+                         "qa",
+                         "mobile"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-04-29T05:04:24Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-04-30T01:04:24Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7055",
+        "entity":  "contact",
+        "company":  "Kirei Care KK",
+        "fullName":  "Kim Minseo",
+        "title":  "Engineering Manager",
+        "email":  "contact55@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "Kirei Care KK is sensitive to compliance and production support coverage.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "act_5056",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "note",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-04-15T19:42:01Z",
+        "summary":  "先方は納期遅延を非常に懸念している。 (Mira Commerce JP)",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "timeline_risk",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "deal_2057",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "CLOSED_LOST",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-04-29",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-17T16:43:20Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "qa"
+                     ],
+        "notes":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo.",
+        "activities":  [
+                           {
+                               "summary":  "Bên PayFlow Systems đang so sánh với hai vendor khác trong khu vực.",
+                               "type":  "call",
+                               "at":  "2026-03-17T20:43:20Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-18T16:43:20Z"
+                           }
+                       ],
+        "lostReason":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery"
+    },
+    {
+        "id":  "deal_2058",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "CLOSED_WON",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-14",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-30T21:42:05Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "qa",
+                         "ai",
+                         "web"
+                     ],
+        "notes":  "The client asked for a more predictable delivery cadence for Hanbit Platform.",
+        "activities":  [
+                           {
+                               "summary":  "Hanbit Platform is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-03-31T01:42:05Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-31T21:42:05Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "deal_2059",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-03-29",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-04T17:50:27Z",
+        "source":  "referral",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "Kirei Care KK is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-03-04T21:50:27Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-05T17:50:27Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5060",
+        "entity":  "activity",
+        "company":  "Hanbit Platform",
+        "activityType":  "meeting",
+        "owner":  "hoa.pham",
+        "timestamp":  "2026-05-02T03:35:33Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "price_pressure",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "deal_2061",
+        "entity":  "deal",
+        "name":  "LMS Revamp - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "NEGOTIATION",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-06-05",
+        "owner":  "trung.do",
+        "createdAt":  "2026-04-27T08:12:02Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "qa",
+                         "mobile"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-04-27T12:12:02Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-04-28T08:12:02Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7062",
+        "entity":  "contact",
+        "company":  "PayFlow Systems",
+        "fullName":  "Aoi Sakamoto",
+        "title":  "Engineering Manager",
+        "email":  "contact62@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "The client asked for a more predictable delivery cadence for PayFlow Systems.",
+        "relationshipStatus":  "engaged"
+    },
+    {
+        "id":  "contact_7063",
+        "entity":  "contact",
+        "company":  "Finamo KK",
+        "fullName":  "Aoi Sakamoto",
+        "title":  "Product Lead",
+        "email":  "contact63@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "先方は納期遅延を非常に懸念している。 (Finamo KK)",
+        "relationshipStatus":  "new"
+    },
+    {
+        "id":  "act_5064",
+        "entity":  "activity",
+        "company":  "Finamo KK",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-04-17T06:17:04Z",
+        "summary":  "Finamo KK is sensitive to compliance and production support coverage.",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "timeline_risk",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "contact_7065",
+        "entity":  "contact",
+        "company":  "MedCore Korea",
+        "fullName":  "Daniel Wong",
+        "title":  "CTO",
+        "email":  "contact65@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "MedCore Korea is sensitive to compliance and production support coverage.",
+        "relationshipStatus":  "engaged"
+    },
+    {
+        "id":  "contact_7066",
+        "entity":  "contact",
+        "company":  "EduSpring Japan",
+        "fullName":  "Daniel Wong",
+        "title":  "CTO",
+        "email":  "contact66@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "relationshipStatus":  "new"
+    },
+    {
+        "id":  "deal_2067",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "PROPOSAL",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-06-20",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-08T23:08:20Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "ai"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-05-09T03:08:20Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-05-09T23:08:20Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2068",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "CLOSED_LOST",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-03-24",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-09T10:10:50Z",
+        "source":  "referral",
+        "services":  [
+                         "team_extension"
+                     ],
+        "notes":  "Mira Commerce JP is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-03-09T14:10:50Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-10T10:10:50Z"
+                           }
+                       ],
+        "lostReason":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery"
+    },
+    {
+        "id":  "deal_2069",
+        "entity":  "deal",
+        "name":  "Platform Modernization - MedCore Korea",
+        "company":  "MedCore Korea",
+        "stage":  "CLOSED_LOST",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-03-29",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-09T23:08:00Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "web",
+                         "mobile"
+                     ],
+        "notes":  "The client asked for a more predictable delivery cadence for MedCore Korea.",
+        "activities":  [
+                           {
+                               "summary":  "MedCore Korea is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-03-10T03:08:00Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-10T23:08:00Z"
+                           }
+                       ],
+        "lostReason":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery"
+    },
+    {
+        "id":  "deal_2070",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "NEGOTIATION",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-14",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-01T20:56:06Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "qa",
+                         "team_extension",
+                         "mobile"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-04-02T00:56:06Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-04-02T20:56:06Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2071",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_LOST",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-02",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-29T18:22:16Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "web",
+                         "team_extension",
+                         "mobile"
+                     ],
+        "notes":  "Kirei Care KK wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-29T22:22:16Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-03-30T18:22:16Z"
+                           }
+                       ],
+        "lostReason":  "khách lo ngại ramp-up mất quá nhiều thời gian"
+    },
+    {
+        "id":  "deal_2072",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-06",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-28T01:35:08Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "qa",
+                         "mobile"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-03-28T05:35:08Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-29T01:35:08Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2073",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-06",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-25T23:29:02Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai",
+                         "team_extension",
+                         "web"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-03-26T03:29:02Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-03-26T23:29:02Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7074",
+        "entity":  "contact",
+        "company":  "Kirei Care KK",
+        "fullName":  "Park Jisoo",
+        "title":  "Procurement Manager",
+        "email":  "contact74@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Kirei Care KK)",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "deal_2075",
+        "entity":  "deal",
+        "name":  "Platform Modernization - MedCore Korea",
+        "company":  "MedCore Korea",
+        "stage":  "CLOSED_LOST",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-04-09",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-26T17:37:45Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "team_extension"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-03-26T21:37:45Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-03-27T17:37:45Z"
+                           }
+                       ],
+        "lostReason":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery"
+    },
+    {
+        "id":  "contact_7076",
+        "entity":  "contact",
+        "company":  "PayFlow Systems",
+        "fullName":  "Park Jisoo",
+        "title":  "Product Lead",
+        "email":  "contact76@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "PayFlow Systems wants clearer ownership on QA and UAT support.",
+        "relationshipStatus":  "new"
+    },
+    {
+        "id":  "deal_2077",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "DISCOVERY",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-13",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-29T15:19:54Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai",
+                         "team_extension",
+                         "web"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-04-29T19:19:54Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-04-30T15:19:54Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2078",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-06-01",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-13T19:12:26Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "Mira Commerce JP wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-05-13T23:12:26Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-05-14T19:12:26Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2079",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "NEGOTIATION",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-04-13",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-28T23:21:25Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "mobile",
+                         "web",
+                         "ai"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-03-29T03:21:25Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-29T23:21:25Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5080",
+        "entity":  "activity",
+        "company":  "Finamo KK",
+        "activityType":  "call",
+        "owner":  "hoa.pham",
+        "timestamp":  "2026-05-02T00:04:30Z",
+        "summary":  "オフショア体制でも日本語での進行を重視している。 (Finamo KK)",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2081",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Learnify APAC",
+        "company":  "Learnify APAC",
+        "stage":  "CLOSED_LOST",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-05",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-04-22T12:26:58Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "qa"
+                     ],
+        "notes":  "Learnify APAC wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "Learnify APAC is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-04-22T16:26:58Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-04-23T12:26:58Z"
+                           }
+                       ],
+        "lostReason":  "khách lo ngại ramp-up mất quá nhiều thời gian"
+    },
+    {
+        "id":  "act_5082",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "meeting",
+        "owner":  "trung.do",
+        "timestamp":  "2026-03-27T08:56:48Z",
+        "summary":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "act_5083",
+        "entity":  "activity",
+        "company":  "ShopWave Korea",
+        "activityType":  "proposal_review",
+        "owner":  "hoa.pham",
+        "timestamp":  "2026-03-29T10:27:53Z",
+        "summary":  "ShopWave Korea is sensitive to compliance and production support coverage.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2084",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-31",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-28T01:25:33Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "web",
+                         "qa",
+                         "mobile"
+                     ],
+        "notes":  "The client asked for a more predictable delivery cadence for Kirei Care KK.",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-04-28T05:25:33Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-04-29T01:25:33Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2085",
+        "entity":  "deal",
+        "name":  "Platform Modernization - PropVista SG",
+        "company":  "PropVista SG",
+        "stage":  "NEGOTIATION",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-06",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-27T12:04:13Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain real estate.",
+                               "type":  "call",
+                               "at":  "2026-03-27T16:04:13Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-28T12:04:13Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5086",
+        "entity":  "activity",
+        "company":  "Hanbit Platform",
+        "activityType":  "meeting",
+        "owner":  "hoa.pham",
+        "timestamp":  "2026-04-09T08:02:49Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "act_5087",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "call",
+        "owner":  "trung.do",
+        "timestamp":  "2026-03-25T04:13:14Z",
+        "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (EduSpring Japan)",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "deal_2088",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "CLOSED_LOST",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-06-04",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-14T16:31:01Z",
+        "source":  "referral",
+        "services":  [
+                         "mobile",
+                         "qa"
+                     ],
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-05-14T20:31:01Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-15T16:31:01Z"
+                           }
+                       ],
+        "lostReason":  "giá của Newwave cao hơn vendor India khoảng 10-15%"
+    },
+    {
+        "id":  "deal_2089",
+        "entity":  "deal",
+        "name":  "LMS Revamp - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "CLOSED_WON",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-18",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-01T01:08:37Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web",
+                         "qa",
+                         "team_extension"
+                     ],
+        "notes":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-05-01T05:08:37Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-05-02T01:08:37Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "act_5090",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "call",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-05-05T04:23:19Z",
+        "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "contact_7091",
+        "entity":  "contact",
+        "company":  "EduSpring Japan",
+        "fullName":  "Daniel Wong",
+        "title":  "Product Lead",
+        "email":  "contact91@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+        "relationshipStatus":  "new"
+    },
+    {
+        "id":  "contact_7092",
+        "entity":  "contact",
+        "company":  "Kirei Care KK",
+        "fullName":  "Yuki Tanaka",
+        "title":  "CTO",
+        "email":  "contact92@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+        "relationshipStatus":  "new"
+    },
+    {
+        "id":  "contact_7093",
+        "entity":  "contact",
+        "company":  "PropVista SG",
+        "fullName":  "Kim Minseo",
+        "title":  "Product Lead",
+        "email":  "contact93@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "contact_7094",
+        "entity":  "contact",
+        "company":  "Hanbit Platform",
+        "fullName":  "Yuki Tanaka",
+        "title":  "Engineering Manager",
+        "email":  "contact94@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+        "relationshipStatus":  "new"
+    },
+    {
+        "id":  "deal_2095",
+        "entity":  "deal",
+        "name":  "QA Managed Service - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-04-29",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-22T11:08:11Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "qa",
+                         "web",
+                         "team_extension"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-03-22T15:08:11Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-23T11:08:11Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5096",
+        "entity":  "activity",
+        "company":  "Hanbit Platform",
+        "activityType":  "note",
+        "owner":  "trung.do",
+        "timestamp":  "2026-05-05T19:24:13Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "deal_2097",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-17",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-03T22:20:22Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai"
+                     ],
+        "notes":  "Finamo KK is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-05-04T02:20:22Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-05-04T22:20:22Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2098",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - MedCore Korea",
+        "company":  "MedCore Korea",
+        "stage":  "PROPOSAL",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-30",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-03T01:36:38Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "team_extension",
+                         "ai",
+                         "qa"
+                     ],
+        "notes":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "activities":  [
+                           {
+                               "summary":  "The client asked for a more predictable delivery cadence for MedCore Korea.",
+                               "type":  "call",
+                               "at":  "2026-05-03T05:36:38Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-04T01:36:38Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5099",
+        "entity":  "activity",
+        "company":  "PayFlow Systems",
+        "activityType":  "meeting",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-05-08T16:22:32Z",
+        "summary":  "Khách PayFlow Systems muốn team chủ động hơn ở phần discovery.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "deal_2100",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "CLOSED_WON",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-03-29",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-17T15:49:41Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "qa",
+                         "ai",
+                         "mobile"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "The client asked for a more predictable delivery cadence for Mira Commerce JP.",
+                               "type":  "call",
+                               "at":  "2026-03-17T19:49:41Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-18T15:49:41Z"
+                           }
+                       ],
+        "wonReason":  "Japanese-speaking BA tạo được niềm tin với stakeholder."
+    },
+    {
+        "id":  "deal_2101",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "CLOSED_WON",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-05-10",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-26T04:10:02Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "team_extension"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-03-26T08:10:02Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-27T04:10:02Z"
+                           }
+                       ],
+        "wonReason":  "Proposal rõ scope và có kế hoạch handover từ vendor cũ."
+    },
+    {
+        "id":  "deal_2102",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_LOST",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-04-15",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-18T15:07:02Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "team_extension",
+                         "web"
+                     ],
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-18T19:07:02Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-19T15:07:02Z"
+                           }
+                       ],
+        "lostReason":  "procurement yêu cầu benchmark thêm hai vendor khác"
+    },
+    {
+        "id":  "deal_2103",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "NEGOTIATION",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-04-16",
+        "owner":  "trung.do",
+        "createdAt":  "2026-04-04T12:45:57Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "ai"
+                     ],
+        "notes":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "Hanbit Platform is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-04-04T16:45:57Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-04-05T12:45:57Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7104",
+        "entity":  "contact",
+        "company":  "Mira Commerce JP",
+        "fullName":  "Aoi Sakamoto",
+        "title":  "Procurement Manager",
+        "email":  "contact104@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+        "relationshipStatus":  "warm"
+    },
+    {
+        "id":  "act_5105",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-03-20T14:27:11Z",
+        "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "price_pressure",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "deal_2106",
+        "entity":  "deal",
+        "name":  "QA Managed Service - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "CLOSED_LOST",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-04-28",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-26T20:32:33Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "team_extension"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The client asked for a more predictable delivery cadence for ShopWave Korea.",
+                               "type":  "call",
+                               "at":  "2026-03-27T00:32:33Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-27T20:32:33Z"
+                           }
+                       ],
+        "lostReason":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn"
+    },
+    {
+        "id":  "deal_2107",
+        "entity":  "deal",
+        "name":  "QA Managed Service - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "DISCOVERY",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-06-01",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-08T03:51:35Z",
+        "source":  "referral",
+        "services":  [
+                         "ai",
+                         "team_extension"
+                     ],
+        "notes":  "EduSpring Japan is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "EduSpring Japan is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-05-08T07:51:35Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-09T03:51:35Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2108",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-23",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-04-26T18:06:23Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "mobile",
+                         "team_extension"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-04-26T22:06:23Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-04-27T18:06:23Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2109",
+        "entity":  "deal",
+        "name":  "LMS Revamp - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-04-12",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-29T22:42:40Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "qa",
+                         "ai"
+                     ],
+        "notes":  "ShopWave Korea wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-03-30T02:42:40Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-30T22:42:40Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5110",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-04-30T00:12:19Z",
+        "summary":  "先方は納期遅延を非常に懸念している。 (Mira Commerce JP)",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "price_pressure",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "deal_2111",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - PropVista SG",
+        "company":  "PropVista SG",
+        "stage":  "NEGOTIATION",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-05",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-21T06:46:54Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai"
+                     ],
+        "notes":  "PropVista SG wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "Khách PropVista SG muốn team chủ động hơn ở phần discovery.",
+                               "type":  "call",
+                               "at":  "2026-04-21T10:46:54Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-04-22T06:46:54Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7112",
+        "entity":  "contact",
+        "company":  "Finamo KK",
+        "fullName":  "Kim Minseo",
+        "title":  "Engineering Manager",
+        "email":  "contact112@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "Finamo KK is sensitive to compliance and production support coverage.",
+        "relationshipStatus":  "warm"
+    },
+    {
+        "id":  "deal_2113",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "PROPOSAL",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-29",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-15T05:03:21Z",
+        "source":  "referral",
+        "services":  [
+                         "web",
+                         "ai"
+                     ],
+        "notes":  "ShopWave Korea is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "ShopWave Korea is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-04-15T09:03:21Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-04-16T05:03:21Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7114",
+        "entity":  "contact",
+        "company":  "EduSpring Japan",
+        "fullName":  "Aoi Sakamoto",
+        "title":  "CTO",
+        "email":  "contact114@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+        "relationshipStatus":  "engaged"
+    },
+    {
+        "id":  "deal_2115",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-06-16",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-11T09:11:53Z",
+        "source":  "referral",
+        "services":  [
+                         "qa",
+                         "ai",
+                         "team_extension"
+                     ],
+        "notes":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-05-11T13:11:53Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-12T09:11:53Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7116",
+        "entity":  "contact",
+        "company":  "Mira Commerce JP",
+        "fullName":  "Daniel Wong",
+        "title":  "Product Lead",
+        "email":  "contact116@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "Mira Commerce JP is sensitive to compliance and production support coverage.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "deal_2117",
+        "entity":  "deal",
+        "name":  "Platform Modernization - PropVista SG",
+        "company":  "PropVista SG",
+        "stage":  "DISCOVERY",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-04-24",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-24T18:13:41Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "qa",
+                         "mobile",
+                         "web"
+                     ],
+        "notes":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo.",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-03-24T22:13:41Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-03-25T18:13:41Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2118",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-06-10",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-06T09:55:32Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "mobile"
+                     ],
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "Finamo KK wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-05-06T13:55:32Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-07T09:55:32Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2119",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "CLOSED_WON",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-06-16",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-09T10:12:21Z",
+        "source":  "referral",
+        "services":  [
+                         "qa",
+                         "web"
+                     ],
+        "notes":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-05-09T14:12:21Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-05-10T10:12:21Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "deal_2120",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "PROPOSAL",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-18",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-24T01:38:34Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-04-24T05:38:34Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-04-25T01:38:34Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7121",
+        "entity":  "contact",
+        "company":  "Learnify APAC",
+        "fullName":  "Park Jisoo",
+        "title":  "Procurement Manager",
+        "email":  "contact121@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain e-learning.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "act_5122",
+        "entity":  "activity",
+        "company":  "ShopWave Korea",
+        "activityType":  "call",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-03-29T03:47:50Z",
+        "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "contact_7123",
+        "entity":  "contact",
+        "company":  "Mira Commerce JP",
+        "fullName":  "Daniel Wong",
+        "title":  "Procurement Manager",
+        "email":  "contact123@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "The client asked for a more predictable delivery cadence for Mira Commerce JP.",
+        "relationshipStatus":  "warm"
+    },
+    {
+        "id":  "deal_2124",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "PROPOSAL",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-04-24",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-26T23:28:16Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "qa"
+                     ],
+        "notes":  "Finamo KK wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-03-27T03:28:16Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-27T23:28:16Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2125",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "PROPOSAL",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-07",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-26T07:14:44Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "web",
+                         "ai",
+                         "qa"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-03-26T11:14:44Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-27T07:14:44Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5126",
+        "entity":  "activity",
+        "company":  "Finamo KK",
+        "activityType":  "note",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-04-05T21:17:11Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "timeline_risk",
+                          "language_concern"
+                      ]
+    },
+    {
+        "id":  "act_5127",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "proposal_review",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-03-04T05:52:01Z",
+        "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "deal_2128",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "PROPOSAL",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-11",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-04-29T01:19:57Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-04-29T05:19:57Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-04-30T01:19:57Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5129",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "note",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-03-10T01:59:46Z",
+        "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Mira Commerce JP)",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2130",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_WON",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-19",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-08T21:04:47Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web",
+                         "ai",
+                         "qa"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-05-09T01:04:47Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-05-09T21:04:47Z"
+                           }
+                       ],
+        "wonReason":  "Proposal rõ scope và có kế hoạch handover từ vendor cũ."
+    },
+    {
+        "id":  "act_5131",
+        "entity":  "activity",
+        "company":  "Finamo KK",
+        "activityType":  "call",
+        "owner":  "trung.do",
+        "timestamp":  "2026-05-03T19:07:10Z",
+        "summary":  "オフショア体制でも日本語での進行を重視している。 (Finamo KK)",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "language_concern",
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2132",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "NEGOTIATION",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-24",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-28T00:55:03Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "team_extension",
+                         "web",
+                         "qa"
+                     ],
+        "notes":  "PayFlow Systems is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "Khách PayFlow Systems muốn team chủ động hơn ở phần discovery.",
+                               "type":  "call",
+                               "at":  "2026-04-28T04:55:03Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-04-29T00:55:03Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2133",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "CLOSED_LOST",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-13",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-29T06:57:21Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "team_extension",
+                         "mobile",
+                         "ai"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-03-29T10:57:21Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-03-30T06:57:21Z"
+                           }
+                       ],
+        "lostReason":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn"
+    },
+    {
+        "id":  "act_5134",
+        "entity":  "activity",
+        "company":  "MedCore Korea",
+        "activityType":  "note",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-05-10T10:02:16Z",
+        "summary":  "The client asked for a more predictable delivery cadence for MedCore Korea.",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2135",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_LOST",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-06-17",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-02T22:06:40Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai",
+                         "web",
+                         "qa"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-05-03T02:06:40Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-05-03T22:06:40Z"
+                           }
+                       ],
+        "lostReason":  "khách muốn thấy thêm case study trong domain tương tự"
+    },
+    {
+        "id":  "act_5136",
+        "entity":  "activity",
+        "company":  "Finamo KK",
+        "activityType":  "note",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-05-07T07:51:31Z",
+        "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Finamo KK)",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "contact_7137",
+        "entity":  "contact",
+        "company":  "Kirei Care KK",
+        "fullName":  "Aoi Sakamoto",
+        "title":  "CTO",
+        "email":  "contact137@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "deal_2138",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_WON",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-17",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-06T17:34:26Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-05-06T21:34:26Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-07T17:34:26Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "deal_2139",
+        "entity":  "deal",
+        "name":  "QA Managed Service - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "PROPOSAL",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-09",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-26T20:34:53Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web",
+                         "mobile",
+                         "qa"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "ShopWave Korea wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-03-27T00:34:53Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-03-27T20:34:53Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2140",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "DISCOVERY",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-05-31",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-05-09T11:12:14Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-05-09T15:12:14Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-05-10T11:12:14Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2141",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-29",
+        "owner":  "trung.do",
+        "createdAt":  "2026-04-27T05:30:23Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "先方は納期遅延を非常に懸念している。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-04-27T09:30:23Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-04-28T05:30:23Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5142",
+        "entity":  "activity",
+        "company":  "MedCore Korea",
+        "activityType":  "proposal_review",
+        "owner":  "hoa.pham",
+        "timestamp":  "2026-03-29T06:49:38Z",
+        "summary":  "The client asked for a more predictable delivery cadence for MedCore Korea.",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "act_5143",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-05-01T17:50:59Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "timeline_risk",
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2144",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - MedCore Korea",
+        "company":  "MedCore Korea",
+        "stage":  "PROPOSAL",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-04-12",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-29T15:37:24Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai",
+                         "web",
+                         "qa"
+                     ],
+        "notes":  "MedCore Korea wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "The client asked for a more predictable delivery cadence for MedCore Korea.",
+                               "type":  "call",
+                               "at":  "2026-03-29T19:37:24Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-30T15:37:24Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2145",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "NEGOTIATION",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-01",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-24T07:43:30Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-24T11:43:30Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-25T07:43:30Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2146",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "CLOSED_WON",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-27",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-06T15:18:15Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "team_extension",
+                         "web"
+                     ],
+        "notes":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "activities":  [
+                           {
+                               "summary":  "The client asked for a more predictable delivery cadence for ShopWave Korea.",
+                               "type":  "call",
+                               "at":  "2026-05-06T19:18:15Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-07T15:18:15Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "deal_2147",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Learnify APAC",
+        "company":  "Learnify APAC",
+        "stage":  "CLOSED_LOST",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-06",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-28T16:03:07Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "qa",
+                         "mobile"
+                     ],
+        "notes":  "The client asked for a more predictable delivery cadence for Learnify APAC.",
+        "activities":  [
+                           {
+                               "summary":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo.",
+                               "type":  "call",
+                               "at":  "2026-03-28T20:03:07Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-29T16:03:07Z"
+                           }
+                       ],
+        "lostReason":  "giá của Newwave cao hơn vendor India khoảng 10-15%"
+    },
+    {
+        "id":  "deal_2148",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "DISCOVERY",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-06-01",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-01T06:46:53Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "web",
+                         "ai",
+                         "mobile"
+                     ],
+        "notes":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "Hanbit Platform is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-05-01T10:46:53Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-05-02T06:46:53Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7149",
+        "entity":  "contact",
+        "company":  "Kirei Care KK",
+        "fullName":  "Kim Minseo",
+        "title":  "Procurement Manager",
+        "email":  "contact149@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "Kirei Care KK wants clearer ownership on QA and UAT support.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "contact_7150",
+        "entity":  "contact",
+        "company":  "EduSpring Japan",
+        "fullName":  "Kim Minseo",
+        "title":  "CTO",
+        "email":  "contact150@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "act_5151",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "meeting",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-03-25T14:21:24Z",
+        "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "language_concern",
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2152",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_WON",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-20",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-10T07:54:32Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "mobile",
+                         "web",
+                         "ai"
+                     ],
+        "notes":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-05-10T11:54:32Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-05-11T07:54:32Z"
+                           }
+                       ],
+        "wonReason":  "Proposal rõ scope và có kế hoạch handover từ vendor cũ."
+    },
+    {
+        "id":  "deal_2153",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-07",
+        "owner":  "trung.do",
+        "createdAt":  "2026-03-27T05:12:16Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "qa",
+                         "team_extension"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-27T09:12:16Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-28T05:12:16Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2154",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_WON",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-04-12",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-27T05:40:18Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "web",
+                         "ai"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-27T09:40:18Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-28T05:40:18Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "deal_2155",
+        "entity":  "deal",
+        "name":  "Platform Modernization - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "DISCOVERY",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-04-15",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-29T01:24:37Z",
+        "source":  "referral",
+        "services":  [
+                         "mobile"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "Kirei Care KK wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-03-29T05:24:37Z"
+                           },
+                           {
+                               "summary":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery",
+                               "type":  "email",
+                               "at":  "2026-03-30T01:24:37Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5156",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "call",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-03-27T03:31:35Z",
+        "summary":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "act_5157",
+        "entity":  "activity",
+        "company":  "PropVista SG",
+        "activityType":  "note",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-03-21T09:24:46Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "deal_2158",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "CLOSED_LOST",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-05-09",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-04-19T23:31:39Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai",
+                         "team_extension",
+                         "mobile"
+                     ],
+        "notes":  "Khách PayFlow Systems muốn team chủ động hơn ở phần discovery.",
+        "activities":  [
+                           {
+                               "summary":  "PayFlow Systems wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-04-20T03:31:39Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-04-20T23:31:39Z"
+                           }
+                       ],
+        "lostReason":  "procurement yêu cầu benchmark thêm hai vendor khác"
+    },
+    {
+        "id":  "deal_2159",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Learnify APAC",
+        "company":  "Learnify APAC",
+        "stage":  "DISCOVERY",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-04-12",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-25T05:20:24Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+        "activities":  [
+                           {
+                               "summary":  "Bên Learnify APAC đang so sánh với hai vendor khác trong khu vực.",
+                               "type":  "call",
+                               "at":  "2026-03-25T09:20:24Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-26T05:20:24Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2160",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-01",
+        "owner":  "trung.do",
+        "createdAt":  "2026-04-12T20:09:43Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "qa"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "The prospect is evaluating vendors in Vietnam, India, and Korea.",
+                               "type":  "call",
+                               "at":  "2026-04-13T00:09:43Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-04-13T20:09:43Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2161",
+        "entity":  "deal",
+        "name":  "Platform Modernization - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-26",
+        "owner":  "trung.do",
+        "createdAt":  "2026-04-23T11:28:36Z",
+        "source":  "referral",
+        "services":  [
+                         "qa",
+                         "team_extension"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-04-23T15:28:36Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-04-24T11:28:36Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2162",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  85,
+        "closeDate":  "2026-05-21",
+        "owner":  "trung.do",
+        "createdAt":  "2026-05-08T02:19:59Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "team_extension",
+                         "ai",
+                         "web"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "Kirei Care KK is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-05-08T06:19:59Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-05-09T02:19:59Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2163",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "NEGOTIATION",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-06-19",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-07T18:43:18Z",
+        "source":  "referral",
+        "services":  [
+                         "ai"
+                     ],
+        "notes":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "ゴールデンウィーク前に概算見積もりが必要。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-05-07T22:43:18Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-08T18:43:18Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2164",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-06-05",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-04-29T12:17:18Z",
+        "source":  "referral",
+        "services":  [
+                         "qa",
+                         "mobile"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "EduSpring Japan wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-04-29T16:17:18Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-04-30T12:17:18Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2165",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "PROPOSAL",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-06-09",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-14T18:37:49Z",
+        "source":  "referral",
+        "services":  [
+                         "qa",
+                         "ai"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-05-14T22:37:49Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-15T18:37:49Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2166",
+        "entity":  "deal",
+        "name":  "QA Managed Service - MedCore Korea",
+        "company":  "MedCore Korea",
+        "stage":  "DISCOVERY",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-21",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-31T13:08:29Z",
+        "source":  "referral",
+        "services":  [
+                         "web",
+                         "team_extension"
+                     ],
+        "notes":  "MedCore Korea wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-03-31T17:08:29Z"
+                           },
+                           {
+                               "summary":  "khách lo ngại ramp-up mất quá nhiều thời gian",
+                               "type":  "email",
+                               "at":  "2026-04-01T13:08:29Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2167",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "PROPOSAL",
+        "amount":  42000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-05-11",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-28T01:54:17Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web",
+                         "ai",
+                         "mobile"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The client asked for a more predictable delivery cadence for Hanbit Platform.",
+                               "type":  "call",
+                               "at":  "2026-03-28T05:54:17Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-29T01:54:17Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2168",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "DISCOVERY",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  60,
+        "closeDate":  "2026-05-24",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-05-07T11:52:05Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "mobile",
+                         "ai",
+                         "qa"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-05-07T15:52:05Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-05-08T11:52:05Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7169",
+        "entity":  "contact",
+        "company":  "MedCore Korea",
+        "fullName":  "Park Jisoo",
+        "title":  "Product Lead",
+        "email":  "contact169@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "MedCore Korea is sensitive to compliance and production support coverage.",
+        "relationshipStatus":  "warm"
+    },
+    {
+        "id":  "deal_2170",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-06-06",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-02T13:31:57Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "web"
+                     ],
+        "notes":  "Finamo KK is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "先方は納期遅延を非常に懸念している。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-05-02T17:31:57Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-05-03T13:31:57Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2171",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "CLOSED_LOST",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-19",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-04-20T01:22:04Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "ai",
+                         "web",
+                         "qa"
+                     ],
+        "notes":  "Mira Commerce JP is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "先方は納期遅延を非常に懸念している。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-04-20T05:22:04Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-04-21T01:22:04Z"
+                           }
+                       ],
+        "lostReason":  "procurement yêu cầu benchmark thêm hai vendor khác"
+    },
+    {
+        "id":  "act_5172",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "proposal_review",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-03-29T08:27:24Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "act_5173",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "meeting",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-03-16T17:21:22Z",
+        "summary":  "EduSpring Japan wants clearer ownership on QA and UAT support.",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "deal_2174",
+        "entity":  "deal",
+        "name":  "Platform Modernization - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  85000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-05-13",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-03T12:22:40Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "ai",
+                         "web",
+                         "mobile"
+                     ],
+        "notes":  "EduSpring Japan wants clearer ownership on QA and UAT support.",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-05-03T16:22:40Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-04T12:22:40Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2175",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "NEGOTIATION",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-17",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-01T09:58:54Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "ai",
+                         "team_extension"
+                     ],
+        "notes":  "Hanbit Platform is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "Hanbit Platform wants clearer ownership on QA and UAT support.",
+                               "type":  "call",
+                               "at":  "2026-05-01T13:58:54Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-02T09:58:54Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2176",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-06-12",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-05-03T08:24:04Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "team_extension",
+                         "qa"
+                     ],
+        "notes":  "先方は納期遅延を非常に懸念している。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-05-03T12:24:04Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-04T08:24:04Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5177",
+        "entity":  "activity",
+        "company":  "MedCore Korea",
+        "activityType":  "proposal_review",
+        "owner":  "trung.do",
+        "timestamp":  "2026-04-01T23:06:37Z",
+        "summary":  "The client asked for a more predictable delivery cadence for MedCore Korea.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "deal_2178",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-20",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-05-01T15:04:51Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web",
+                         "ai"
+                     ],
+        "notes":  "Finamo KK is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "先方は納期遅延を非常に懸念している。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-05-01T19:04:51Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-02T15:04:51Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5179",
+        "entity":  "activity",
+        "company":  "Mira Commerce JP",
+        "activityType":  "note",
+        "owner":  "trung.do",
+        "timestamp":  "2026-05-08T22:23:42Z",
+        "summary":  "Mira Commerce JP wants clearer ownership on QA and UAT support.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2180",
+        "entity":  "deal",
+        "name":  "LMS Revamp - Learnify APAC",
+        "company":  "Learnify APAC",
+        "stage":  "CLOSED_LOST",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-04-22",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-30T12:46:14Z",
+        "source":  "referral",
+        "services":  [
+                         "team_extension",
+                         "web",
+                         "qa"
+                     ],
+        "notes":  "Learnify APAC is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "Khách Learnify APAC muốn team chủ động hơn ở phần discovery.",
+                               "type":  "call",
+                               "at":  "2026-03-30T16:46:14Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-31T12:46:14Z"
+                           }
+                       ],
+        "lostReason":  "khách chưa chắc chắn về năng lực tiếng Nhật của team delivery"
+    },
+    {
+        "id":  "deal_2181",
+        "entity":  "deal",
+        "name":  "QA Managed Service - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "CLOSED_WON",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  20,
+        "closeDate":  "2026-04-20",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-30T13:40:23Z",
+        "source":  "referral",
+        "services":  [
+                         "mobile",
+                         "web",
+                         "qa"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+                               "type":  "call",
+                               "at":  "2026-03-30T17:40:23Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-03-31T13:40:23Z"
+                           }
+                       ],
+        "wonReason":  "Khách đánh giá cao communication và timezone overlap."
+    },
+    {
+        "id":  "contact_7182",
+        "entity":  "contact",
+        "company":  "Hanbit Platform",
+        "fullName":  "Daniel Wong",
+        "title":  "CTO",
+        "email":  "contact182@example.com",
+        "preferredLanguage":  "English",
+        "notes":  "The client asked for a more predictable delivery cadence for Hanbit Platform.",
+        "relationshipStatus":  "stakeholder"
+    },
+    {
+        "id":  "act_5183",
+        "entity":  "activity",
+        "company":  "ShopWave Korea",
+        "activityType":  "note",
+        "owner":  "trung.do",
+        "timestamp":  "2026-04-29T12:12:14Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "book technical deep dive",
+        "riskFlags":  [
+                          "price_pressure",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "act_5184",
+        "entity":  "activity",
+        "company":  "MedCore Korea",
+        "activityType":  "call",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-03-25T12:57:20Z",
+        "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "language_concern",
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2185",
+        "entity":  "deal",
+        "name":  "Platform Modernization - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-05-06",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-03-30T01:25:10Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-03-30T05:25:10Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-31T01:25:10Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2186",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - ShopWave Korea",
+        "company":  "ShopWave Korea",
+        "stage":  "CLOSED_WON",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-19",
+        "owner":  "anh.nguyen",
+        "createdAt":  "2026-04-01T15:02:22Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "mobile",
+                         "ai"
+                     ],
+        "notes":  "ShopWave Korea is sensitive to compliance and production support coverage.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-04-01T19:02:22Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-04-02T15:02:22Z"
+                           }
+                       ],
+        "wonReason":  "Proposal rõ scope và có kế hoạch handover từ vendor cũ."
+    },
+    {
+        "id":  "deal_2187",
+        "entity":  "deal",
+        "name":  "Healthcare Portal - Kirei Care KK",
+        "company":  "Kirei Care KK",
+        "stage":  "DISCOVERY",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  40,
+        "closeDate":  "2026-06-03",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-05-08T23:52:05Z",
+        "source":  "marketing_handoff",
+        "services":  [
+                         "mobile",
+                         "qa",
+                         "team_extension"
+                     ],
+        "notes":  "品質保証の進め方をもっと具体的に示してほしいとのこと。 (Kirei Care KK)",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-05-09T03:52:05Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-05-09T23:52:05Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5188",
+        "entity":  "activity",
+        "company":  "Kirei Care KK",
+        "activityType":  "meeting",
+        "owner":  "linh.tran",
+        "timestamp":  "2026-03-27T10:38:20Z",
+        "summary":  "Kirei Care KK wants clearer ownership on QA and UAT support.",
+        "followUp":  "prepare compliance slide",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "timeline_risk"
+                      ]
+    },
+    {
+        "id":  "contact_7189",
+        "entity":  "contact",
+        "company":  "Finamo KK",
+        "fullName":  "Kim Minseo",
+        "title":  "CTO",
+        "email":  "contact189@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "先方は納期遅延を非常に懸念している。 (Finamo KK)",
+        "relationshipStatus":  "engaged"
+    },
+    {
+        "id":  "act_5190",
+        "entity":  "activity",
+        "company":  "EduSpring Japan",
+        "activityType":  "proposal_review",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-04-29T20:11:32Z",
+        "summary":  "オフショア体制でも日本語での進行を重視している。 (EduSpring Japan)",
+        "followUp":  "wait until after Golden Week",
+        "riskFlags":  [
+                          "price_pressure",
+                          "scope_ambiguity"
+                      ]
+    },
+    {
+        "id":  "contact_7191",
+        "entity":  "contact",
+        "company":  "Mira Commerce JP",
+        "fullName":  "Aoi Sakamoto",
+        "title":  "Procurement Manager",
+        "email":  "contact191@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+        "relationshipStatus":  "engaged"
+    },
+    {
+        "id":  "deal_2192",
+        "entity":  "deal",
+        "name":  "Payment Reconciliation - Mira Commerce JP",
+        "company":  "Mira Commerce JP",
+        "stage":  "PROPOSAL",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-24",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-05-06T11:15:52Z",
+        "source":  "repeat_client",
+        "services":  [
+                         "qa",
+                         "web",
+                         "mobile"
+                     ],
+        "notes":  "ゴールデンウィーク前に概算見積もりが必要。 (Mira Commerce JP)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Mira Commerce JP)",
+                               "type":  "call",
+                               "at":  "2026-05-06T15:15:52Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-07T11:15:52Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2193",
+        "entity":  "deal",
+        "name":  "Platform Modernization - PropVista SG",
+        "company":  "PropVista SG",
+        "stage":  "PROPOSAL",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-26",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-04-30T20:05:07Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "team_extension"
+                     ],
+        "notes":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo.",
+        "activities":  [
+                           {
+                               "summary":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo.",
+                               "type":  "call",
+                               "at":  "2026-05-01T00:05:07Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-05-01T20:05:07Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2194",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Hanbit Platform",
+        "company":  "Hanbit Platform",
+        "stage":  "NEGOTIATION",
+        "amount":  18000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-28",
+        "owner":  "trung.do",
+        "createdAt":  "2026-04-14T16:28:52Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "team_extension"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "The client requested a concrete transition plan from the incumbent vendor.",
+                               "type":  "call",
+                               "at":  "2026-04-14T20:28:52Z"
+                           },
+                           {
+                               "summary":  "giá của Newwave cao hơn vendor India khoảng 10-15%",
+                               "type":  "email",
+                               "at":  "2026-04-15T16:28:52Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2195",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - Finamo KK",
+        "company":  "Finamo KK",
+        "stage":  "NEGOTIATION",
+        "amount":  120000,
+        "currency":  "USD",
+        "probability":  50,
+        "closeDate":  "2026-05-02",
+        "owner":  "linh.tran",
+        "createdAt":  "2026-03-30T04:24:13Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "mobile",
+                         "ai"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (Finamo KK)",
+        "activities":  [
+                           {
+                               "summary":  "オフショア体制でも日本語での進行を重視している。 (Finamo KK)",
+                               "type":  "call",
+                               "at":  "2026-03-30T08:24:13Z"
+                           },
+                           {
+                               "summary":  "khách muốn thấy thêm case study trong domain tương tự",
+                               "type":  "email",
+                               "at":  "2026-03-31T04:24:13Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "act_5196",
+        "entity":  "activity",
+        "company":  "MedCore Korea",
+        "activityType":  "meeting",
+        "owner":  "anh.nguyen",
+        "timestamp":  "2026-04-01T08:42:54Z",
+        "summary":  "The client asked for a more predictable delivery cadence for MedCore Korea.",
+        "followUp":  "send revised estimation",
+        "riskFlags":  [
+                          "scope_ambiguity",
+                          "price_pressure"
+                      ]
+    },
+    {
+        "id":  "deal_2197",
+        "entity":  "deal",
+        "name":  "Platform Modernization - PayFlow Systems",
+        "company":  "PayFlow Systems",
+        "stage":  "NEGOTIATION",
+        "amount":  65000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-04-16",
+        "owner":  "hoa.pham",
+        "createdAt":  "2026-03-19T11:37:58Z",
+        "source":  "linkedin_outbound",
+        "services":  [
+                         "web"
+                     ],
+        "notes":  "The client requested a concrete transition plan from the incumbent vendor.",
+        "activities":  [
+                           {
+                               "summary":  "PayFlow Systems is sensitive to compliance and production support coverage.",
+                               "type":  "call",
+                               "at":  "2026-03-19T15:37:58Z"
+                           },
+                           {
+                               "summary":  "procurement yêu cầu benchmark thêm hai vendor khác",
+                               "type":  "email",
+                               "at":  "2026-03-20T11:37:58Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "deal_2198",
+        "entity":  "deal",
+        "name":  "Mobile Commerce App - EduSpring Japan",
+        "company":  "EduSpring Japan",
+        "stage":  "PROPOSAL",
+        "amount":  25000,
+        "currency":  "USD",
+        "probability":  70,
+        "closeDate":  "2026-05-17",
+        "owner":  "trung.do",
+        "createdAt":  "2026-04-05T09:01:56Z",
+        "source":  "referral",
+        "services":  [
+                         "web",
+                         "mobile"
+                     ],
+        "notes":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (EduSpring Japan)",
+        "activities":  [
+                           {
+                               "summary":  "既存ベンダーからの引き継ぎ計画を確認したいとの要望あり。 (EduSpring Japan)",
+                               "type":  "call",
+                               "at":  "2026-04-05T13:01:56Z"
+                           },
+                           {
+                               "summary":  "khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn",
+                               "type":  "email",
+                               "at":  "2026-04-06T09:01:56Z"
+                           }
+                       ]
+    },
+    {
+        "id":  "contact_7199",
+        "entity":  "contact",
+        "company":  "Mira Commerce JP",
+        "fullName":  "Kim Minseo",
+        "title":  "CTO",
+        "email":  "contact199@example.com",
+        "preferredLanguage":  "Japanese",
+        "notes":  "先方は納期遅延を非常に懸念している。 (Mira Commerce JP)",
+        "relationshipStatus":  "stakeholder"
+    }
+]
