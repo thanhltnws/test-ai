@@ -274,17 +274,22 @@ Package: `json-repair` trong `backend/seed/requirements.txt`.
 | Total records | 1000 | Đúng kế hoạch |
 | Source distribution | Khớp 100% | hubspot 160, twenty_crm 200, ... |
 | Date range thực tế | 2026-02-28 → 2026-06-20 | Raw data có drift nhẹ so với plan (03-01 → 05-15) |
-| Null dates | 144 (14%) | Phần lớn là internal noise records |
+| Null dates | 144 (14%) | LLM không extract date — đã fix bằng raw fallback |
 | Empty `pain_points` | 217 (22%) | Kỳ vọng: Redmine noise và email nội bộ |
-| Empty `embedding_text` | 206 (21%) | Những record này không có signal RAG |
-| `consideration` dominant | 775/1000 (77%) | Skewed — `won` chỉ 36, `lost` chỉ 17 |
+| Empty `embedding_text` | 206 (21%) | Record không có signal RAG |
+| `consideration` dominant | 775/1000 (77%) | Skewed — `won` chỉ 36, `lost` chỉ 17; đã fix prompt |
 | `icp.sector` rỗng | 70 records | Model không infer được từ record thiếu context |
+| Noise records (zero signal) | 201 (20%) | Đã bị bỏ qua trong generate — không vào signals table |
 
-**Điểm cần lưu ý cho lần chạy tiếp:**
+### Fixes đã áp dụng sau lần chạy đầu (commit `ff386ec`)
 
-- `won`/`lost` thấp bất thường — có thể Twenty CRM CLOSED_LOST chưa được map đúng sang funnel_stage
-- 206 empty `embedding_text` sẽ bị bỏ qua khi import embedding — chấp nhận được nếu là noise records
-- Nếu muốn distribution funnel_stage thực tế hơn, cân nhắc điều chỉnh prompt hoặc raw data
+| Vấn đề | Fix |
+| --- | --- |
+| `record_date: null` ở 144 records | Thêm `_fallback_date_from_raw()` — scan raw record cho `createdate`, `createdAt`, `timestamp`, v.v. trước khi trả null |
+| 201 noise records vẫn vào `signals_seed.json` | Thêm `_has_signal()` guard — record bị drop khỏi output nếu `embedding_text`, `pain_points`, `use_cases`, `objections` đều rỗng |
+| `CLOSED_WON` bị map thành `consideration` | Thêm rule vào prompt: explicit stage field (`CLOSED_WON`/`WON`/`CLOSED_LOST`/`LOST`) ưu tiên tuyệt đối trước sentiment của note |
+
+**Chạy lại generate.py sau các fix trên:** signals_seed.json sẽ có ~799 records thay vì 1000, với `record_date` null giảm đáng kể và `won`/`lost` phân phối chính xác hơn.
 
 ---
 
