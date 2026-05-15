@@ -29,7 +29,7 @@ Gemini → Bedrock: swap endpoint + key only, logic unchanged.
 
 ## Data situation
 
-No real sources yet. Use seed data in `backend/seed/data/` (20–30 mock records).
+No real sources yet. Use seed data in `backend/seed/data/` (1000 mock records).
 Import directly into Aurora — skip ingestion pipeline entirely for demo.
 
 ## Do not re-suggest

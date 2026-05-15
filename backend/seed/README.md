@@ -233,6 +233,61 @@ Các file này là JSON array và có schema không hoàn toàn đồng nhất g
 
 ---
 
+## Generate strategy
+
+### LLM provider và model
+
+`generate.py` hỗ trợ hai provider: `gemini` (default local dev) và `bedrock`. Trong thực tế đã chạy với Bedrock để đồng nhất với AWS stack:
+
+- **Model:** `us.anthropic.claude-haiku-4-5-20251001-v1:0` (US cross-region inference profile)
+- **Region:** `us-east-1`
+- **Auth:** AWS SSO qua profile `aih`, load vào boto3 thông qua `AWS_PROFILE` trong `.env`
+- **Provider switch:** set `SEED_LLM_PROVIDER=bedrock` trong `.env` (không phải `EMBEDDING_PROVIDER`)
+
+Lý do chọn Haiku thay vì Sonnet cho bước extraction: extraction là structured JSON với prompt rõ ràng, không cần reasoning sâu. Haiku đủ chất lượng, cost thấp hơn đáng kể (~$0.10 cho toàn bộ 1000 records).
+
+### Batching
+
+| Tham số | Giá trị |
+| --- | --- |
+| `MAX_BATCH_RECORDS` | 40 records/batch |
+| `MAX_BATCH_CHARS` | 150,000 chars/batch |
+| `max_tokens` (Bedrock) | 8192 |
+| `API_DELAY_S` | 1.0 giây giữa các batch |
+
+`max_tokens` ban đầu là 4096, bị thiếu với 40 records (output ~6000 token). Đã tăng lên 8192.
+
+### JSON repair
+
+Model đôi khi sinh ra JSON có ký tự đặc biệt chưa escape hoặc quote lỗi trong string field (hay xảy ra với `embedding_text` chứa nội dung đa ngôn ngữ). Đã thêm `json_repair` vào pipeline để xử lý trước khi parse:
+
+```python
+json.loads(repair_json(response_text))
+```
+
+Package: `json-repair` trong `backend/seed/requirements.txt`.
+
+### Kết quả generate thực tế (lần chạy 2026-05-16)
+
+| Metric | Giá trị | Nhận xét |
+| --- | --- | --- |
+| Total records | 1000 | Đúng kế hoạch |
+| Source distribution | Khớp 100% | hubspot 160, twenty_crm 200, ... |
+| Date range thực tế | 2026-02-28 → 2026-06-20 | Raw data có drift nhẹ so với plan (03-01 → 05-15) |
+| Null dates | 144 (14%) | Phần lớn là internal noise records |
+| Empty `pain_points` | 217 (22%) | Kỳ vọng: Redmine noise và email nội bộ |
+| Empty `embedding_text` | 206 (21%) | Những record này không có signal RAG |
+| `consideration` dominant | 775/1000 (77%) | Skewed — `won` chỉ 36, `lost` chỉ 17 |
+| `icp.sector` rỗng | 70 records | Model không infer được từ record thiếu context |
+
+**Điểm cần lưu ý cho lần chạy tiếp:**
+
+- `won`/`lost` thấp bất thường — có thể Twenty CRM CLOSED_LOST chưa được map đúng sang funnel_stage
+- 206 empty `embedding_text` sẽ bị bỏ qua khi import embedding — chấp nhận được nếu là noise records
+- Nếu muốn distribution funnel_stage thực tế hơn, cân nhắc điều chỉnh prompt hoặc raw data
+
+---
+
 ## Bước tiếp theo
 
 Sau raw seed này, flow mong muốn là:

@@ -1,143 +1,178 @@
 """
-Scan backend/seed/raw/ subfolders, let AI classify files (context vs data),
-then extract unified insight records in token-aware batches.
+Generate unified signal seed data from raw source JSON files.
 
-Processes ALL records in every subfolder by default.
-Use --limit to cap records per subfolder during development/testing.
+Input:
+    backend/seed/data/raw/
+      hubspot.json
+      twenty_crm.json
+      redmine.json
+      outlook_email.json
+      teams_transcript.json
+      sharepoint.json
 
-Structure expected:
-    raw/
-      marketing/marketing_lead_scoring/   ← subfolder = unit of processing
-      sales/sales_pipeline_crm/
-      sales/sales_b2b_ict/
-      ops/                                ← ops has no subfolder, treated directly
+Output:
+    backend/seed/data/signals_seed.json
+
+Defaults:
+    - Local/dev uses Gemini for extraction
+    - Optional Bedrock mode is available for production-parity spot checks
 
 Usage:
-    python backend/seed/generate.py                  # process everything
-    python backend/seed/generate.py --limit 20       # test run, first 20 rows per subfolder
+    python backend/seed/generate.py
+    python backend/seed/generate.py --limit 10
+    python backend/seed/generate.py --provider bedrock
+    python backend/seed/generate.py --source redmine --source outlook_email
 """
+
+from __future__ import annotations
+
 import argparse
-import csv
 import json
 import os
 import sys
 import time
 from datetime import date, datetime, timezone
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from json_repair import repair_json
 
 sys.path.insert(0, str(Path(__file__).parent))
-from prompt import build_classify_prompt, build_extract_prompt
+from prompt import build_extract_prompt
 
-# ── constants ─────────────────────────────────────────────────────────────────
 
-MAX_BATCH_CHARS    = 150_000   # ~37K tokens — aligned with transform/handler.py
-MAX_BATCH_RECORDS  = 40        # 8192 output tokens / ~200 tokens per record
-API_DELAY_S        = 5.0   # Gemini free tier: 15 RPM → min 4s between calls
-CONTEXT_CHAR_LIMIT = 10_000    # chars of context file content sent per batch
-MIN_ROW_TEXT_LEN   = 10        # drop rows shorter than this (truly empty rows)
+MAX_BATCH_CHARS = 150_000
+MAX_BATCH_RECORDS = 40
+API_DELAY_S = 1.0
+MIN_ROW_TEXT_LEN = 10
 
-GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+DEFAULT_PROVIDER = "gemini"
+DEFAULT_GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
+DEFAULT_BEDROCK_MODEL = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+DEFAULT_AWS_REGION = "ap-southeast-1"
 
-_HERE       = Path(__file__).parent
-RAW_DIR     = _HERE / "raw"
+_HERE = Path(__file__).parent
+RAW_DIR = _HERE / "data" / "raw"
 OUTPUT_PATH = _HERE / "data" / "signals_seed.json"
 
 
-# ── subfolder discovery ───────────────────────────────────────────────────────
-
-def find_subfolders(raw_dir: Path) -> list[Path]:
-    """
-    Return leaf subfolders that contain data files.
-    If a domain folder (marketing/sales/ops) has direct files, treat it as a subfolder too.
-    """
-    results = []
-    for domain in sorted(raw_dir.iterdir()):
-        if not domain.is_dir():
-            continue
-        subdirs = [p for p in domain.iterdir() if p.is_dir()]
-        if subdirs:
-            results.extend(sorted(subdirs))
-        else:
-            results.append(domain)  # ops/ has files directly
-    return results
-
-
-# ── file loading ──────────────────────────────────────────────────────────────
-
-def read_file_as_text(path: Path, char_limit: int = 0) -> str:
-    try:
-        text = path.read_text(encoding="utf-8", errors="replace")
-        if not char_limit or len(text) <= char_limit:
-            return text
-        # Truncate at last newline so we don't cut mid-row (CSV) or mid-line (JSON)
-        cut = text.rfind("\n", 0, char_limit)
-        return text[: cut if cut > 0 else char_limit]
-    except Exception:
-        return ""
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="max records per source file; omit to process all",
+    )
+    parser.add_argument(
+        "--provider",
+        choices=["gemini", "bedrock"],
+        default=None,
+        help="LLM provider for extraction; default comes from env or Gemini",
+    )
+    parser.add_argument(
+        "--source",
+        action="append",
+        default=[],
+        help="specific source name(s) to process, e.g. --source redmine",
+    )
+    return parser.parse_args()
 
 
-def load_records(path: Path) -> list[dict]:
-    if path.suffix.lower() == ".json":
-        with open(path, encoding="utf-8") as f:
-            data = json.load(f)
-        if isinstance(data, list):
-            return data
-        for v in data.values():
-            if isinstance(v, list):
-                return v
-        return []
-    elif path.suffix.lower() == ".csv":
-        with open(path, encoding="utf-8") as f:
-            return list(csv.DictReader(f))
-    return []
+def get_provider(cli_provider: str | None) -> str:
+    provider = (
+        cli_provider
+        or os.getenv("SEED_LLM_PROVIDER")
+        or os.getenv("LOCAL_LLM_PROVIDER")
+        or DEFAULT_PROVIDER
+    ).strip().lower()
+    if provider not in {"gemini", "bedrock"}:
+        raise RuntimeError("Provider must be one of: gemini, bedrock")
+    return provider
+
+
+def get_source_files(selected_sources: list[str]) -> list[Path]:
+    if not RAW_DIR.exists():
+        raise RuntimeError(f"Raw data directory not found: {RAW_DIR}")
+
+    files = sorted(p for p in RAW_DIR.iterdir() if p.is_file() and p.suffix.lower() == ".json")
+    if not files:
+        raise RuntimeError(f"No JSON source files found in {RAW_DIR}")
+
+    if not selected_sources:
+        return files
+
+    selected = {name.strip().lower() for name in selected_sources}
+    filtered = [p for p in files if p.stem.lower() in selected]
+    if not filtered:
+        raise RuntimeError(f"No matching sources found for: {sorted(selected)}")
+    return filtered
+
+
+def load_source_records(path: Path) -> list[dict]:
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    if not isinstance(data, list):
+        raise RuntimeError(f"{path.name} must contain a JSON array")
+    return [row for row in data if isinstance(row, dict)]
+
+
+def _flatten_value(prefix: str, value: Any, out: list[str]) -> None:
+    if value is None:
+        return
+
+    if isinstance(value, str):
+        text = value.strip()
+        if text:
+            out.append(f"{prefix}: {text}" if prefix else text)
+        return
+
+    if isinstance(value, (int, float, bool)):
+        out.append(f"{prefix}: {value}" if prefix else str(value))
+        return
+
+    if isinstance(value, list):
+        for idx, item in enumerate(value, 1):
+            child_prefix = f"{prefix}[{idx}]" if prefix else f"item[{idx}]"
+            _flatten_value(child_prefix, item, out)
+        return
+
+    if isinstance(value, dict):
+        for key, item in value.items():
+            child_prefix = f"{prefix}.{key}" if prefix else str(key)
+            _flatten_value(child_prefix, item, out)
 
 
 def row_to_text(row: dict) -> str:
-    lines = []
-    for k, v in row.items():
-        if k.startswith("_"):
+    lines: list[str] = []
+    for key, value in row.items():
+        _flatten_value(str(key), value, lines)
+    return "\n".join(lines).strip()
+
+
+def make_batches(records: list[dict]) -> list[list[tuple[int, dict, str]]]:
+    batches: list[list[tuple[int, dict, str]]] = []
+    current: list[tuple[int, dict, str]] = []
+    current_chars = 0
+
+    for idx, row in enumerate(records):
+        text = row_to_text(row)
+        if len(text) < MIN_ROW_TEXT_LEN:
             continue
-        v = str(v).strip()
-        if v and v.lower() not in ("select", "nan", "none", ""):
-            lines.append(f"{k}: {v}")
-    return "\n".join(lines)
 
-
-# ── token-aware batching ──────────────────────────────────────────────────────
-
-def make_batches(
-    rows: list[tuple[str, dict]],
-    context_len: int,
-    max_batch_chars: int,
-) -> list[list[tuple[str, dict, str]]]:
-    """
-    Split rows into batches so that:
-      context_len + sum(len(text) for row in batch) <= max_batch_chars
-
-    Context is sent with every batch so it counts against the budget each time.
-    Text is precomputed once here and stored in the tuple to avoid recomputation.
-    A single row that exceeds the remaining budget on its own is placed in its
-    own batch (we cannot split within a single record).
-    """
-    batches: list[list[tuple[str, dict, str]]] = []
-    current: list[tuple[str, dict, str]] = []
-    current_chars = context_len  # context cost applies to every batch
-
-    for fname, row in rows:
-        text     = row_to_text(row)
-        text_len = len(text)
-
-        if current and (current_chars + text_len > max_batch_chars or len(current) >= MAX_BATCH_RECORDS):
+        if current and (
+            current_chars + len(text) > MAX_BATCH_CHARS
+            or len(current) >= MAX_BATCH_RECORDS
+        ):
             batches.append(current)
-            current       = []
-            current_chars = context_len  # reset, but context cost stays
+            current = []
+            current_chars = 0
 
-        current.append((fname, row, text))
-        current_chars += text_len
+        current.append((idx, row, text))
+        current_chars += len(text)
 
     if current:
         batches.append(current)
@@ -145,240 +180,203 @@ def make_batches(
     return batches
 
 
-# ── gemini helpers ────────────────────────────────────────────────────────────
-
-def parse_json_response(response_text: str):
+def parse_json_response(response_text: str) -> Any:
     text = response_text.strip()
     if text.startswith("```"):
         text = text.split("```", 2)[1]
         if text.startswith("json"):
             text = text[4:]
-    return json.loads(text.strip())
+    return json.loads(repair_json(text.strip()))
 
 
-def classify_files(files: list[Path], model) -> tuple[list[Path], list[Path]]:
-    """Call 1: ask AI to classify files as context vs data."""
-    file_names = [f.name for f in files]
-    summaries  = []
-    for p in files:
-        sample = read_file_as_text(p, char_limit=500)
-        if not sample:
-            label = "(binary or unreadable — likely reference/dictionary file)"
-            summaries.append(f"### {p.name}\n{label}")
-        else:
-            summaries.append(f"### {p.name}\n{sample}")
+class GeminiExtractor:
+    def __init__(self) -> None:
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY not set")
+        self.client = genai.Client(api_key=api_key)
+        self.model = os.getenv("LOCAL_GEMINI_MODEL", DEFAULT_GEMINI_MODEL)
 
-    prompt   = build_classify_prompt("\n\n".join(summaries))
-    response = model.models.generate_content(model=GEMINI_MODEL, contents=prompt)
-    result   = parse_json_response(response.text)
-
-    context_names = set(result.get("context_files", []))
-    data_names    = set(result.get("data_files", []))
-
-    # Warn about filenames AI invented that don't exist in the folder
-    for name in context_names | data_names:
-        if name not in file_names:
-            print(f"  ⚠  classify returned unknown filename: '{name}' (ignored)")
-
-    # Only keep names that actually exist
-    context_files = [f for f in files if f.name in context_names]
-    data_files    = [f for f in files if f.name in data_names]
-
-    # Anything not classified → default to data, with a warning
-    classified   = {f.name for f in context_files} | {f.name for f in data_files}
-    unclassified = [f for f in files if f.name not in classified]
-    if unclassified:
-        print(f"  ⚠  unclassified files (defaulting to data): {[f.name for f in unclassified]}")
-        data_files.extend(unclassified)
-
-    return context_files, data_files
+    def extract_batch(self, texts: list[str], source: str) -> list[dict]:
+        prompt = build_extract_prompt(texts, source, context_content="")
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=prompt,
+            config=types.GenerateContentConfig(temperature=0.2),
+        )
+        result = parse_json_response(response.text)
+        if not isinstance(result, list):
+            raise RuntimeError("Gemini returned non-array JSON")
+        return result
 
 
-def extract_batch(
-    texts: list[str],
-    source: str,
-    context_content: str,
-    model,
-) -> list[dict]:
-    """Call 2+: extract unified records from a batch."""
-    prompt   = build_extract_prompt(texts, source, context_content)
-    response = model.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(temperature=0.2),
-    )
-    result   = parse_json_response(response.text)
-    if not isinstance(result, list):
-        result = [result]
-    # Pad with empty dicts if model returned fewer items than expected
-    while len(result) < len(texts):
-        result.append({})
-    return result
+class BedrockExtractor:
+    def __init__(self) -> None:
+        import boto3
+
+        region = os.getenv("AWS_REGION", DEFAULT_AWS_REGION)
+        self.client = boto3.client("bedrock-runtime", region_name=region)
+        self.model = os.getenv("BEDROCK_MODEL_ID", DEFAULT_BEDROCK_MODEL)
+
+    def extract_batch(self, texts: list[str], source: str) -> list[dict]:
+        prompt = build_extract_prompt(texts, source, context_content="")
+        body = json.dumps(
+            {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 8192,
+                "temperature": 0.2,
+                "messages": [{"role": "user", "content": prompt}],
+            }
+        )
+        response = self.client.invoke_model(modelId=self.model, body=body)
+        payload = json.loads(response["body"].read())
+        text = payload["content"][0]["text"]
+        result = parse_json_response(text)
+        if not isinstance(result, list):
+            raise RuntimeError("Bedrock returned non-array JSON")
+        return result
 
 
-# ── row assembler ─────────────────────────────────────────────────────────────
-
-def _parse_record_date(val) -> str | None:
-    """Parse YYYY-MM-DD string from AI output → date string for DB DATE column. None if absent/invalid."""
-    if val:
-        try:
-            return date.fromisoformat(str(val).strip()[:10]).isoformat()
-        except (ValueError, TypeError):
-            pass
-    return None
+def get_extractor(provider: str) -> GeminiExtractor | BedrockExtractor:
+    if provider == "bedrock":
+        return BedrockExtractor()
+    return GeminiExtractor()
 
 
-def assemble_row(source: str, source_id: str, source_url: str,
-                 raw_text: str, ext: dict) -> dict:
+def _parse_record_date(value: Any) -> str | None:
+    if value in (None, ""):
+        return None
+    try:
+        return date.fromisoformat(str(value).strip()[:10]).isoformat()
+    except (TypeError, ValueError):
+        return None
+
+
+def normalize_extraction(ext: dict) -> dict:
+    if not isinstance(ext, dict):
+        ext = {}
     return {
-        "source":           source,
-        "source_id":        source_id,
-        "source_url":       source_url,   # empty for seed; production ingest sets real URL
-        "raw_text":         raw_text,
-        "pain_points":      ext.get("pain_points") or [],
-        "objections":       ext.get("objections") or [],
-        "use_cases":        ext.get("use_cases") or [],
-        "icp":              ext.get("icp") or {},
-        "funnel_stage":     ext.get("funnel_stage") or "consideration",
+        "pain_points": ext.get("pain_points") or [],
+        "objections": ext.get("objections") or [],
+        "use_cases": ext.get("use_cases") or [],
+        "icp": ext.get("icp") or {},
+        "funnel_stage": ext.get("funnel_stage") or "consideration",
         "confidence_score": round(float(ext.get("confidence_score") or 0.5), 2),
-        "embedding_text":   str(ext.get("embedding_text") or "").strip(),
-        "record_date":      _parse_record_date(ext.get("record_date")),
-        "ingested_at":      datetime.now(timezone.utc).isoformat(),
+        "source_id": str(ext.get("source_id") or "").strip(),
+        "embedding_text": str(ext.get("embedding_text") or "").strip(),
+        "record_date": _parse_record_date(ext.get("record_date")),
     }
 
 
-# ── subfolder processor ───────────────────────────────────────────────────────
+def build_signal_row(
+    source: str,
+    raw_path: Path,
+    row_idx: int,
+    raw_row: dict,
+    raw_text: str,
+    ext: dict,
+) -> dict:
+    normalized = normalize_extraction(ext)
 
-def process_subfolder(
-    subfolder: Path,
+    source_id = (
+        normalized["source_id"]
+        or str(raw_row.get("id") or raw_row.get("hs_object_id") or raw_row.get("meetingId") or f"{source}-{row_idx}")
+    )
+
+    return {
+        "source": source,
+        "source_id": source_id,
+        "source_url": f"file://seed/{raw_path.name}#{row_idx}",
+        "raw_text": raw_text,
+        "pain_points": normalized["pain_points"],
+        "objections": normalized["objections"],
+        "use_cases": normalized["use_cases"],
+        "icp": normalized["icp"],
+        "funnel_stage": normalized["funnel_stage"],
+        "confidence_score": normalized["confidence_score"],
+        "embedding_text": normalized["embedding_text"],
+        "record_date": normalized["record_date"],
+        "ingested_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def process_source_file(
+    path: Path,
+    extractor: GeminiExtractor | BedrockExtractor,
     limit: int | None,
-    max_batch_chars: int,
-    model,
 ) -> tuple[list[dict], list[dict]]:
-    source = subfolder.name
-    files  = [
-        f for f in sorted(subfolder.iterdir())
-        if f.is_file() and f.suffix.lower() in (".csv", ".json", ".md", ".txt")
-    ]
-    if not files:
-        print(f"  (no data files, skipping)")
-        return [], []
+    source = path.stem
+    raw_records = load_source_records(path)
+    if limit is not None:
+        raw_records = raw_records[:limit]
 
-    # ── Call 1: classify ──────────────────────────────────────────────────────
-    print(f"  classify ({len(files)} files) …", end=" ", flush=True)
-    try:
-        context_files, data_files = classify_files(files, model)
-        print(f"context={[f.name for f in context_files]}  data={[f.name for f in data_files]}")
-    except Exception as exc:
-        print(f"✗ classify failed: {exc}")
-        return [], [{"source": source, "error": str(exc)}]
+    batches = make_batches(raw_records)
+    print(f"[{source}] {len(raw_records)} raw rows -> {len(batches)} batch(es)")
 
-    time.sleep(API_DELAY_S)
-
-    if not data_files:
-        print(f"  (no data files after classification, skipping)")
-        return [], []
-
-    # ── Load context content (sent with every batch) ──────────────────────────
-    context_parts = []
-    for cf in context_files:
-        text = read_file_as_text(cf, char_limit=CONTEXT_CHAR_LIMIT)
-        if text:
-            context_parts.append(f"[{cf.name}]\n{text}")
-    context_content = "\n\n".join(context_parts)
-    context_len     = len(context_content)
-
-    # ── Load ALL data records ─────────────────────────────────────────────────
-    all_rows: list[tuple[str, dict]] = []
-    for df in data_files:
-        for row in load_records(df):
-            if len(row_to_text(row)) >= MIN_ROW_TEXT_LEN:
-                all_rows.append((df.name, row))
-
-    if not all_rows:
-        print(f"  (no rows with enough content, skipping)")
-        return [], []
-
-    # --limit: first N rows for dev/test runs; None = process everything
-    rows_to_process = all_rows[:limit] if limit else all_rows
-    if limit and len(all_rows) > limit:
-        print(f"  ⚠  --limit {limit}: processing {limit} of {len(all_rows)} rows")
-
-    # ── Token-aware batching ──────────────────────────────────────────────────
-    batches = make_batches(rows_to_process, context_len, max_batch_chars)
-    print(f"  {len(rows_to_process)} rows → {len(batches)} batch(es)  "
-          f"(context={context_len:,} chars, budget={max_batch_chars:,} chars/batch)")
-
-    # ── Call 2+: extract in batches ───────────────────────────────────────────
-    records:    list[dict] = []
-    errors:     list[dict] = []
-    global_idx: int        = 0  # absolute row index across all batches for stable source_id
+    records: list[dict] = []
+    errors: list[dict] = []
 
     for batch_num, batch in enumerate(batches, 1):
-        texts = [text for _, _, text in batch]  # precomputed in make_batches
+        texts = [text for _, _, text in batch]
         try:
-            extractions = extract_batch(texts, source, context_content, model)
-            for i, ((fname, _, text), ext) in enumerate(zip(batch, extractions)):
-                sid = str(ext.get("source_id") or f"{fname}#{global_idx + i}")
-                url = f"file://seed/{subfolder.relative_to(RAW_DIR).as_posix()}/{fname}#{global_idx + i}"
-                records.append(assemble_row(source, sid, url, text, ext))
-            print(f"  batch {batch_num}/{len(batches)} ✓  "
-                  f"({len(batch)} records, {sum(len(t) for t in texts):,} chars)")
+            extractions = extractor.extract_batch(texts, source)
+            while len(extractions) < len(batch):
+                extractions.append({})
+
+            for (row_idx, raw_row, raw_text), ext in zip(batch, extractions):
+                records.append(build_signal_row(source, path, row_idx, raw_row, raw_text, ext))
+
+            print(
+                f"  batch {batch_num}/{len(batches)} OK "
+                f"({len(batch)} records, {sum(len(t) for t in texts):,} chars)"
+            )
         except Exception as exc:
             errors.append({"source": source, "batch": batch_num, "error": str(exc)})
-            print(f"  batch {batch_num}/{len(batches)} ✗  {exc}")
+            print(f"  batch {batch_num}/{len(batches)} FAILED: {exc}")
 
-        global_idx += len(batch)
-        time.sleep(API_DELAY_S)
+        if batch_num < len(batches):
+            time.sleep(API_DELAY_S)
 
     return records, errors
 
 
-# ── main ──────────────────────────────────────────────────────────────────────
-
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--limit", type=int, default=None,
-        help="max rows per subfolder — omit to process all (use for test runs)",
-    )
-    args = parser.parse_args()
-
+    args = parse_args()
     load_dotenv()
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        sys.exit("GEMINI_API_KEY not set in .env")
 
-    model = genai.Client(api_key=api_key)
+    provider = get_provider(args.provider)
+    extractor = get_extractor(provider)
+    source_files = get_source_files(args.source)
 
-    subfolders = find_subfolders(RAW_DIR)
-    if not subfolders:
-        sys.exit(f"No subfolders found in {RAW_DIR}")
-
-    print(f"Found {len(subfolders)} subfolder(s):\n")
-    for s in subfolders:
-        print(f"  {s.relative_to(RAW_DIR)}")
+    print(f"Provider: {provider}")
+    if provider == "gemini":
+        print(f"Model: {os.getenv('LOCAL_GEMINI_MODEL', DEFAULT_GEMINI_MODEL)}")
+    else:
+        print(f"Model: {os.getenv('BEDROCK_MODEL_ID', DEFAULT_BEDROCK_MODEL)}")
+    print(f"Raw dir: {RAW_DIR}")
+    print("Sources:")
+    for path in source_files:
+        print(f"  - {path.name}")
     print()
 
     all_records: list[dict] = []
-    all_errors:  list[dict] = []
+    all_errors: list[dict] = []
 
-    for i, subfolder in enumerate(subfolders, 1):
-        print(f"[{i}/{len(subfolders)}] {subfolder.relative_to(RAW_DIR)}")
-        recs, errs = process_subfolder(subfolder, args.limit, MAX_BATCH_CHARS, model)
-        all_records.extend(recs)
-        all_errors.extend(errs)
+    for path in source_files:
+        records, errors = process_source_file(path, extractor, args.limit)
+        all_records.extend(records)
+        all_errors.extend(errors)
         print()
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(all_records, f, indent=2, ensure_ascii=False)
 
-    print(f"✓ {len(all_records)} records → {OUTPUT_PATH}")
+    print(f"OK {len(all_records)} records -> {OUTPUT_PATH}")
     if all_errors:
-        print(f"✗ {len(all_errors)} error(s):")
-        for e in all_errors:
-            print(f"  {e}")
+        print(f"FAILED batches: {len(all_errors)}")
+        for error in all_errors:
+            print(f"  {error}")
 
 
 if __name__ == "__main__":
