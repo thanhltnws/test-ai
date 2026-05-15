@@ -38,6 +38,8 @@ export interface SummaryData {
 
 export interface RecommendationsData {
   recommendations: string[]
+  sales: string[]
+  marketing: string[]
   computed_at?: string
 }
 
@@ -62,4 +64,10 @@ export interface ChatMessage {
 export interface Reference {
   title: string
   url: string
+}
+
+export interface DashboardFilters {
+  dateFrom: string
+  dateTo: string
+  market: string
 }
