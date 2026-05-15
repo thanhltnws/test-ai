@@ -29,6 +29,7 @@ For each record below, extract:
 
 Rules:
 - Return [] for empty lists; default funnel_stage to "consideration" if unclear
+- funnel_stage MUST follow explicit stage/status fields first: CLOSED_WON or WON → "won"; CLOSED_LOST or LOST → "lost"; ignore sentiment of note content when explicit stage is present
 - embedding_text must be natural language, not flattened JSON or key-value dumps
 - embedding_text should summarize the meaningful customer/business signal, including pain points, objections, use cases, ICP, and funnel stage when available
 - Set embedding_text to "" if the record does not contain enough meaningful signal for semantic search

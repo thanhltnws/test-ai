@@ -243,6 +243,22 @@ def get_extractor(provider: str) -> GeminiExtractor | BedrockExtractor:
     return GeminiExtractor()
 
 
+def _has_signal(row: dict) -> bool:
+    return bool(
+        row.get("embedding_text")
+        or row.get("pain_points")
+        or row.get("use_cases")
+        or row.get("objections")
+    )
+
+
+_DATE_FIELD_CANDIDATES = [
+    "createdate", "createdAt", "created_on", "timestamp",
+    "receivedDateTime", "sentDateTime", "updated_on", "lastModified",
+    "date", "submittedAt", "closedAt", "closeDate", "completedAt",
+]
+
+
 def _parse_record_date(value: Any) -> str | None:
     if value in (None, ""):
         return None
@@ -250,6 +266,16 @@ def _parse_record_date(value: Any) -> str | None:
         return date.fromisoformat(str(value).strip()[:10]).isoformat()
     except (TypeError, ValueError):
         return None
+
+
+def _fallback_date_from_raw(raw_row: dict) -> str | None:
+    for field in _DATE_FIELD_CANDIDATES:
+        val = raw_row.get(field)
+        if val:
+            parsed = _parse_record_date(val)
+            if parsed:
+                return parsed
+    return None
 
 
 def normalize_extraction(ext: dict) -> dict:
@@ -295,7 +321,7 @@ def build_signal_row(
         "funnel_stage": normalized["funnel_stage"],
         "confidence_score": normalized["confidence_score"],
         "embedding_text": normalized["embedding_text"],
-        "record_date": normalized["record_date"],
+        "record_date": normalized["record_date"] or _fallback_date_from_raw(raw_row),
         "ingested_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -324,7 +350,9 @@ def process_source_file(
                 extractions.append({})
 
             for (row_idx, raw_row, raw_text), ext in zip(batch, extractions):
-                records.append(build_signal_row(source, path, row_idx, raw_row, raw_text, ext))
+                row = build_signal_row(source, path, row_idx, raw_row, raw_text, ext)
+                if _has_signal(row):
+                    records.append(row)
 
             print(
                 f"  batch {batch_num}/{len(batches)} OK "
