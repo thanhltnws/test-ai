@@ -357,7 +357,7 @@ def _call_bedrock(prompt_text: str) -> str:
     )
     body = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 4096,
+        "max_tokens": 8192,
         "temperature": 0.2,
         "messages": [{"role": "user", "content": prompt_text}],
     })

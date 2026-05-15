@@ -21,6 +21,7 @@ _HERE = Path(__file__).parent
 DATA_PATH = _HERE / "data" / "signals_seed.json"
 
 CLOUDFLARE_BATCH_SIZE = 50
+BEDROCK_BATCH_SIZE = 96
 DEFAULT_BATCH_SIZE = 100
 
 
@@ -97,23 +98,16 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
         "bedrock-runtime",
         region_name=os.environ.get("AWS_REGION", "us-east-1"),
     )
-
-    embeddings = []
-
-    for text in texts:
-        resp = client.invoke_model(
-            modelId="amazon.titan-embed-text-v2:0",
-            contentType="application/json",
-            accept="application/json",
-            body=json.dumps({
-                "inputText": text,
-                "dimensions": 1024,
-                "normalize": True,
-            }),
-        )
-        embeddings.append(json.loads(resp["body"].read())["embedding"])
-
-    return embeddings
+    resp = client.invoke_model(
+        modelId="cohere.embed-multilingual-v3",
+        contentType="application/json",
+        accept="application/json",
+        body=json.dumps({
+            "texts": texts,
+            "input_type": "search_document",
+        }),
+    )
+    return json.loads(resp["body"].read())["embeddings"]
 
 
 _EMBED_DELAY_S = 0.7
@@ -249,7 +243,7 @@ def insert_embeddings(records: list[dict]) -> None:
 
         embedding_rows.append((rec["id"], embedding_text, metadata))
 
-    batch_size = CLOUDFLARE_BATCH_SIZE if provider == "cloudflare" else DEFAULT_BATCH_SIZE
+    batch_size = CLOUDFLARE_BATCH_SIZE if provider == "cloudflare" else BEDROCK_BATCH_SIZE
 
     embeddings: list[list[float]] = []
 
