@@ -49,7 +49,6 @@ MAX_BATCH_RECORDS = 40
 API_DELAY_S = 1.0
 MIN_ROW_TEXT_LEN = 10
 
-DEFAULT_PROVIDER = "gemini"
 DEFAULT_GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 DEFAULT_BEDROCK_MODEL = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
 DEFAULT_AWS_REGION = "ap-southeast-1"
@@ -83,12 +82,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def get_provider(cli_provider: str | None) -> str:
-    provider = (
-        cli_provider
-        or os.getenv("SEED_LLM_PROVIDER")
-        or os.getenv("LOCAL_LLM_PROVIDER")
-        or DEFAULT_PROVIDER
-    ).strip().lower()
+    provider = (cli_provider or os.getenv("SEED_LLM_PROVIDER") or "").strip().lower()
     if provider not in {"gemini", "bedrock"}:
         raise RuntimeError("Provider must be one of: gemini, bedrock")
     return provider
