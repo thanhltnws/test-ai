@@ -1,6 +1,8 @@
 // Raw response shape from backend API
 export interface BeInsightResponse {
+  period: string
   period_start: string
+  period_end: string
   computed_at: string
   funnel_distribution: {
     stages: { stage: string; count: number; pct: number }[]
@@ -34,6 +36,7 @@ export interface SummaryData {
   icp_summary: (ICP & { count: number })[]
   period: string
   period_start: string
+  period_end: string
 }
 
 export interface RecommendationsData {
@@ -66,8 +69,9 @@ export interface Reference {
   url: string
 }
 
+export type PeriodType = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+
 export interface DashboardFilters {
-  dateFrom: string
-  dateTo: string
-  market: string
+  period: PeriodType | ''
+  date: string
 }

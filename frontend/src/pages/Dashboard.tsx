@@ -6,13 +6,15 @@ import {
 import { fetchDashboardInsights } from '../api/lambdas'
 import type { DashboardFilters, SummaryData, RecommendationsData } from '../types'
 
-const MARKETS = [
-  { value: 'all', label: 'All' },
-  { value: 'EN', label: 'EN' },
-  { value: 'JP', label: 'JP' },
-]
+const PERIODS = [
+  { value: '', label: 'Latest' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'quarterly', label: 'Quarterly' },
+  { value: 'yearly', label: 'Yearly' },
+] as const
 
-const EMPTY_FILTERS: DashboardFilters = { dateFrom: '', dateTo: '', market: 'all' }
+const EMPTY_FILTERS: DashboardFilters = { period: '', date: '' }
 
 const FUNNEL_COLORS: Record<string, string> = {
   awareness: '#93c5fd',
@@ -57,7 +59,7 @@ export default function Dashboard() {
   const [retryCount, setRetryCount] = useState(0)
   const [draft, setDraft] = useState<DashboardFilters>(EMPTY_FILTERS)
   const [applied, setApplied] = useState<DashboardFilters>(EMPTY_FILTERS)
-  const hasFilter = applied.dateFrom !== '' || applied.dateTo !== '' || applied.market !== 'all'
+  const hasFilter = applied.period !== '' || applied.date !== ''
 
   const dedupedPainPoints = useMemo(() => {
     if (!data) return []
@@ -69,10 +71,10 @@ export default function Dashboard() {
     return Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
-      .map(([label, count]) => ({
-        label: label.charAt(0).toUpperCase() + label.slice(1),
-        count,
-      }))
+      .map(([label, count]) => {
+        const full = label.charAt(0).toUpperCase() + label.slice(1)
+        return { label: full.length > 34 ? full.slice(0, 33) + '…' : full, fullLabel: full, count }
+      })
   }, [data])
 
   useEffect(() => {
@@ -145,29 +147,24 @@ export default function Dashboard() {
         <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 4, fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.3px' }}>Customer Insight Overview</h1>
         {/* Filter bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-          <input
-            type="date"
-            value={draft.dateFrom}
-            onChange={e => setDraft(f => ({ ...f, dateFrom: e.target.value }))}
-            style={inputStyle}
-          />
-          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>
-          <input
-            type="date"
-            value={draft.dateTo}
-            onChange={e => setDraft(f => ({ ...f, dateTo: e.target.value }))}
-            style={inputStyle}
-          />
-          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Market:</span>
           <select
-            value={draft.market}
-            onChange={e => setDraft(f => ({ ...f, market: e.target.value }))}
+            value={draft.period}
+            onChange={e => setDraft(f => ({ ...f, period: e.target.value as DashboardFilters['period'], date: '' }))}
             style={inputStyle}
           >
-            {MARKETS.map(m => (
-              <option key={m.value} value={m.value}>{m.label}</option>
+            {PERIODS.map(p => (
+              <option key={p.value} value={p.value}>{p.label}</option>
             ))}
           </select>
+          {draft.period !== '' && (
+            <input
+              type="date"
+              value={draft.date}
+              onChange={e => setDraft(f => ({ ...f, date: e.target.value }))}
+              placeholder="Any date in period"
+              style={inputStyle}
+            />
+          )}
           <button
             onClick={() => setApplied({ ...draft })}
             style={{
@@ -247,9 +244,30 @@ export default function Dashboard() {
           <ResponsiveContainer width="100%" height={230}>
             <BarChart data={dedupedPainPoints} layout="vertical" margin={{ left: 0, right: 32 }}>
               <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="label" width={170} tick={{ fill: 'var(--text)', fontSize: 12 }} axisLine={false} tickLine={false} />
+              <YAxis
+                type="category"
+                dataKey="label"
+                width={240}
+                axisLine={false}
+                tickLine={false}
+                interval={0}
+                tick={(props: { x: string | number; y: string | number; payload: { value: string } }) => (
+                  <text x={props.x} y={props.y} dy={4} textAnchor="end" fill="var(--text)" fontSize={11}>
+                    {props.payload.value}
+                  </text>
+                )}
+              />
               <Tooltip
-                contentStyle={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13 }}
+                content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null
+                  const d = payload[0].payload
+                  return (
+                    <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px', fontSize: 13, maxWidth: 280 }}>
+                      <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 4, lineHeight: 1.4 }}>{d.fullLabel}</div>
+                      <div style={{ color: 'var(--text-muted)' }}>Count: <strong>{d.count}</strong></div>
+                    </div>
+                  )
+                }}
               />
               <Bar dataKey="count" fill="var(--accent)" radius={[0, 4, 4, 0]} />
             </BarChart>

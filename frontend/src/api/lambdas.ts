@@ -60,8 +60,9 @@ function requireAuthHeaders(): { Authorization: string } {
 }
 
 const MOCK_SUMMARY: SummaryData = {
-  period: 'weekly',
-  period_start: '2026-05-07',
+  period: 'monthly',
+  period_start: '2026-05-01',
+  period_end: '2026-05-31',
   funnel_distribution: [
     { stage: 'consideration', count: 11 },
     { stage: 'won', count: 7 },
@@ -103,8 +104,9 @@ const MOCK_DASHBOARD_INSIGHTS: DashboardInsights = {
 
 function toSummary(raw: BeInsightResponse): SummaryData {
   return {
-    period: 'daily',
+    period: raw.period,
     period_start: raw.period_start,
+    period_end: raw.period_end ?? '',
     funnel_distribution: raw.funnel_distribution.stages,
     top_pain_points: raw.pain_points_summary.top_items.map(p => ({
       label: p.item,
@@ -125,9 +127,8 @@ function toRecommendations(raw: BeInsightResponse): RecommendationsData {
 
 async function fetchInsightResponse(filters?: DashboardFilters): Promise<BeInsightResponse> {
   const params: Record<string, string> = {}
-  if (filters?.dateFrom) params.date_from = filters.dateFrom
-  if (filters?.dateTo) params.date_to = filters.dateTo
-  if (filters?.market && filters.market !== 'all') params.market = filters.market
+  if (filters?.period) params.period = filters.period
+  if (filters?.date) params.date = filters.date
   const res = await axios.get<BeInsightResponse>(lambdaEndpoints.api, { params })
   return res.data
 }
