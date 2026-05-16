@@ -66,7 +66,7 @@ Then import the seed data from the repo root:
 ```powershell
 $env:DATABASE_URL="postgresql://..."
 $env:AWS_REGION="ap-southeast-1"
-$env:EMBEDDING_PROVIDER="bedrock"
+$env:SEED_EMBEDDING_PROVIDER="bedrock"
 py backend/seed/import.py
 ```
 
