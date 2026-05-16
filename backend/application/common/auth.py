@@ -3,6 +3,25 @@ import json
 import os
 from typing import Any
 
+_token_cache: str | None = None
+
+
+def _get_expected_token() -> str:
+    global _token_cache
+    if _token_cache is not None:
+        return _token_cache
+
+    secret_arn = os.environ.get("APP_AUTH_TOKEN_SECRET_ARN", "").strip()
+    if secret_arn:
+        import boto3
+        client = boto3.client("secretsmanager")
+        resp = client.get_secret_value(SecretId=secret_arn)
+        _token_cache = resp.get("SecretString", "").strip()
+    else:
+        _token_cache = os.environ.get("APP_AUTH_TOKEN", "").strip()
+
+    return _token_cache
+
 
 def cors_headers() -> dict[str, str]:
     # Lambda Function URL CORS config (CDK) adds Access-Control-* headers automatically.
@@ -59,7 +78,7 @@ def auth_error(event: dict[str, Any], *, allow_non_http: bool = False) -> dict[s
     if allow_non_http and not event.get("headers") and not event.get("requestContext"):
         return None
 
-    expected = os.environ.get("APP_AUTH_TOKEN", "").strip()
+    expected = _get_expected_token()
     if not expected:
         if _is_local_or_test():
             return None

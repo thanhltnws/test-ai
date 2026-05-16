@@ -1,0 +1,4044 @@
+[
+    {
+        "id":  "mail_9000",
+        "subject":  "UAT alignment for PropVista SG",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-04T21:34:48Z",
+        "importance":  "normal",
+        "body":  "PropVista SG is sensitive to compliance and production support coverage. lo ngại timezone overlap không đủ với team Nhật Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9001",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-10T00:08:10Z",
+        "importance":  "high",
+        "body":  "The client asked for a more predictable delivery cadence for EduSpring Japan. muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9002",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-07T02:46:52Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9003",
+        "subject":  "Proposal follow-up - Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-14T04:44:24Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 khách lo ngại ramp-up mất quá nhiều thời gian We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9004",
+        "subject":  "Proposal follow-up - Learnify APAC",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-26T08:49:16Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9005",
+        "subject":  "UAT alignment for Learnify APAC",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-30T11:17:53Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. procurement yêu cầu benchmark thêm hai vendor khác We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9006",
+        "subject":  "Nhắc nộp timesheet tuần này",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-08T06:31:15Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9007",
+        "subject":  "Re: pricing concern from Finamo KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T09:00:07Z",
+        "importance":  "high",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain fintech. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9008",
+        "subject":  "Chuẩn bị câu trả lời cho khách PayFlow Systems",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@payflowsystems.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-29T10:45:48Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain fintech. khó kiểm soát thay đổi requirement vào cuối sprint Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9009",
+        "subject":  "Re: Release plan and open issues - Mira Commerce JP",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-30T01:33:04Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 cần đối tác quen domain compliance cho fintech/healthcare Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9010",
+        "subject":  "Re: Release plan and open issues - ShopWave Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-03T17:36:15Z",
+        "importance":  "high",
+        "body":  "ShopWave Korea is sensitive to compliance and production support coverage. khách lo ngại ramp-up mất quá nhiều thời gian We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9011",
+        "subject":  "Weekly update - PropVista SG",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-27T17:49:34Z",
+        "importance":  "normal",
+        "body":  "PropVista SG wants clearer ownership on QA and UAT support. muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9012",
+        "subject":  "Weekly update - MedCore Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-09T05:31:03Z",
+        "importance":  "normal",
+        "body":  "MedCore Korea is sensitive to compliance and production support coverage. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9013",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-21T16:01:19Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9014",
+        "subject":  "ご提案について - Hanbit Platform",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-26T01:11:05Z",
+        "importance":  "normal",
+        "body":  "Hanbit Platform is sensitive to compliance and production support coverage. chi phí maintain sau go-live đang tăng nhanh Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9015",
+        "subject":  "Nhắc nộp timesheet tuần này",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-28T04:19:50Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9016",
+        "subject":  "Chuẩn bị câu trả lời cho khách Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-02T09:45:55Z",
+        "importance":  "high",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain e-commerce. chi phí maintain sau go-live đang tăng nhanh Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9017",
+        "subject":  "ご提案について - PayFlow Systems",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@payflowsystems.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-30T12:07:11Z",
+        "importance":  "normal",
+        "body":  "PayFlow Systems wants clearer ownership on QA and UAT support. lo ngại timezone overlap không đủ với team Nhật We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9018",
+        "subject":  "Weekly update - ShopWave Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-30T04:35:09Z",
+        "importance":  "normal",
+        "body":  "ShopWave Korea wants clearer ownership on QA and UAT support. thiếu năng lực AI/automation ở vendor hiện tại Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9019",
+        "subject":  "Chuẩn bị câu trả lời cho khách Hanbit Platform",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-05T20:13:41Z",
+        "importance":  "normal",
+        "body":  "Khách Hanbit Platform muốn team chủ động hơn ở phần discovery. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9020",
+        "subject":  "Proposal follow-up - Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-16T17:12:08Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 release thường chậm vì QA handoff thủ công Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9021",
+        "subject":  "ご提案について - Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-26T23:25:54Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9022",
+        "subject":  "Re: Release plan and open issues - MedCore Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-19T05:05:08Z",
+        "importance":  "normal",
+        "body":  "MedCore Korea is sensitive to compliance and production support coverage. lo ngại timezone overlap không đủ với team Nhật Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9023",
+        "subject":  "Proposal follow-up - Learnify APAC",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-26T04:11:45Z",
+        "importance":  "high",
+        "body":  "Learnify APAC wants clearer ownership on QA and UAT support. khách muốn thấy thêm case study trong domain tương tự We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9024",
+        "subject":  "Internal summary before client sync - Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-13T08:22:32Z",
+        "importance":  "high",
+        "body":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới. khách muốn thấy thêm case study trong domain tương tự Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9025",
+        "subject":  "Update danh sách nghỉ lễ 30/4",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-07T08:31:55Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9026",
+        "subject":  "Proposal follow-up - Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-04T19:51:38Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9027",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-08T12:55:08Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9028",
+        "subject":  "Re: Release plan and open issues - Hanbit Platform",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-30T18:37:24Z",
+        "importance":  "high",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. procurement yêu cầu benchmark thêm hai vendor khác Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9029",
+        "subject":  "UAT alignment for PropVista SG",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-02T10:26:19Z",
+        "importance":  "normal",
+        "body":  "PropVista SG is sensitive to compliance and production support coverage. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9030",
+        "subject":  "Re: Dedicated team scope for Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-24T21:40:26Z",
+        "importance":  "high",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9031",
+        "subject":  "Internal summary before client sync - Finamo KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-03T14:20:26Z",
+        "importance":  "normal",
+        "body":  "Bên Finamo KK đang so sánh với hai vendor khác trong khu vực. chi phí maintain sau go-live đang tăng nhanh Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9032",
+        "subject":  "ご提案について - PayFlow Systems",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@payflowsystems.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-08T10:11:41Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. thiếu năng lực AI/automation ở vendor hiện tại We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9033",
+        "subject":  "Re: Dedicated team scope for PayFlow Systems",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@payflowsystems.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-08T21:45:12Z",
+        "importance":  "normal",
+        "body":  "PayFlow Systems is sensitive to compliance and production support coverage. cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9034",
+        "subject":  "Proposal follow-up - PropVista SG",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-12T15:06:31Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. khó kiểm soát thay đổi requirement vào cuối sprint We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9035",
+        "subject":  "Re: pricing concern from EduSpring Japan",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-25T23:13:07Z",
+        "importance":  "normal",
+        "body":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới. lo ngại timezone overlap không đủ với team Nhật Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9036",
+        "subject":  "Re: Dedicated team scope for Learnify APAC",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-29T06:33:47Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Learnify APAC. thiếu năng lực AI/automation ở vendor hiện tại Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9037",
+        "subject":  "ご提案について - EduSpring Japan",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-24T05:25:24Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. thiếu năng lực AI/automation ở vendor hiện tại Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9038",
+        "subject":  "Weekly update - PropVista SG",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-01T02:32:13Z",
+        "importance":  "high",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. khó kiểm soát thay đổi requirement vào cuối sprint Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9039",
+        "subject":  "Re: pricing concern from Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-31T07:11:44Z",
+        "importance":  "high",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain e-commerce. khách muốn thấy thêm case study trong domain tương tự Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9040",
+        "subject":  "UAT alignment for Mira Commerce JP",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-29T21:54:09Z",
+        "importance":  "high",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9041",
+        "subject":  "ご提案について - Finamo KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-29T14:08:45Z",
+        "importance":  "high",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. khách lo ngại ramp-up mất quá nhiều thời gian We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9042",
+        "subject":  "Weekly update - Kirei Care KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-29T04:09:58Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 giá của Newwave cao hơn vendor India khoảng 10-15% Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9043",
+        "subject":  "Proposal follow-up - Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-02T22:35:04Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9044",
+        "subject":  "Re: Dedicated team scope for Learnify APAC",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-28T06:59:25Z",
+        "importance":  "high",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. chi phí maintain sau go-live đang tăng nhanh Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9045",
+        "subject":  "Re: Dedicated team scope for EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-24T07:01:14Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 khách muốn thấy thêm case study trong domain tương tự Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9046",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-26T01:17:52Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9047",
+        "subject":  "Weekly update - Finamo KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-03T18:23:08Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 muốn một team có thể vừa làm web vừa làm mobile Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9048",
+        "subject":  "Weekly update - Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-08T21:03:55Z",
+        "importance":  "high",
+        "body":  "見積もり前提を再確認させてください。 lo ngại timezone overlap không đủ với team Nhật Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9049",
+        "subject":  "Re: Dedicated team scope for Mira Commerce JP",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-12T17:51:01Z",
+        "importance":  "normal",
+        "body":  "Mira Commerce JP is sensitive to compliance and production support coverage. release thường chậm vì QA handoff thủ công Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9050",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-29T19:49:29Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9051",
+        "subject":  "Re: Dedicated team scope for Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-31T12:01:55Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 lo ngại timezone overlap không đủ với team Nhật Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9052",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-11T19:15:27Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9053",
+        "subject":  "Re: Dedicated team scope for Finamo KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-30T17:01:15Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9054",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-09T05:41:39Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9055",
+        "subject":  "Nhắc nộp timesheet tuần này",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-30T07:10:14Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9056",
+        "subject":  "Re: Release plan and open issues - Finamo KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-26T05:47:28Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 khách muốn thấy thêm case study trong domain tương tự Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9057",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-30T13:42:27Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9058",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-26T20:25:52Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9059",
+        "subject":  "UAT alignment for MedCore Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-23T16:01:55Z",
+        "importance":  "normal",
+        "body":  "MedCore Korea is sensitive to compliance and production support coverage. giá của Newwave cao hơn vendor India khoảng 10-15% Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9060",
+        "subject":  "Re: pricing concern from Finamo KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-01T13:39:53Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain fintech. khách muốn thấy thêm case study trong domain tương tự Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9061",
+        "subject":  "ご提案について - Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-23T14:23:34Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 muốn một team có thể vừa làm web vừa làm mobile We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9062",
+        "subject":  "Update danh sách nghỉ lễ 30/4",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-28T22:52:58Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9063",
+        "subject":  "Re: Release plan and open issues - ShopWave Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-27T19:44:33Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. cần đối tác quen domain compliance cho fintech/healthcare Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9064",
+        "subject":  "Weekly update - Hanbit Platform",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-28T00:25:38Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Hanbit Platform. giá của Newwave cao hơn vendor India khoảng 10-15% Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9065",
+        "subject":  "Weekly update - Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-05T23:33:44Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9066",
+        "subject":  "ご提案について - Learnify APAC",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-25T02:30:44Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. release thường chậm vì QA handoff thủ công We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9067",
+        "subject":  "Re: Release plan and open issues - Hanbit Platform",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-06T03:14:55Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Hanbit Platform. khó kiểm soát thay đổi requirement vào cuối sprint Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9068",
+        "subject":  "ご提案について - EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-24T16:11:07Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 chi phí maintain sau go-live đang tăng nhanh We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9069",
+        "subject":  "Chuẩn bị câu trả lời cho khách Hanbit Platform",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T09:54:12Z",
+        "importance":  "normal",
+        "body":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới. procurement yêu cầu benchmark thêm hai vendor khác Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9070",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-29T12:34:44Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9071",
+        "subject":  "Re: Dedicated team scope for Kirei Care KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-28T10:47:49Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 lo ngại timezone overlap không đủ với team Nhật Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9072",
+        "subject":  "Chuẩn bị câu trả lời cho khách Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-31T14:17:50Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain e-commerce. khách lo ngại ramp-up mất quá nhiều thời gian We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9073",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-02T07:26:24Z",
+        "importance":  "high",
+        "body":  "EduSpring Japan wants clearer ownership on QA and UAT support. cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9074",
+        "subject":  "Proposal follow-up - Kirei Care KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-03T09:11:35Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. thiếu năng lực AI/automation ở vendor hiện tại Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9075",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-10T02:49:53Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9076",
+        "subject":  "Proposal follow-up - ShopWave Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T10:35:08Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. giá của Newwave cao hơn vendor India khoảng 10-15% We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9077",
+        "subject":  "UAT alignment for EduSpring Japan",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-29T04:29:24Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9078",
+        "subject":  "Re: Dedicated team scope for Learnify APAC",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-01T14:23:28Z",
+        "importance":  "normal",
+        "body":  "Learnify APAC wants clearer ownership on QA and UAT support. thiếu năng lực AI/automation ở vendor hiện tại Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9079",
+        "subject":  "Re: Dedicated team scope for Kirei Care KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-29T04:31:38Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 release thường chậm vì QA handoff thủ công Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9080",
+        "subject":  "Internal summary before client sync - Kirei Care KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T06:22:47Z",
+        "importance":  "high",
+        "body":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9081",
+        "subject":  "Proposal follow-up - EduSpring Japan",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-26T08:22:56Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. procurement yêu cầu benchmark thêm hai vendor khác Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9082",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-25T02:09:10Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9083",
+        "subject":  "Internal summary before client sync - PropVista SG",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-31T03:57:02Z",
+        "importance":  "high",
+        "body":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo. chi phí maintain sau go-live đang tăng nhanh Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9084",
+        "subject":  "Weekly update - Kirei Care KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-31T11:01:59Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9085",
+        "subject":  "Chuẩn bị câu trả lời cho khách Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-06T17:54:23Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain healthcare. khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9086",
+        "subject":  "Update danh sách nghỉ lễ 30/4",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-28T08:00:01Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9087",
+        "subject":  "ご提案について - Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-01T21:05:31Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Kirei Care KK. chi phí maintain sau go-live đang tăng nhanh Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9088",
+        "subject":  "Re: Release plan and open issues - Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-31T03:08:35Z",
+        "importance":  "high",
+        "body":  "見積もり前提を再確認させてください。 khách muốn thấy thêm case study trong domain tương tự Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9089",
+        "subject":  "Re: Release plan and open issues - Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-22T23:47:45Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 release thường chậm vì QA handoff thủ công Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9090",
+        "subject":  "Chuẩn bị câu trả lời cho khách ShopWave Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-05T20:51:34Z",
+        "importance":  "high",
+        "body":  "Bên ShopWave Korea đang so sánh với hai vendor khác trong khu vực. chi phí maintain sau go-live đang tăng nhanh Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9091",
+        "subject":  "Internal summary before client sync - Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-07T01:41:53Z",
+        "importance":  "high",
+        "body":  "Bên Finamo KK đang so sánh với hai vendor khác trong khu vực. cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9092",
+        "subject":  "UAT alignment for Mira Commerce JP",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-26T16:24:21Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9093",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-25T13:08:21Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9094",
+        "subject":  "Weekly update - MedCore Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-25T03:31:30Z",
+        "importance":  "high",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. khó kiểm soát thay đổi requirement vào cuối sprint Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9095",
+        "subject":  "Weekly update - Hanbit Platform",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-29T04:04:41Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. lo ngại timezone overlap không đủ với team Nhật Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9096",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-13T04:53:11Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9097",
+        "subject":  "Re: Release plan and open issues - ShopWave Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-22T07:52:44Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9098",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-20T20:20:43Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9099",
+        "subject":  "ご提案について - Finamo KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-31T13:28:06Z",
+        "importance":  "normal",
+        "body":  "Finamo KK wants clearer ownership on QA and UAT support. thiếu năng lực AI/automation ở vendor hiện tại Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9100",
+        "subject":  "Weekly update - Hanbit Platform",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-28T06:25:08Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. thiếu năng lực AI/automation ở vendor hiện tại Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9101",
+        "subject":  "Internal summary before client sync - Mira Commerce JP",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-06T14:35:54Z",
+        "importance":  "normal",
+        "body":  "Bên Mira Commerce JP đang so sánh với hai vendor khác trong khu vực. lo ngại timezone overlap không đủ với team Nhật We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9102",
+        "subject":  "Chuẩn bị câu trả lời cho khách ShopWave Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-05T15:11:23Z",
+        "importance":  "normal",
+        "body":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo. lo ngại timezone overlap không đủ với team Nhật Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9103",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-28T02:53:14Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9104",
+        "subject":  "Update danh sách nghỉ lễ 30/4",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-09T07:33:25Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9105",
+        "subject":  "Proposal follow-up - MedCore Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-25T23:11:55Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for MedCore Korea. khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9106",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-08T19:09:12Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9107",
+        "subject":  "Re: pricing concern from ShopWave Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-06T11:05:59Z",
+        "importance":  "high",
+        "body":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới. khách muốn thấy thêm case study trong domain tương tự Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9108",
+        "subject":  "Weekly update - Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-05T04:55:37Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 khách lo ngại ramp-up mất quá nhiều thời gian Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9109",
+        "subject":  "Re: Release plan and open issues - Learnify APAC",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-02T05:54:28Z",
+        "importance":  "normal",
+        "body":  "Learnify APAC wants clearer ownership on QA and UAT support. muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9110",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-28T04:38:33Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9111",
+        "subject":  "Internal summary before client sync - Mira Commerce JP",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-05T12:59:24Z",
+        "importance":  "normal",
+        "body":  "Bên Mira Commerce JP đang so sánh với hai vendor khác trong khu vực. khách lo ngại ramp-up mất quá nhiều thời gian Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9112",
+        "subject":  "Re: Dedicated team scope for Hanbit Platform",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-28T05:39:55Z",
+        "importance":  "high",
+        "body":  "Hanbit Platform is sensitive to compliance and production support coverage. procurement yêu cầu benchmark thêm hai vendor khác Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9113",
+        "subject":  "Re: Release plan and open issues - Mira Commerce JP",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-14T07:31:27Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 khách muốn thấy thêm case study trong domain tương tự Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9114",
+        "subject":  "ご提案について - EduSpring Japan",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-02T02:31:42Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for EduSpring Japan. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9115",
+        "subject":  "Re: pricing concern from Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T15:33:22Z",
+        "importance":  "high",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain e-commerce. khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9116",
+        "subject":  "Re: Release plan and open issues - ShopWave Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-12T04:31:16Z",
+        "importance":  "high",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. chi phí maintain sau go-live đang tăng nhanh We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9117",
+        "subject":  "ご提案について - Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-15T07:41:25Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Mira Commerce JP. release thường chậm vì QA handoff thủ công We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9118",
+        "subject":  "Re: Dedicated team scope for MedCore Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-04T04:45:09Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. procurement yêu cầu benchmark thêm hai vendor khác We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9119",
+        "subject":  "Proposal follow-up - ShopWave Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-11T12:15:49Z",
+        "importance":  "high",
+        "body":  "The client asked for a more predictable delivery cadence for ShopWave Korea. chi phí maintain sau go-live đang tăng nhanh Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9120",
+        "subject":  "ご提案について - EduSpring Japan",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-05T03:10:39Z",
+        "importance":  "high",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. khó kiểm soát thay đổi requirement vào cuối sprint We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9121",
+        "subject":  "ご提案について - Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-07T13:14:22Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. khách muốn thấy thêm case study trong domain tương tự Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9122",
+        "subject":  "Weekly update - Finamo KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-28T10:10:15Z",
+        "importance":  "high",
+        "body":  "Finamo KK wants clearer ownership on QA and UAT support. khó kiểm soát thay đổi requirement vào cuối sprint Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9123",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-08T01:52:08Z",
+        "importance":  "high",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9124",
+        "subject":  "Internal summary before client sync - Mira Commerce JP",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-02T09:07:14Z",
+        "importance":  "normal",
+        "body":  "Bên Mira Commerce JP đang so sánh với hai vendor khác trong khu vực. release thường chậm vì QA handoff thủ công Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9125",
+        "subject":  "Re: Release plan and open issues - Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-18T16:58:01Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 giá của Newwave cao hơn vendor India khoảng 10-15% Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9126",
+        "subject":  "UAT alignment for Finamo KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-04T07:19:46Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9127",
+        "subject":  "ご提案について - Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-22T08:03:15Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 release thường chậm vì QA handoff thủ công Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9128",
+        "subject":  "Re: pricing concern from Hanbit Platform",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T05:41:08Z",
+        "importance":  "normal",
+        "body":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo. procurement yêu cầu benchmark thêm hai vendor khác Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9129",
+        "subject":  "Proposal follow-up - Finamo KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-04T05:04:39Z",
+        "importance":  "high",
+        "body":  "Finamo KK wants clearer ownership on QA and UAT support. giá của Newwave cao hơn vendor India khoảng 10-15% Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9130",
+        "subject":  "Re: Dedicated team scope for Kirei Care KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-29T06:59:19Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 giá của Newwave cao hơn vendor India khoảng 10-15% We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9131",
+        "subject":  "UAT alignment for EduSpring Japan",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-30T11:05:39Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 muốn một team có thể vừa làm web vừa làm mobile We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9132",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-03T05:12:37Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9133",
+        "subject":  "Update danh sách nghỉ lễ 30/4",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-25T22:24:35Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9134",
+        "subject":  "ご提案について - ShopWave Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-21T09:40:49Z",
+        "importance":  "high",
+        "body":  "ShopWave Korea is sensitive to compliance and production support coverage. procurement yêu cầu benchmark thêm hai vendor khác Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9135",
+        "subject":  "UAT alignment for ShopWave Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T05:56:04Z",
+        "importance":  "high",
+        "body":  "ShopWave Korea is sensitive to compliance and production support coverage. khó kiểm soát thay đổi requirement vào cuối sprint Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9136",
+        "subject":  "Internal summary before client sync - Hanbit Platform",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-06T08:07:49Z",
+        "importance":  "normal",
+        "body":  "Bên Hanbit Platform đang so sánh với hai vendor khác trong khu vực. chi phí maintain sau go-live đang tăng nhanh Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9137",
+        "subject":  "Re: Release plan and open issues - Kirei Care KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-30T06:48:27Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 muốn một team có thể vừa làm web vừa làm mobile Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9138",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-01T10:57:02Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9139",
+        "subject":  "Chuẩn bị câu trả lời cho khách ShopWave Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-08T22:52:22Z",
+        "importance":  "normal",
+        "body":  "Khách ShopWave Korea muốn team chủ động hơn ở phần discovery. khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9140",
+        "subject":  "ご提案について - Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-25T16:17:30Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9141",
+        "subject":  "Weekly update - Learnify APAC",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-28T00:03:53Z",
+        "importance":  "high",
+        "body":  "Learnify APAC wants clearer ownership on QA and UAT support. release thường chậm vì QA handoff thủ công Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9142",
+        "subject":  "Internal summary before client sync - Finamo KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-03T23:37:14Z",
+        "importance":  "high",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain fintech. giá của Newwave cao hơn vendor India khoảng 10-15% Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9143",
+        "subject":  "Chuẩn bị câu trả lời cho khách Finamo KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-02T01:31:02Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain fintech. giá của Newwave cao hơn vendor India khoảng 10-15% We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9144",
+        "subject":  "Re: Dedicated team scope for ShopWave Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-30T00:23:28Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. khách muốn thấy thêm case study trong domain tương tự Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9145",
+        "subject":  "Proposal follow-up - Mira Commerce JP",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-24T17:24:53Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9146",
+        "subject":  "UAT alignment for Mira Commerce JP",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-28T20:14:44Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Mira Commerce JP. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9147",
+        "subject":  "Proposal follow-up - Hanbit Platform",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-31T02:02:04Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. khó kiểm soát thay đổi requirement vào cuối sprint Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9148",
+        "subject":  "Re: Release plan and open issues - Hanbit Platform",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-28T02:05:12Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Hanbit Platform. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9149",
+        "subject":  "Chuẩn bị câu trả lời cho khách PayFlow Systems",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@payflowsystems.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-30T09:07:00Z",
+        "importance":  "normal",
+        "body":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo. muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9150",
+        "subject":  "UAT alignment for Hanbit Platform",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-02T03:39:55Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. khách lo ngại ramp-up mất quá nhiều thời gian Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9151",
+        "subject":  "Internal summary before client sync - EduSpring Japan",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-11T02:06:35Z",
+        "importance":  "normal",
+        "body":  "Khách EduSpring Japan muốn team chủ động hơn ở phần discovery. procurement yêu cầu benchmark thêm hai vendor khác Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9152",
+        "subject":  "ご提案について - Finamo KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-06T03:47:44Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9153",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-26T16:28:00Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9154",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-09T14:40:11Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9155",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "all@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-08T14:00:36Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9156",
+        "subject":  "Re: pricing concern from Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-24T19:48:11Z",
+        "importance":  "normal",
+        "body":  "Bên Mira Commerce JP đang so sánh với hai vendor khác trong khu vực. thiếu năng lực AI/automation ở vendor hiện tại Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9157",
+        "subject":  "Re: Dedicated team scope for Learnify APAC",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-29T07:45:16Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. muốn một team có thể vừa làm web vừa làm mobile Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9158",
+        "subject":  "Re: Dedicated team scope for Kirei Care KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-30T19:13:59Z",
+        "importance":  "high",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 release thường chậm vì QA handoff thủ công Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9159",
+        "subject":  "Internal summary before client sync - Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-09T05:05:56Z",
+        "importance":  "normal",
+        "body":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Please let us know if you want a smaller pilot first.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9160",
+        "subject":  "Re: Release plan and open issues - MedCore Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-25T01:47:06Z",
+        "importance":  "normal",
+        "body":  "MedCore Korea wants clearer ownership on QA and UAT support. release thường chậm vì QA handoff thủ công Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9161",
+        "subject":  "Re: Dedicated team scope for PropVista SG",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-07T15:50:13Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for PropVista SG. khó kiểm soát thay đổi requirement vào cuối sprint Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9162",
+        "subject":  "Re: Release plan and open issues - PropVista SG",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-03T17:49:42Z",
+        "importance":  "high",
+        "body":  "PropVista SG is sensitive to compliance and production support coverage. muốn một team có thể vừa làm web vừa làm mobile Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9163",
+        "subject":  "Re: Đặt suất ăn trưa thứ 6",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-02T19:20:40Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9164",
+        "subject":  "Chuẩn bị câu trả lời cho khách Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-28T17:07:11Z",
+        "importance":  "normal",
+        "body":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới. khách muốn thấy thêm case study trong domain tương tự Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9165",
+        "subject":  "ご提案について - Kirei Care KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-23T03:19:18Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. khó kiểm soát thay đổi requirement vào cuối sprint Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9166",
+        "subject":  "Re: pricing concern from Kirei Care KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-29T05:02:51Z",
+        "importance":  "normal",
+        "body":  "Client nhấn mạnh deadline nội bộ khá căng trước lần review tiếp theo. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9167",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-19T02:38:45Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 thiếu năng lực AI/automation ở vendor hiện tại Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9168",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-05T14:52:30Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for EduSpring Japan. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9169",
+        "subject":  "Chuẩn bị câu trả lời cho khách EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-12T06:20:39Z",
+        "importance":  "high",
+        "body":  "Khách EduSpring Japan muốn team chủ động hơn ở phần discovery. chi phí maintain sau go-live đang tăng nhanh Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9170",
+        "subject":  "Re: pricing concern from EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-03T20:15:39Z",
+        "importance":  "high",
+        "body":  "PM phía khách nói requirement vẫn có thể đổi sau buổi alignment tuần tới. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9171",
+        "subject":  "Re: Release plan and open issues - MedCore Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-25T08:58:43Z",
+        "importance":  "high",
+        "body":  "MedCore Korea wants clearer ownership on QA and UAT support. giá của Newwave cao hơn vendor India khoảng 10-15% Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9172",
+        "subject":  "ご提案について - EduSpring Japan",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-04T17:10:11Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 khách lo ngại ramp-up mất quá nhiều thời gian We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9173",
+        "subject":  "UAT alignment for Hanbit Platform",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-28T22:23:37Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9174",
+        "subject":  "Weekly update - Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-27T22:08:33Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 khó kiểm soát thay đổi requirement vào cuối sprint Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9175",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-05T16:31:51Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9176",
+        "subject":  "Re: Dedicated team scope for ShopWave Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-01T06:14:45Z",
+        "importance":  "high",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. giá của Newwave cao hơn vendor India khoảng 10-15% Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9177",
+        "subject":  "Internal summary before client sync - Hanbit Platform",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-13T13:14:22Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain education. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9178",
+        "subject":  "Weekly update - EduSpring Japan",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-28T12:33:44Z",
+        "importance":  "normal",
+        "body":  "EduSpring Japan is sensitive to compliance and production support coverage. procurement yêu cầu benchmark thêm hai vendor khác Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9179",
+        "subject":  "Internal summary before client sync - Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-28T12:02:30Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain healthcare. chi phí maintain sau go-live đang tăng nhanh Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9180",
+        "subject":  "Re: Release plan and open issues - Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-22T21:31:28Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. lo ngại timezone overlap không đủ với team Nhật We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9181",
+        "subject":  "Re: Release plan and open issues - MedCore Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-16T16:31:20Z",
+        "importance":  "high",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. muốn một team có thể vừa làm web vừa làm mobile Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9182",
+        "subject":  "ご提案について - Kirei Care KK",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-09T14:01:30Z",
+        "importance":  "normal",
+        "body":  "Kirei Care KK is sensitive to compliance and production support coverage. muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9183",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-27T20:39:34Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9184",
+        "subject":  "Re: Dedicated team scope for Finamo KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-05T16:06:40Z",
+        "importance":  "normal",
+        "body":  "Finamo KK wants clearer ownership on QA and UAT support. thiếu năng lực AI/automation ở vendor hiện tại We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9185",
+        "subject":  "Weekly update - Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-19T01:59:34Z",
+        "importance":  "high",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9186",
+        "subject":  "Weekly update - PropVista SG",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-03T17:54:50Z",
+        "importance":  "normal",
+        "body":  "PropVista SG is sensitive to compliance and production support coverage. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9187",
+        "subject":  "Re: Release plan and open issues - Hanbit Platform",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-28T14:51:01Z",
+        "importance":  "normal",
+        "body":  "Hanbit Platform wants clearer ownership on QA and UAT support. muốn một team có thể vừa làm web vừa làm mobile Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9188",
+        "subject":  "Re: Dedicated team scope for Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-28T07:26:19Z",
+        "importance":  "normal",
+        "body":  "Mira Commerce JP wants clearer ownership on QA and UAT support. khó kiểm soát thay đổi requirement vào cuối sprint Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9189",
+        "subject":  "Re: Dedicated team scope for Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-25T04:08:27Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. release thường chậm vì QA handoff thủ công Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9190",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-07T19:29:46Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9191",
+        "subject":  "Update danh sách nghỉ lễ 30/4",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-29T05:40:34Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9192",
+        "subject":  "Re: Release plan and open issues - MedCore Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-26T13:01:00Z",
+        "importance":  "high",
+        "body":  "The client asked for a more predictable delivery cadence for MedCore Korea. cần đối tác quen domain compliance cho fintech/healthcare Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9193",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-07T23:18:14Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9194",
+        "subject":  "ご提案について - Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-02-28T20:51:35Z",
+        "importance":  "high",
+        "body":  "見積もり前提を再確認させてください。 procurement yêu cầu benchmark thêm hai vendor khác We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9195",
+        "subject":  "Re: Release plan and open issues - Kirei Care KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-24T02:57:33Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 cần đối tác quen domain compliance cho fintech/healthcare Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9196",
+        "subject":  "UAT alignment for Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-15T03:05:41Z",
+        "importance":  "normal",
+        "body":  "The client asked for a more predictable delivery cadence for Kirei Care KK. procurement yêu cầu benchmark thêm hai vendor khác We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9197",
+        "subject":  "UAT alignment for Learnify APAC",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-29T16:15:06Z",
+        "importance":  "normal",
+        "body":  "Learnify APAC is sensitive to compliance and production support coverage. thiếu năng lực AI/automation ở vendor hiện tại Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9198",
+        "subject":  "Re: Dedicated team scope for EduSpring Japan",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-01T15:42:34Z",
+        "importance":  "normal",
+        "body":  "EduSpring Japan is sensitive to compliance and production support coverage. muốn một team có thể vừa làm web vừa làm mobile We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9199",
+        "subject":  "Re: Dedicated team scope for Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-29T17:19:55Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 muốn một team có thể vừa làm web vừa làm mobile Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9200",
+        "subject":  "Re: Dedicated team scope for Kirei Care KK",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-04T07:21:06Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. release thường chậm vì QA handoff thủ công Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9201",
+        "subject":  "UAT alignment for Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T19:25:22Z",
+        "importance":  "high",
+        "body":  "見積もり前提を再確認させてください。 lo ngại timezone overlap không đủ với team Nhật Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9202",
+        "subject":  "Proposal follow-up - PropVista SG",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-30T21:13:48Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. cần đối tác quen domain compliance cho fintech/healthcare Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9203",
+        "subject":  "ご提案について - ShopWave Korea",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-01T14:51:20Z",
+        "importance":  "normal",
+        "body":  "ShopWave Korea is sensitive to compliance and production support coverage. khó kiểm soát thay đổi requirement vào cuối sprint Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9204",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-30T18:11:07Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9205",
+        "subject":  "Re: Release plan and open issues - MedCore Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-25T01:08:10Z",
+        "importance":  "normal",
+        "body":  "MedCore Korea wants clearer ownership on QA and UAT support. giá của Newwave cao hơn vendor India khoảng 10-15% We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9206",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-06T20:34:19Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9207",
+        "subject":  "Re: pricing concern from Kirei Care KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-01T16:25:22Z",
+        "importance":  "normal",
+        "body":  "Khách Kirei Care KK muốn team chủ động hơn ở phần discovery. khách chưa chắc chắn về năng lực tiếng Nhật của team delivery Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx",
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9208",
+        "subject":  "Re: Release plan and open issues - Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-03T18:00:02Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 lo ngại timezone overlap không đủ với team Nhật Please let us know if you want a smaller pilot first.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9209",
+        "subject":  "Weekly update - Mira Commerce JP",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-04T01:42:11Z",
+        "importance":  "normal",
+        "body":  "先方から追加質問をいただいたため、回答案を共有します。 chi phí maintain sau go-live đang tăng nhanh We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9210",
+        "subject":  "Weekly update - MedCore Korea",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-09T01:35:59Z",
+        "importance":  "normal",
+        "body":  "MedCore Korea is sensitive to compliance and production support coverage. khách muốn thấy thêm case study trong domain tương tự We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9211",
+        "subject":  "Re: pricing concern from MedCore Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-28T21:01:26Z",
+        "importance":  "normal",
+        "body":  "Bên MedCore Korea đang so sánh với hai vendor khác trong khu vực. cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9212",
+        "subject":  "Proposal follow-up - MedCore Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-18T00:50:39Z",
+        "importance":  "normal",
+        "body":  "MedCore Korea wants clearer ownership on QA and UAT support. cần đối tác quen domain compliance cho fintech/healthcare Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9213",
+        "subject":  "Re: Release plan and open issues - EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "ba@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-06T15:40:23Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. khách muốn thấy thêm case study trong domain tương tự Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9214",
+        "subject":  "Proposal follow-up - Learnify APAC",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@learnifyapac.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-04-24T09:01:09Z",
+        "importance":  "high",
+        "body":  "Learnify APAC is sensitive to compliance and production support coverage. chi phí maintain sau go-live đang tăng nhanh Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9215",
+        "subject":  "Weekly update - ShopWave Korea",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@shopwavekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-31T05:10:29Z",
+        "importance":  "normal",
+        "body":  "The client requested a concrete transition plan from the incumbent vendor. cần đối tác quen domain compliance cho fintech/healthcare We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9216",
+        "subject":  "Proposal follow-up - Hanbit Platform",
+        "from":  "qa@newwavesolution.com",
+        "to":  [
+                   "contact@hanbitplatform.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-05-11T01:35:22Z",
+        "importance":  "normal",
+        "body":  "Hanbit Platform is sensitive to compliance and production support coverage. thiếu năng lực AI/automation ở vendor hiện tại Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9217",
+        "subject":  "Internal summary before client sync - MedCore Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T19:00:18Z",
+        "importance":  "normal",
+        "body":  "Khách đánh giá cao việc Newwave có kinh nghiệm domain healthcare. muốn một team có thể vừa làm web vừa làm mobile We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9218",
+        "subject":  "ご提案について - EduSpring Japan",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-27T04:03:02Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 cần đối tác quen domain compliance cho fintech/healthcare Please let us know if you want a smaller pilot first.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9219",
+        "subject":  "ご提案について - Finamo KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "sales@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-03T15:15:06Z",
+        "importance":  "high",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 chi phí maintain sau go-live đang tăng nhanh Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9220",
+        "subject":  "Re: pricing concern from EduSpring Japan",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@eduspringjapan.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-30T14:17:37Z",
+        "importance":  "normal",
+        "body":  "Bên EduSpring Japan đang so sánh với hai vendor khác trong khu vực. khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "internal_account",
+        "attachments":  [
+                            "nda.docx"
+                        ]
+    },
+    {
+        "id":  "mail_9221",
+        "subject":  "Laptop bạn nào để quên ở pantry",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "sales@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-03-05T04:47:04Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9222",
+        "subject":  "Re: Release plan and open issues - Mira Commerce JP",
+        "from":  "pm@newwavesolution.com",
+        "to":  [
+                   "contact@miracommercejp.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-26T08:48:27Z",
+        "importance":  "normal",
+        "body":  "Mira Commerce JP is sensitive to compliance and production support coverage. khó kiểm soát thay đổi requirement vào cuối sprint We can arrange a Japanese-speaking BA for the next call.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+
+                        ]
+    },
+    {
+        "id":  "mail_9223",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "admin@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-29T11:47:43Z",
+        "importance":  "normal",
+        "body":  "Nhắc lại giúp mình lịch nghỉ lễ và trực support cuối tuần.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9224",
+        "subject":  "ご提案について - MedCore Korea",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@medcorekorea.example.com"
+               ],
+        "ccRecipients":  [
+                             "delivery@newwavesolution.com",
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-03-28T06:41:28Z",
+        "importance":  "high",
+        "body":  "MedCore Korea is sensitive to compliance and production support coverage. thiếu năng lực AI/automation ở vendor hiện tại Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9225",
+        "subject":  "Mượn phòng họp tầng 8 lúc 3pm",
+        "from":  "ops@newwavesolution.com",
+        "to":  [
+                   "marketing@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-05-04T19:53:54Z",
+        "importance":  "normal",
+        "body":  "Please update before EOD. Không có việc gì gấp.",
+        "conversationType":  "internal"
+    },
+    {
+        "id":  "mail_9226",
+        "subject":  "Proposal follow-up - PropVista SG",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@propvistasg.example.com"
+               ],
+        "ccRecipients":  [
+                             "ba@newwavesolution.com",
+                             "delivery@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-04-06T15:05:41Z",
+        "importance":  "normal",
+        "body":  "The prospect is evaluating vendors in Vietnam, India, and Korea. khách muốn thử pilot nhỏ trước khi ký hợp đồng lớn Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "sales_external",
+        "attachments":  [
+                            "proposal_v2.pdf",
+                            "qa_plan.pptx"
+                        ]
+    },
+    {
+        "id":  "mail_9227",
+        "subject":  "Weekly update - Kirei Care KK",
+        "from":  "sales@newwavesolution.com",
+        "to":  [
+                   "contact@kireicarekk.example.com"
+               ],
+        "ccRecipients":  [
+
+                         ],
+        "receivedDateTime":  "2026-03-29T13:00:11Z",
+        "importance":  "normal",
+        "body":  "田中様、先日はお時間をいただきありがとうございました。 cần vendor giao tiếp chủ động hơn thay vì chỉ chờ ticket Khách muốn file proposal được tách rõ phạm vi QA và support sau go-live.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "qa_plan.pptx",
+                            "proposal_v2.pdf"
+                        ]
+    },
+    {
+        "id":  "mail_9228",
+        "subject":  "UAT alignment for Finamo KK",
+        "from":  "delivery@newwavesolution.com",
+        "to":  [
+                   "contact@finamokk.example.com"
+               ],
+        "ccRecipients":  [
+                             "account@newwavesolution.com"
+                         ],
+        "receivedDateTime":  "2026-05-07T20:17:13Z",
+        "importance":  "normal",
+        "body":  "見積もり前提を再確認させてください。 procurement yêu cầu benchmark thêm hai vendor khác Đề nghị team bổ sung timeline có buffer cho UAT.",
+        "conversationType":  "delivery_external",
+        "attachments":  [
+                            "timeline.xlsx"
+                        ]
+    },
+    {
+        "id":  "mail_9229",
+        "subject":  "Update danh sách nghỉ lễ 30/4",
+        "from":  "hr@newwavesolution.com",
+        "to":  [
+                   "delivery@newwavesolution.com"
+               ],
+        "receivedDateTime":  "2026-04-02T06:29:48Z",
+        "importance":  "normal",
+        "body":  "Team nào đăng ký thì phản hồi trước 10h sáng nhé.",
+        "conversationType":  "internal"
+    }
+]

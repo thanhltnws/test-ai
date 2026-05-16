@@ -287,7 +287,7 @@ def _call_bedrock(prompt_text: str) -> str:
 
     client = boto3.client(
         "bedrock-runtime",
-        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        region_name=os.environ.get("AWS_REGION", "ap-southeast-1"),
     )
     body = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
@@ -297,7 +297,7 @@ def _call_bedrock(prompt_text: str) -> str:
     })
     resp = client.invoke_model(
         modelId=os.environ.get(
-            "BEDROCK_MODEL_ID", "apac.anthropic.claude-3-5-sonnet-20241022-v2:0"
+            "BEDROCK_MODEL_ID", "global.anthropic.claude-sonnet-4-6"
         ),
         body=body,
     )

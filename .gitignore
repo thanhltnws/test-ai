@@ -236,7 +236,7 @@ frontend/dist-ssr
 .env.*.local
 
 # Seed — generated output only; raw/ is committed
-backend/seed/data/
+
 # SAM build artifacts
 .aws-sam/
 

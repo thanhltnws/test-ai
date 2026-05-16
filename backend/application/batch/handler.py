@@ -353,17 +353,17 @@ def _call_bedrock(prompt_text: str) -> str:
 
     client = boto3.client(
         "bedrock-runtime",
-        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        region_name=os.environ.get("AWS_REGION", "ap-southeast-1"),
     )
     body = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 4096,
+        "max_tokens": 8192,
         "temperature": 0.2,
         "messages": [{"role": "user", "content": prompt_text}],
     })
     resp = client.invoke_model(
         modelId=os.environ.get(
-            "BEDROCK_MODEL_ID", "apac.anthropic.claude-3-haiku-20240307-v1:0"
+            "BEDROCK_MODEL_ID", "global.anthropic.claude-haiku-4-5-20251001-v1:0"
         ),
         body=body,
     )
