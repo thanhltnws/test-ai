@@ -96,10 +96,10 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
 
     client = boto3.client(
         "bedrock-runtime",
-        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        region_name=os.environ.get("AWS_REGION", "ap-southeast-1"),
     )
     resp = client.invoke_model(
-        modelId="cohere.embed-multilingual-v3",
+        modelId=os.environ.get("BEDROCK_EMBEDDING_MODEL_ID", "cohere.embed-multilingual-v3"),
         contentType="application/json",
         accept="application/json",
         body=json.dumps({

@@ -239,7 +239,7 @@ Các file này là JSON array và có schema không hoàn toàn đồng nhất g
 
 `generate.py` hỗ trợ hai provider: `gemini` (default local dev) và `bedrock`. Trong thực tế đã chạy với Bedrock để đồng nhất với AWS stack:
 
-- **Model:** `us.anthropic.claude-haiku-4-5-20251001-v1:0` (US cross-region inference profile)
+- **Model:** `apac.anthropic.claude-haiku-4-5-20251001-v1:0` (APAC cross-region inference profile)
 - **Region:** `us-east-1`
 - **Auth:** AWS SSO qua profile `aih`, load vào boto3 thông qua `AWS_PROFILE` trong `.env`
 - **Provider switch:** set `SEED_LLM_PROVIDER=bedrock` trong `.env` (không phải `EMBEDDING_PROVIDER`)

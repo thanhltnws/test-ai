@@ -317,6 +317,7 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
         BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+        BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
       description: 'Transform: S3 ObjectCreated raw/ → normalize → Bedrock extract → Aurora signals + pgvector',
     });
