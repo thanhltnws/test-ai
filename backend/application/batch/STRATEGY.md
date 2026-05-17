@@ -95,7 +95,7 @@ Bảng là **append-only** — không update, không xóa. Mỗi lần chạy th
 
 ## Dev vs Prod
 
-`_is_dev()` kiểm tra env vars theo thứ tự: `APP_ENV` → `ENVIRONMENT` → `ENV` → `STAGE`. Nếu không set, fallback dựa vào sự tồn tại của `AWS_LAMBDA_FUNCTION_NAME` hoặc `DB_SECRET_ARN`.
+Provider được chọn qua `LLM_PROVIDER` env var (`gemini` | `bedrock`, default `bedrock`).
 
 | | Dev (local) | Prod (Lambda) |
 |---|---|---|
@@ -103,7 +103,15 @@ Bảng là **append-only** — không update, không xóa. Mỗi lần chạy th
 | Embedding | Gemini embedding | Bedrock Cohere multilingual |
 | DB | `DATABASE_URL` từ `.env` | Secret từ `DB_SECRET_ARN` |
 
-Để force prod mode khi chạy local: set `APP_ENV=production` trong `.env`.
+---
+
+## Known Issues
+
+### `write_insight_embeddings` dùng sai `input_type`
+
+`_embed_bedrock` dùng `"input_type": "search_query"` cho cả việc lưu document vào `insight_embeddings`. Đúng ra phải dùng `"search_document"` (Cohere) / `"RETRIEVAL_DOCUMENT"` (Gemini) khi embed text để index. `signal_embeddings` được import đúng với `search_document` — chỉ `insight_embeddings` từ Lambda bị sai.
+
+Fix: tách riêng `_embed_documents()` dùng `search_document`, dùng nó trong `write_insight_embeddings` thay vì `_embed_queries`.
 
 ---
 

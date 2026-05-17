@@ -260,7 +260,7 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
 
 
 def _embed_queries(texts: list[str]) -> list[list[float]]:
-    if _is_dev():
+    if _llm_provider() == "gemini":
         return _embed_gemini(texts)
     return _embed_bedrock(texts)
 
@@ -319,20 +319,8 @@ def query_pgvector(conn, period_start: date, period_end: date) -> list[dict]:
 
 # ── llm calls ──────────────────────────────────────────────────────────────────
 
-def _is_dev() -> bool:
-    env = (
-        os.environ.get("APP_ENV")
-        or os.environ.get("ENVIRONMENT")
-        or os.environ.get("ENV")
-        or os.environ.get("STAGE")
-        or ""
-    ).strip().lower()
-    if env:
-        return env in {"local", "dev", "development", "test"}
-    return not (
-        os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
-        or os.environ.get("DB_SECRET_ARN")
-    )
+def _llm_provider() -> str:
+    return os.environ.get("LLM_PROVIDER", "bedrock").strip().lower()
 
 
 def _call_gemini(prompt_text: str) -> str:
@@ -371,7 +359,7 @@ def _call_bedrock(prompt_text: str) -> str:
 
 
 def call_llm(prompt_text: str) -> str:
-    if _is_dev():
+    if _llm_provider() == "gemini":
         return _call_gemini(prompt_text)
     return _call_bedrock(prompt_text)
 

@@ -18,9 +18,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Force Bedrock — override _is_dev() detection before importing handler
 import os
-os.environ.setdefault("APP_ENV", "production")
+os.environ.setdefault("LLM_PROVIDER", "bedrock")
 
 # Make batch handler importable
 sys.path.insert(0, str(Path(__file__).parents[1] / "application" / "batch"))
