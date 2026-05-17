@@ -1,10 +1,23 @@
 # AI Insight Hub
 
-Internal demo. Aggregates customer insights from HubSpot, Jira, email, and ops notes into a insights store, then surfaces them through a dashboard and a natural-language chatbox.
+Internal demo. Aggregates customer insights from CRM, email, call transcripts, and ops notes into a unified store, then surfaces them through a dashboard and a natural-language chatbox.
 
 ```text
-Data Sources → Ingestion (Lambda + S3) → Transform (Lambda ETL + Bedrock) → Aurora + Vectorize → Dashboard / Chatbox
+Data Sources → Ingestion (Lambda + S3) → Transform (Lambda + Bedrock) → Aurora + pgvector → Dashboard / Chatbox
 ```
+
+---
+
+## Docs
+
+| File | Contents |
+| --- | --- |
+| [`docs/break_problem.md`](docs/break_problem.md) | Problem analysis — why this system exists |
+| [`docs/architecture.md`](docs/architecture.md) | Three-tier architecture, data flow, service list |
+| [`docs/decisions.md`](docs/decisions.md) | ADRs — why we chose what |
+| [`docs/scope.md`](docs/scope.md) | Scope, limitations, prerequisites |
+| [`docs/faq.md`](docs/faq.md) | Technical Q&A — design decisions explained |
+| [`docs/schema.md`](docs/schema.md) | Table definitions, indexes |
 
 ---
 
@@ -12,12 +25,12 @@ Data Sources → Ingestion (Lambda + S3) → Transform (Lambda ETL + Bedrock) �
 
 | Layer | Local dev | AWS deploy |
 | --- | --- | --- |
-| LLM | Gemini API (free) | Bedrock — Haiku (extract) · Sonnet (RAG, Case B) |
-| Database | PostgreSQL | Aurora PostgreSQL Serverless v2 |
-| Vector store | — | Cloudflare Vectorize |
+| LLM | Gemini API (free) | Bedrock — Haiku (extract) · Sonnet (RAG, batch) |
+| Embeddings | Gemini Embedding | Bedrock — Cohere embed-multilingual-v3 |
+| Database | PostgreSQL + pgvector | Aurora PostgreSQL Serverless v2 + pgvector |
 | Functions | Python 3.12 | Lambda |
 | Infra | — | CDK (TypeScript) |
-| Frontend | Vite + React + Recharts | Amplify |
+| Frontend | React + Vercel |
 
 ---
 
@@ -26,67 +39,57 @@ Data Sources → Ingestion (Lambda + S3) → Transform (Lambda ETL + Bedrock) �
 ```text
 ai-insight-hub/
 │
-├── docs/
-│   ├── architecture.md       ← full system design
-│   ├── schema.md             ← Aurora table definitions
-│   └── decisions.md          ← ADRs — why we chose what
+├── docs/                         ← see table above
 │
 ├── backend/
 │   ├── ingestion/
-│   │   ├── hubspot/          ← Lambda: poll HubSpot deals + call notes → S3 raw/
-│   │   │   ├── handler.py
-│   │   │   └── requirements.txt
-│   │   └── jira/             ← Lambda: poll Jira issues → S3 raw/
-│   │       ├── handler.py
-│   │       └── requirements.txt
+│   │   └── handler.py            ← Lambda: load from data sources → S3 raw/
 │   │
-│   ├── transform/            ← Lambda: S3 ObjectCreated (raw/) → normalize + Bedrock → Aurora
-│   │   ├── handler.py        ← single handler: ETL normalize + AI extract + Aurora write
-│   │   ├── prompt.py         ← prompt template (never inline in handler)
-│   │   └── requirements.txt
+│   ├── transform/
+│   │   ├── handler.py            ← Lambda: S3 ObjectCreated → LLM extract → Aurora signals
+│   │   └── prompt.py
 │   │
 │   ├── application/
-│   │   ├── batch/            ← Lambda: EventBridge-triggered dashboard compute
-│   │   │   └── handler.py    ← Case A (aggregates) + Case B (ICP narrative)
-│   │   └── rag/              ← Lambda: POST /chat RAG handler
-│   │       ├── handler.py
-│   │       └── prompt.py
+│   │   ├── batch/                ← Lambda: EventBridge → aggregate signals → insights table
+│   │   │   ├── handler.py
+│   │   │   └── prompt.py
+│   │   ├── chat/                 ← Lambda: POST /chat — dual-context RAG
+│   │   │   ├── handler.py
+│   │   │   └── prompt.py
+│   │   ├── api/                  ← Lambda: GET /insights — dashboard data
+│   │   │   └── handler.py
+│   │   └── common/
+│   │       └── auth.py
 │   │
-│   └── seed/                 ← local dev only — not deployed
-│       ├── generate.py       ← read raw/, call Gemini, output insights_seed.json
-│       ├── import.py         ← import insights_seed.json → Aurora + Vectorize (stub)
+│   └── seed/                     ← local dev only — not deployed
+│       ├── generate.py           ← read raw/, call Gemini, output signals_seed.json
+│       ├── import.py             ← import signals_seed.json → Aurora + pgvector
 │       ├── prompt.py
-│       ├── requirements.txt
-│       ├── raw/              ← source datasets, committed to git
-│       │   ├── marketing/
-│       │   │   └── marketing_lead_scoring/
-│       │   ├── sales/
-│       │   │   ├── sales_pipeline_crm/
-│       │   │   └── sales_b2b_ict/
-│       │   └── ops/
-│       │       └── ofbiz_issues.json
 │       └── data/
-│           └── insights_seed.json   ← generated, gitignored
+│           ├── raw/              ← 6 source JSON files, committed to git
+│           └── signals_seed.json ← generated, gitignored
 │
-├── infra/                    ← CDK TypeScript
+├── infra/                        ← CDK TypeScript
 │   ├── bin/app.ts
 │   └── lib/
-│       ├── ingestion-stack.ts
-│       ├── transform-stack.ts
 │       └── application-stack.ts
 │
-├── frontend/                 ← React + Vite
+├── frontend/                     ← React + Vite
 │   ├── src/
 │   │   ├── pages/
 │   │   │   ├── Dashboard.tsx
 │   │   │   └── Chat.tsx
-│   │   └── components/
-│   ├── package.json
-│   └── amplify.yml
+│   │   └── api/
+│   │       └── lambdas.ts
+│   └── package.json
 │
-├── .env.example              ← copy to .env, fill in keys
+├── dev/
+│   ├── docker-compose.yml        ← PostgreSQL 17 + pgvector
+│   └── init.sql                  ← DDL: signals, insights, signal_embeddings, insight_embeddings
+│
+├── .env.example                  ← copy to .env, fill in keys
 ├── .gitignore
-└── requirements.txt          ← root-level deps for local scripts
+└── requirements.txt              ← root-level deps for local scripts
 ```
 
 ---
@@ -124,53 +127,73 @@ Add to `.env`:
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_insight_hub
 ```
 
-When a new table is added after your local database already exists, re-run the idempotent schema file:
-
-```bash
-docker compose -f dev/docker-compose.yml up -d
-docker compose -f dev/docker-compose.yml exec -T db psql -U postgres -d ai_insight_hub -f /docker-entrypoint-initdb.d/init.sql
-```
-
-This is only for syncing new tables without affecting existing tables/data. Do not use this flow for changing existing tables.
-
 To wipe and recreate the database from scratch: `docker compose -f dev/docker-compose.yml down -v && docker compose -f dev/docker-compose.yml up -d`
 
 ### 4. Generate and import seed data
 
+Set providers in `.env` before running:
+
+```env
+SEED_LLM_PROVIDER=gemini          # gemini (default) or bedrock
+SEED_EMBEDDING_PROVIDER=gemini    # gemini, bedrock, or cloudflare
+```
+
+The raw source files in `backend/seed/data/raw/` contain mock data covering February — mid-May 2026.
+
+There are three ways to get data into the local database — pick the one that fits:
+
+#### Option A — Use the existing `signals_seed.json`
+
+The repo may already have a generated file. Just import it directly:
+
 ```bash
-# Test run — 5 rows per subfolder, a few API calls, fast
-python backend/seed/generate.py --limit 5
-
-# Full run — processes all rows in backend/seed/raw/
-python backend/seed/generate.py
-
-# Import into PostgreSQL
 python backend/seed/import.py
 ```
 
-`--limit 5` is recommended for first-time setup to verify the pipeline works. Increase or drop it once you have a model with higher quota (default: `gemini-3.1-flash-lite-preview`, free tier RPD = 500).
+#### Option B — Regenerate `signals_seed.json` from raw sources
 
----
-## Running each component locall
-
-**Full pipeline (ingestion → transform)**
+Re-runs extraction on the 6 files in `backend/seed/data/raw/` via LLM, then imports:
 
 ```bash
-docker compose -f dev/docker-compose.yml up -d          # 1. start DB
-python backend/ingestion/hubspot/handler.py             # 2a. upload HubSpot to S3
-python backend/ingestion/jira/handler.py                # 2b. upload Jira to S3
-# 2c. update events/s3_transform.json with the S3 key from step 2a
-sam build && sam local invoke TransformFunction \
-    -e events/s3_transform.json                          # 2d. run transform
-python backend/application/batch/handler.py             # 3. compute recommendations
+python backend/seed/generate.py
+python backend/seed/import.py
+```
+
+#### Option C — Use your own raw data
+
+Edit or replace files in `backend/seed/data/raw/`, then run Option B above.
+
+### 5. Backfill batch insights for seed data
+
+Populates the `insights` table across all historical periods in the seed data (weekly/monthly/quarterly/yearly × all markets). Required for the dashboard to have data to display.
+
+> **Note:** the time range is hardcoded in `run_batch.py` to match the default `signals_seed.json` (Feb–Jun 2026). If you generated your own seed data, update `DATA_START` and `DATA_END` in that file to match your data before running.
+
+```bash
+python backend/seed/run_batch.py
+```
+
+If the LLM step completes but embedding fails mid-run, re-run with `--embed-only` to skip re-calling the LLM:
+
+```bash
+python backend/seed/run_batch.py --embed-only
 ```
 
 ---
 
-## Docs
+## Running each component locally
 
-| File | Contents |
-| --- | --- |
-| [`docs/architecture.md`](docs/architecture.md) | Three-tier architecture, data flow, service list |
-| [`docs/schema.md`](docs/schema.md) | `insights` and `table_c` table definitions, indexes, seed mappings |
-| [`docs/decisions.md`](docs/decisions.md) | ADRs — Vectorize vs OpenSearch, fixed SQL vs Text-to-SQL, Gemini vs Bedrock, etc. |
+```bash
+python backend/application/batch/handler.py       # batch Lambda
+python backend/application/api/handler.py         # GET /insights
+python backend/application/chat/handler.py        # POST /chat
+```
+
+To test the Transform Lambda locally via SAM:
+
+```bash
+# Update events/s3_transform.json with a valid S3 key first
+sam build && sam local invoke TransformFunction -e events/s3_transform.json
+```
+
+---
