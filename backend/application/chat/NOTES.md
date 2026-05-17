@@ -1,5 +1,50 @@
 # Chat Lambda — Notes
 
+## Strategy: LLM pre-call để extract query intent
+
+Thêm 1 LLM pre-call (Haiku) phân tích câu hỏi trước khi query DB, extract `{period_start, period_end, market, sector, result_type_hint}`. Dùng kết quả này làm filter cho cả Aurora lẫn pgvector metadata pre-filter.
+
+Lợi ích:
+
+- Giải quyết vấn đề LIMIT — query filtered by market/sector trả ít rows, không cần LIMIT cứng
+- pgvector metadata pre-filter chính xác hơn
+- Consistent với cách batch store data (insights/insight_embeddings đều có metadata theo slice)
+
+Trade-off: thêm 1 LLM call → latency tăng. Pre-call nhẹ, dùng Haiku là đủ.
+
+---
+
+## Strategy: `insights` thành primary query, `signals` thành evidence fallback
+
+Sau khi add `insight_embeddings`, cân nhắc đổi priority:
+
+- `insights` → primary narrative context (icp_narrative, recommendations, pain_points_summary theo period/market)
+- `signals` → fallback cho evidence cụ thể + source_url references
+
+Lưu ý: `insights` chỉ tồn tại cho các period đã batch. Signal rất gần đây (chưa qua batch) chỉ có trong `signals` — không thể bỏ hẳn, chỉ thay đổi priority.
+
+**Strategy mới kết hợp cả hai ý:**
+
+```
+1. Pre-call (Haiku): extract {period, market, sector} từ câu hỏi
+2. Query insights (filter by slice)           → primary narrative
+3. Query insight_embeddings (metadata filter) → semantic match trên narratives
+4. Query signal_embeddings (metadata filter)  → granular evidence + source_url
+5. Final call (Sonnet): merge all context → answer + references
+```
+
+---
+
+## query_aurora — LIMIT và keyword matching cần bàn lại
+
+Background aggregates dùng LIMIT cứng (top_pain_points: 15, top_use_cases: 10) không filter theo intent câu hỏi — câu hỏi về fintech vẫn nhận top N toàn dataset, miss các item nằm ngoài top N dù liên quan trực tiếp.
+
+Keyword matching (`raw_text ILIKE`) match theo chữ không theo nghĩa, LIMIT 8 cắt cứng. Câu hỏi về "vấn đề tích hợp" sẽ miss signal nói "khó kết nối hệ thống". Phần semantic đang được đẩy hoàn toàn cho pgvector.
+
+Hướng cần bàn: bỏ LIMIT ở aggregates (seed data có ~50 pain points tối đa), cân nhắc bỏ keyword matching vì pgvector cover tốt hơn.
+
+---
+
 ## Missing: query insight_embeddings
 
 `query_pgvector` currently only queries `signal_embeddings` (raw customer signals).
