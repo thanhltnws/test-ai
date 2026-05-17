@@ -63,6 +63,7 @@ const MOCK_SUMMARY: SummaryData = {
   period: 'monthly',
   period_start: '2026-05-01',
   period_end: '2026-05-31',
+  market: null,
   funnel_distribution: [
     { stage: 'consideration', count: 11 },
     { stage: 'won', count: 7 },
@@ -107,6 +108,7 @@ function toSummary(raw: BeInsightResponse): SummaryData {
     period: raw.period,
     period_start: raw.period_start,
     period_end: raw.period_end ?? '',
+    market: raw.market ?? null,
     funnel_distribution: raw.funnel_distribution.stages,
     top_pain_points: raw.pain_points_summary.top_items.map(p => ({
       label: p.item,
@@ -129,6 +131,7 @@ async function fetchInsightResponse(filters?: DashboardFilters): Promise<BeInsig
   const params: Record<string, string> = {}
   if (filters?.period) params.period = filters.period
   if (filters?.date) params.date = filters.date
+  if (filters?.market) params.market = filters.market
   const res = await axios.get<BeInsightResponse>(lambdaEndpoints.api, { params })
   return res.data
 }

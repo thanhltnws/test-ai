@@ -4,6 +4,7 @@ export interface BeInsightResponse {
   period_start: string
   period_end: string
   computed_at: string
+  market: string | null
   funnel_distribution: {
     stages: { stage: string; count: number; pct: number }[]
     summary: string
@@ -37,6 +38,7 @@ export interface SummaryData {
   period: string
   period_start: string
   period_end: string
+  market: string | null
 }
 
 export interface RecommendationsData {
@@ -70,8 +72,10 @@ export interface Reference {
 }
 
 export type PeriodType = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+export type MarketType = 'vietnam' | 'japan' | 'korea' | 'international'
 
 export interface DashboardFilters {
   period: PeriodType | ''
   date: string
+  market: MarketType | ''
 }

@@ -14,7 +14,15 @@ const PERIODS = [
   { value: 'yearly', label: 'Yearly' },
 ] as const
 
-const EMPTY_FILTERS: DashboardFilters = { period: '', date: '' }
+const MARKETS = [
+  { value: '', label: 'All Markets' },
+  { value: 'vietnam', label: 'Vietnam' },
+  { value: 'japan', label: 'Japan' },
+  { value: 'korea', label: 'Korea' },
+  { value: 'international', label: 'International' },
+] as const
+
+const EMPTY_FILTERS: DashboardFilters = { period: '', date: '', market: '' }
 
 const FUNNEL_COLORS: Record<string, string> = {
   awareness: '#93c5fd',
@@ -59,7 +67,7 @@ export default function Dashboard() {
   const [retryCount, setRetryCount] = useState(0)
   const [draft, setDraft] = useState<DashboardFilters>(EMPTY_FILTERS)
   const [applied, setApplied] = useState<DashboardFilters>(EMPTY_FILTERS)
-  const hasFilter = applied.period !== '' || applied.date !== ''
+  const hasFilter = applied.period !== '' || applied.date !== '' || applied.market !== ''
 
   const dedupedPainPoints = useMemo(() => {
     if (!data) return []
@@ -165,6 +173,15 @@ export default function Dashboard() {
               style={inputStyle}
             />
           )}
+          <select
+            value={draft.market}
+            onChange={e => setDraft(f => ({ ...f, market: e.target.value as DashboardFilters['market'] }))}
+            style={inputStyle}
+          >
+            {MARKETS.map(m => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
           <button
             onClick={() => setApplied({ ...draft })}
             style={{
