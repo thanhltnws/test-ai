@@ -9,7 +9,7 @@
 AI Insight Hub aggregates customer insights scattered across HubSpot, Jira/Redmine, email, and manual notes into a signals store, then surfaces them through a dashboard and a natural-language chatbox.
 
 ```
-Data Sources → Ingestion (Lambda + S3) → Transform (Glue + Bedrock) → Aurora + pgvector → Application (Feature 1 + Feature 2)
+Data Sources → Ingestion (Lambda + S3) → Transform (Lambda ETL + Bedrock) → Aurora + pgvector → Application (Dashboard + Chat)
 ```
 
 ---
@@ -21,9 +21,11 @@ All sources are pulled via **Lambda + API Gateway** on a schedule. Raw data is d
 | Source | Data captured |
 |---|---|
 | HubSpot | Deals, call notes |
-| CRM | Contacts, pipeline stages |
+| Twenty CRM | Contacts, pipeline stages |
 | Jira / Redmine | Ticket descriptions |
-| Email (Gmail / Outlook API) | Email body |
+| Outlook Email | Email body |
+| Teams Transcript | Meeting and call transcripts |
+| SharePoint | Documents, ops notes |
 | Push form | Ops notes, call notes (manual fallback) |
 
 S3 path convention: `raw/{source}/{date}/{timestamp}_{id}.json`
@@ -34,13 +36,13 @@ S3 path convention: `raw/{source}/{date}/{timestamp}_{id}.json`
 
 Two sequential steps.
 
-### Step 1 — AWS Glue ETL
+### Step 1 — Lambda ETL
 
-Normalize schema, rule-based dedup, field mapping for structured fields (deal stage, ticket status, form data).
+Normalize schema, rule-based dedup, field mapping for structured fields (deal stage, ticket status, form data). AWS Glue was rejected — Spark cluster is over-engineering at ~500 docs/month demo scale (ADR-002).
 
 ### Step 2 — Bedrock / Claude
 
-Processes unstructured text (call notes, email body, ops notes). Two parallel outputs:
+Processes unstructured text (CRM note, email, Teams transcript, Jira/Redmine note). Two parallel outputs:
 
 **Output A — Structured extraction → Aurora PostgreSQL `signals` table**
 
@@ -75,27 +77,27 @@ EventBridge scheduler
   → InsightsBuilderFn (ai-insight-hub-insights-builder)
       → SQL query Aurora signals           (structured aggregates)
       → pgvector semantic search           (pattern context)
-      → enrich prompt with both contexts
-      → Bedrock / Claude
-          Case A → top pain points, funnel distribution
-          Case B → ICP narrative, action recommendations for Sales & Marketing
-  → Aurora insights (pre-computed results)
-  → GET /insights/summary
+      → single prompt with both contexts
+      → Bedrock / Claude  →  single JSON with 4 keys:
+            pain_points_summary · funnel_distribution
+            icp_narrative · recommendations
+      → INSERT 4 rows into Aurora insights (one per result_type)
+  → GET /insights
   → Frontend · Dashboard (charts, ICP cards, recommendations)
 ```
 
 ### Feature 2 · Chatbox (RAG)
 
-User submits a free-text question. `DashboardApiFn` (`ai-insight-hub-dashboard-api`) retrieves context from both stores, enriches the prompt, and streams the response back.
+User submits a free-text question. `ChatFn` (`ai-insight-hub-chat`) retrieves context from both stores, enriches the prompt, and returns the response.
 
 ```
 POST /chat
-  → DashboardApiFn (ai-insight-hub-dashboard-api)
+  → ChatFn (ai-insight-hub-chat)
       → SQL query Aurora signals           (structured fields + source_url)
       → pgvector semantic search           (relevant chunks + source_url)
       → merge context → enrich prompt
   → Bedrock / Claude
-  → streaming JSON { answer, references }
+  → JSON { answer, references }
   → Frontend · Chatbox (answer + chip links → Jira / HubSpot)
 ```
 
@@ -109,35 +111,34 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 |---|---|---|
 | Ingestion | Lambda + API Gateway | Poll sources, dump raw to S3 |
 | Ingestion | S3 | Raw landing zone |
-| Transform | AWS Glue ETL | Schema normalize, dedup, field map |
+| Transform | Lambda ETL | Schema normalize, dedup, field map |
 | Transform | Bedrock / Claude | AI field extraction from unstructured text |
 | Store | Aurora PostgreSQL | `signals` table (source of truth) + `insights` (pre-computed) |
 | Store | Aurora pgvector | Vector index — `signal_embeddings` + source_url metadata |
-| Store | ElastiCache Redis | API response cache |
 | Application | EventBridge | Batch scheduler |
 | Application | InsightsBuilderFn (`ai-insight-hub-insights-builder`) | Batch compute |
-| Application | DashboardApiFn (`ai-insight-hub-dashboard-api`) | RAG handler + REST API |
+| Application | DashboardApiFn (`ai-insight-hub-dashboard-api`) | REST API — GET /insights |
+| Application | ChatFn (`ai-insight-hub-chat`) | RAG handler — POST /chat |
 | Application | Bedrock / Claude | Prompt enrichment, ICP narrative, recommendations, RAG answers |
 | Application | API Gateway | REST API layer |
-| Application | Amplify | Web frontend — React + Vite + Recharts |
+| Application | Vercel | Web frontend — React + Vite |
 
 ---
 
 ## Key Design Decisions
 
+Service and tooling choices (Lambda polling vs AppFlow, Lambda ETL vs Glue, pgvector vs Vectorize, Gemini vs Bedrock, Recharts vs QuickSight, fixed SQL vs Text-to-SQL) are documented in [`decisions.md`](decisions.md).
+
+The following decisions are architectural — not yet in decisions.md:
+
 - **`source_url` in `signals` and pgvector metadata** — links back to the originating CRM/Jira/Redmine record when available; optional, NULL for sources without an external URL.
 - **Two-layer idempotency in Transform Lambda** — S3 object tag `processed=true` is the file-level guard: on duplicate S3 events the tag is checked first and the Lambda returns early (Bedrock never called). `ON CONFLICT (source, source_id) DO UPDATE` in Aurora is the record-level guard: re-processing the same file overwrites existing rows with the latest extraction result rather than creating duplicates. The UPSERT semantics are intentional — re-running with an updated prompt or model produces better extractions that should replace the old ones.
-- **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich Bedrock prompt with context from Aurora (structured) and pgvector (semantic) before generating output.
+- **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich the Bedrock prompt with context from Aurora (structured) and pgvector (semantic) before generating output.
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
-- **Fixed SQL is primary for Aurora queries** — Text-to-SQL deferred as fallback only, due to hallucination risk on complex queries.
-- **Bedrock called directly, no Comprehend pre-filter** — simpler for demo scope. Comprehend can be added later to reduce token cost.
 
 ---
 
 ## Known Gaps
 
-- External customer workspaces (Jira, Slack) lose access when a project ends — ingestion must capture data before access is revoked.
-- OpenSearch deferred — Aurora pgvector covers semantic search needs for demo scope.
-- Kinesis real-time stream deferred — batch ingestion is sufficient for demo.
 - Text-to-SQL hallucination risk — no validation layer yet. Mitigate by prioritizing fixed SQL and logging generated queries.
 - No data quality gate — Bedrock extraction output is not validated before INSERT. Schema validation in Lambda recommended before going beyond demo.

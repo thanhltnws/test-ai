@@ -2,25 +2,25 @@
 API Lambda — GET /insights
 
 Returns pre-computed batch results from the insights table.
-Supports time-range filtering via ?period= and ?date= query params.
+Supports time-range and market filtering via query params.
 
 Query params
 ------------
 period  weekly | monthly | quarterly | yearly   (omit → latest across all)
-date    Period reference — see README.md for accepted formats per period type.
-        (omit → latest for the given period type)
+date    ISO date YYYY-MM-DD within the desired period (omit → latest for that period)
+market  vietnam | japan | korea | international  (omit → aggregate across all markets)
 
 Examples
 --------
-GET /insights                              # latest row, any period
-GET /insights?period=monthly               # latest monthly snapshot
-GET /insights?period=monthly&date=2026-05  # May 2026
-GET /insights?period=weekly&date=2026-W20  # ISO week 20 of 2026
-GET /insights?period=quarterly&date=2026-Q1
-GET /insights?period=yearly&date=2026
+GET /insights
+GET /insights?period=monthly
+GET /insights?period=monthly&date=2026-05-01
+GET /insights?period=monthly&date=2026-05-01&market=vietnam
+GET /insights?market=japan
 
 Local run:
     python backend/application/api/handler.py
+    python backend/application/api/handler.py monthly 2026-05-01 vietnam
 """
 import json
 import os
@@ -32,6 +32,7 @@ from urllib.parse import urlparse
 
 
 VALID_PERIODS = {"weekly", "monthly", "quarterly", "yearly"}
+VALID_MARKETS = {"vietnam", "japan", "korea", "international"}
 
 _db_url_cache: str | None = None
 
@@ -105,48 +106,58 @@ def get_insights(
     conn,
     period: str | None = None,
     date_str: str | None = None,
+    market: str | None = None,
 ) -> dict:
-    """Query the insights table with optional period/date filtering.
+    """Query the insights table with optional period/date/market filtering.
 
-    Behaviour matrix:
-      period=None, date=None  → latest snapshot across all period types
-      period=X,    date=None  → latest snapshot for period type X
-      period=X,    date=Y     → snapshot whose period_start matches Y
+    market=None → rows where market IS NULL (aggregate across all markets)
+    market=X    → rows where market = X
+
+    Behaviour matrix (period / date):
+      None / None  → latest snapshot across all period types
+      X    / None  → latest snapshot for period type X
+      X    / Y     → snapshot whose period_start matches Y
     """
+    # market condition is always applied — NULL = aggregate, value = specific market
+    mkt_cond  = "market IS NULL" if market is None else "market = %s"
+    mp        = () if market is None else (market,)
+
     cur = conn.cursor()
     try:
         if period is None:
             cur.execute(
-                """
+                f"""
                 SELECT result_type, payload, period, period_start, period_end, computed_at
                 FROM   insights
-                WHERE  computed_at = (SELECT MAX(computed_at) FROM insights)
+                WHERE  {mkt_cond}
+                  AND  computed_at = (SELECT MAX(computed_at) FROM insights WHERE {mkt_cond})
                 ORDER  BY result_type
-                """
+                """,
+                mp + mp,
             )
         elif date_str is None:
             cur.execute(
-                """
+                f"""
                 SELECT result_type, payload, period, period_start, period_end, computed_at
                 FROM   insights
-                WHERE  period = %s
+                WHERE  {mkt_cond} AND period = %s
                   AND  computed_at = (
-                           SELECT MAX(computed_at) FROM insights WHERE period = %s
+                           SELECT MAX(computed_at) FROM insights WHERE {mkt_cond} AND period = %s
                        )
                 ORDER  BY result_type
                 """,
-                (period, period),
+                mp + (period,) + mp + (period,),
             )
         else:
             period_start = _parse_period_start(period, date_str)
             cur.execute(
-                """
+                f"""
                 SELECT result_type, payload, period, period_start, period_end, computed_at
                 FROM   insights
-                WHERE  period = %s AND period_start = %s
+                WHERE  {mkt_cond} AND period = %s AND period_start = %s
                 ORDER  BY result_type
                 """,
-                (period, period_start),
+                mp + (period, period_start),
             )
 
         cols = [d[0] for d in cur.description]
@@ -159,6 +170,7 @@ def get_insights(
         "period_start": None,
         "period_end": None,
         "computed_at": None,
+        "market": market,
     }
     for row in rows:
         result[row["result_type"]] = row["payload"]
@@ -196,14 +208,15 @@ def handler(event=None, context=None):
         return _err(404, f"Unknown path: {path}")
 
     params = (event or {}).get("queryStringParameters") or {}
-    period = params.get("period") or None      # treat empty string as absent
-    date_str = params.get("date") or None      # treat empty string as absent
+    period   = params.get("period") or None
+    date_str = params.get("date")   or None
+    market   = params.get("market") or None
 
     if period is not None and period not in VALID_PERIODS:
-        return _err(
-            400,
-            f"Invalid period '{period}'. Valid values: {', '.join(sorted(VALID_PERIODS))}",
-        )
+        return _err(400, f"Invalid period '{period}'. Valid values: {', '.join(sorted(VALID_PERIODS))}")
+
+    if market is not None and market not in VALID_MARKETS:
+        return _err(400, f"Invalid market '{market}'. Valid values: {', '.join(sorted(VALID_MARKETS))}")
 
     if date_str is not None and period is None:
         return _err(400, "'date' requires 'period' to be specified")
@@ -211,7 +224,7 @@ def handler(event=None, context=None):
     conn = _pg_connect()
     try:
         try:
-            return _ok(get_insights(conn, period=period, date_str=date_str))
+            return _ok(get_insights(conn, period=period, date_str=date_str, market=market))
         except ValueError as exc:
             return _err(400, str(exc))
     finally:
@@ -221,12 +234,14 @@ def handler(event=None, context=None):
 if __name__ == "__main__":
     import sys
 
-    # Usage: python handler.py [period] [date]
-    # e.g.:  python handler.py monthly 2026-05
+    # Usage: python handler.py [period] [date] [market]
+    # e.g.:  python handler.py monthly 2026-05-01 vietnam
     argv = sys.argv[1:]
     params: dict = {}
     if argv:
         params["period"] = argv[0]
     if len(argv) > 1:
         params["date"] = argv[1]
+    if len(argv) > 2:
+        params["market"] = argv[2]
     print(json.dumps(handler({"rawPath": "/insights", "queryStringParameters": params}), indent=2))

@@ -4,7 +4,7 @@ from datetime import date
 _BATCH_TEMPLATE = """\
 You are an AI analyst for a B2B software company.
 Below is aggregated customer insight data for the {granularity} period \
-({period_start} to {period_end}).
+({period_start} to {period_end}){market_context}.
 
 === STRUCTURED DATA (SQL aggregates from Aurora) ===
 {sql_context}
@@ -28,7 +28,7 @@ with exactly these 4 keys:
   }},
   "icp_narrative": {{
     "top_segments": [
-      {{"sector": "...", "company_size": "...", "deal_size": "...", "region": "...", "count": N}}
+      {{"sector": "...", "company_size": "...", "deal_size": "...", "count": N}}
     ],
     "narrative": "3-4 sentence ICP profile describing the ideal customer based on top segments"
   }},
@@ -53,7 +53,9 @@ def build_batch_prompt(
     granularity: str,
     period_start: date,
     period_end: date,
+    market: str | None = None,
 ) -> str:
+    market_context = f", {market} market" if market else ""
     vector_section = (
         json.dumps(vector_context, indent=2, ensure_ascii=False)
         if vector_context
@@ -63,6 +65,7 @@ def build_batch_prompt(
         granularity=granularity,
         period_start=period_start,
         period_end=period_end,
+        market_context=market_context,
         sql_context=json.dumps(sql_context, indent=2, ensure_ascii=False),
         vector_context=vector_section,
     )
