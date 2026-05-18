@@ -137,17 +137,18 @@ record_date: string (YYYY-MM-DD)
 LastRenewalDate, created_at, issue_date, submission_date, timestamp. \
 Return null if the record contains no date field.
 
-market: one of international | korea | japan
+market: one of international | korea | japan | vietnam
   The specific target market of this customer or deal.
+  vietnam      — customer or deal is based in / targeting Vietnam
   korea        — customer or deal is based in / targeting South Korea
   japan        — customer or deal is based in / targeting Japan
-  international — any other non-Vietnam market
+  international — any other market not specifically vietnam, korea, or japan
   Infer from company name, language of records, country/region fields, domain, or \
 explicit geographic mentions. When the record provides no usable signal, return \
 "international" as the default.
 
 Constraints:
-- market: international | korea | japan
+- market: international | korea | japan | vietnam
 - sector: fintech | logistics | retail | healthcare | manufacturing | software | education | ict | other
 - company_size: 1-10 | 11-50 | 50-200 | 200-1000 | 1000+
 - deal_size: small | medium | large
