@@ -58,7 +58,7 @@ _VALID_SECTORS       = {"fintech", "logistics", "retail", "healthcare", "manufac
                         "software", "education", "ict", "other"}
 _VALID_COMPANY_SIZES = {"1-10", "11-50", "50-200", "200-1000", "1000+"}
 _VALID_DEAL_SIZES    = {"small", "medium", "large"}
-_VALID_MARKETS       = {"international", "korea", "japan"}
+_VALID_MARKETS       = {"international", "korea", "japan", "vietnam"}
 
 
 class _ICP(BaseModel):
