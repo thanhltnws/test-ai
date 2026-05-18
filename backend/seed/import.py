@@ -45,42 +45,43 @@ def insert_signals(records: list[dict]) -> None:
                     cur.execute(
                         """
                         INSERT INTO signals (
-                            id, source, source_id, source_url, raw_text,
+                            id, source, source_id, source_url,
                             pain_points, objections, use_cases,
-                            icp, market, sector, funnel_stage,
-                            confidence_score, embedding_text,
-                            record_date, ingested_at, extracted_at
+                            deal_size, client_type, tech_maturity,
+                            market, sector, funnel_stage,
+                            embedding_text, record_date, ingested_at, extracted_at
                         )
-                        VALUES (%s,%s,%s,%s,%s, %s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s,%s)
+                        VALUES (%s,%s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s,%s)
                         ON CONFLICT (source, source_id) DO UPDATE SET
-                            raw_text         = EXCLUDED.raw_text,
-                            pain_points      = EXCLUDED.pain_points,
-                            objections       = EXCLUDED.objections,
-                            use_cases        = EXCLUDED.use_cases,
-                            icp              = EXCLUDED.icp,
-                            market           = EXCLUDED.market,
-                            sector           = EXCLUDED.sector,
-                            funnel_stage     = EXCLUDED.funnel_stage,
-                            confidence_score = EXCLUDED.confidence_score,
-                            embedding_text   = EXCLUDED.embedding_text,
-                            record_date      = EXCLUDED.record_date,
-                            extracted_at     = EXCLUDED.extracted_at
+                            source_url     = EXCLUDED.source_url,
+                            pain_points    = EXCLUDED.pain_points,
+                            objections     = EXCLUDED.objections,
+                            use_cases      = EXCLUDED.use_cases,
+                            deal_size      = EXCLUDED.deal_size,
+                            client_type    = EXCLUDED.client_type,
+                            tech_maturity  = EXCLUDED.tech_maturity,
+                            market         = EXCLUDED.market,
+                            sector         = EXCLUDED.sector,
+                            funnel_stage   = EXCLUDED.funnel_stage,
+                            embedding_text = EXCLUDED.embedding_text,
+                            record_date    = EXCLUDED.record_date,
+                            extracted_at   = EXCLUDED.extracted_at
                         RETURNING id
                         """,
                         (
                             rec["id"],
                             rec["source"],
                             rec["source_id"],
-                            rec["source_url"],
-                            rec.get("raw_text"),
+                            rec.get("source_url"),
                             rec.get("pain_points") or [],
                             rec.get("objections") or [],
                             rec.get("use_cases") or [],
-                            psycopg2.extras.Json(rec.get("icp") or {}),
+                            rec.get("deal_size"),
+                            rec.get("client_type"),
+                            rec.get("tech_maturity"),
                             rec.get("market"),
                             rec.get("sector"),
                             rec.get("funnel_stage"),
-                            rec.get("confidence_score"),
                             str(rec.get("embedding_text") or "").strip(),
                             rec.get("record_date"),
                             rec.get("ingested_at"),
