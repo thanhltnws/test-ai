@@ -65,6 +65,18 @@ function getPeriodLabel(period: PeriodType, isoDate: string): string {
 
 
 
+const SECTOR_COLORS: Record<string, string> = {
+  education:     '#7c3aed',
+  fintech:       '#0d9488',
+  retail:        '#ea580c',
+  healthcare:    '#db2777',
+  software:      '#2563eb',
+  manufacturing: '#b45309',
+  logistics:     '#0369a1',
+  ict:           '#7c3aed',
+  other:         '#6b7280',
+}
+
 const FUNNEL_COLORS: Record<string, string> = {
   awareness: '#93c5fd',
   consideration: '#60a5fa',
@@ -110,19 +122,39 @@ export default function Dashboard() {
   const [market, setMarket] = useState<string>('')
   const [retryTick, setRetryTick] = useState(0)
   const [noData, setNoData] = useState(false)
-const dedupedPainPoints = useMemo(() => {
+
+  const icpLayout = useMemo(() => {
+    if (!data) return null
+    const total = data.icp_summary.reduce((s, x) => s + x.count, 0)
+    const sorted = [...data.icp_summary].sort((a, b) => b.count - a.count)
+    const main = sorted[0]
+    const topRight = sorted.slice(1, 4)
+    const bottom = sorted.slice(4)
+    const topTotal = sorted.slice(0, 4).reduce((s, x) => s + x.count, 0)
+    const bottomTotal = bottom.reduce((s, x) => s + x.count, 0)
+    return { total, main, topRight, bottom, topTotal, bottomTotal }
+  }, [data])
+
+  const dedupedPainPoints = useMemo(() => {
     if (!data) return []
-    const map = new Map<string, number>()
+    const countMap = new Map<string, number>()
+    const insightMap = new Map<string, string>()
     for (const p of data.top_pain_points) {
       const key = p.label.toLowerCase().trim().replace(/[.,!?]$/, '')
-      map.set(key, (map.get(key) ?? 0) + p.count)
+      countMap.set(key, (countMap.get(key) ?? 0) + p.count)
+      if (!insightMap.has(key) && p.insight) insightMap.set(key, p.insight)
     }
-    return Array.from(map.entries())
+    return Array.from(countMap.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
       .map(([label, count]) => {
         const full = label.charAt(0).toUpperCase() + label.slice(1)
-        return { label: full.length > 34 ? full.slice(0, 33) + '…' : full, fullLabel: full, count }
+        return {
+          label: full.length > 48 ? full.slice(0, 47) + '…' : full,
+          fullLabel: full,
+          count,
+          insight: insightMap.get(label) ?? '',
+        }
       })
   }, [data])
 
@@ -280,10 +312,10 @@ const dedupedPainPoints = useMemo(() => {
       </div>
 
       {/* Row: Funnel + Pain Points */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
 
         {/* Funnel Distribution */}
-        <div style={card}>
+        <div style={{ ...card, display: 'flex', flexDirection: 'column' }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 20 }}>Funnel Distribution</h2>
           <ResponsiveContainer width="100%" height={230}>
             <PieChart>
@@ -304,18 +336,43 @@ const dedupedPainPoints = useMemo(() => {
               />
             </PieChart>
           </ResponsiveContainer>
+          {data.funnel_summary && (
+            <div style={{
+              marginTop: 16,
+              padding: '10px 14px',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              borderLeft: '3px solid #3b82f6',
+              borderRadius: 7,
+              fontSize: 12,
+              fontWeight: 500,
+              color: '#1e40af',
+              lineHeight: 1.6,
+            }}>
+              {data.funnel_summary}
+            </div>
+          )}
         </div>
 
         {/* Top Pain Points */}
-        <div style={card}>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 20 }}>Top Pain Points</h2>
-          <ResponsiveContainer width="100%" height={230}>
+        <div style={{ ...card, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Top Pain Points</h2>
+            <span style={{ fontSize: 11, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 20, padding: '3px 10px', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M8 7v5M8 5.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              Hover for insight
+            </span>
+          </div>
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={dedupedPainPoints} layout="vertical" margin={{ left: 0, right: 32 }}>
               <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
               <YAxis
                 type="category"
                 dataKey="label"
-                width={240}
+                width={310}
                 axisLine={false}
                 tickLine={false}
                 interval={0}
@@ -330,9 +387,14 @@ const dedupedPainPoints = useMemo(() => {
                   if (!active || !payload?.length) return null
                   const d = payload[0].payload
                   return (
-                    <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px', fontSize: 13, maxWidth: 280 }}>
-                      <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 4, lineHeight: 1.4 }}>{d.fullLabel}</div>
-                      <div style={{ color: 'var(--text-muted)' }}>Count: <strong>{d.count}</strong></div>
+                    <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', fontSize: 13, maxWidth: 300 }}>
+                      <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 6, lineHeight: 1.4 }}>{d.fullLabel}</div>
+                      <div style={{ color: 'var(--text-muted)', marginBottom: d.insight ? 8 : 0 }}>Count: <strong style={{ color: 'var(--text)' }}>{d.count}</strong></div>
+                      {d.insight && (
+                        <div style={{ fontSize: 12, color: '#374151', lineHeight: 1.6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+                          {d.insight}
+                        </div>
+                      )}
                     </div>
                   )
                 }}
@@ -343,36 +405,90 @@ const dedupedPainPoints = useMemo(() => {
         </div>
       </div>
 
-      {/* ICP Cards */}
+      {/* ICP — Narrative + Treemap */}
       <div style={card}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 16 }}>Ideal Customer Profile (ICP)</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 12 }}>
-          {data.icp_summary.map((icp, i) => (
-            <div key={i} style={{
-              background: 'var(--surface2)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              padding: 16,
-              borderLeft: '3px solid var(--accent-light)',
-            }}>
-              <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 10, color: 'var(--text)' }}>{icp.sector}</div>
-              {[
-                ['Region', icp.region],
-                ['Company size', icp.company_size],
-                ['Deal size', icp.deal_size],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 5 }}>
-                  <span style={{ color: 'var(--text-muted)' }}>{k}</span>
-                  <span style={{ fontWeight: 500 }}>{v}</span>
-                </div>
-              ))}
-              <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: 'var(--text-muted)' }}>Insights</span>
-                <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{icp.count}</span>
-              </div>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 12 }}>Ideal Customer Profile (ICP)</h2>
+
+        {/* Narrative callout */}
+        {data.icp_narrative && (
+          <div style={{
+            marginBottom: 16, padding: '10px 14px',
+            background: '#f0fdf4', border: '1px solid #bbf7d0',
+            borderLeft: '3px solid #16a34a', borderRadius: 7,
+            fontSize: 12, fontWeight: 500, color: '#14532d', lineHeight: 1.6,
+          }}>
+            <div style={{ fontWeight: 700, fontSize: 11, color: '#16a34a', marginBottom: 5, letterSpacing: '0.06em' }}>
+              ICP ANALYSIS
             </div>
-          ))}
-        </div>
+            {data.icp_narrative}
+          </div>
+        )}
+
+        {/* Treemap */}
+        {icpLayout && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, height: 160, borderRadius: 8, overflow: 'hidden' }}>
+            {/* Top row */}
+            <div style={{ display: 'flex', gap: 4, flex: icpLayout.topTotal }}>
+              {/* Main segment */}
+              {icpLayout.main && (() => {
+                const seg = icpLayout.main
+                const color = SECTOR_COLORS[seg.sector] ?? '#6b7280'
+                const pct = ((seg.count / icpLayout.total) * 100).toFixed(1)
+                return (
+                  <div key="main" style={{ flex: Math.sqrt(seg.count), background: color, borderRadius: 4, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+                    <div>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>{seg.sector}</div>
+                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11, marginTop: 2 }}>{seg.deal_size} · {seg.company_size}</div>
+                    </div>
+                    <div>
+                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{pct}%</div>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 22 }}>{seg.count}</div>
+                    </div>
+                  </div>
+                )
+              })()}
+              {/* Secondary segments */}
+              {icpLayout.topRight.map((seg, i) => {
+                const color = SECTOR_COLORS[seg.sector] ?? '#6b7280'
+                const pct = ((seg.count / icpLayout.total) * 100).toFixed(1)
+                return (
+                  <div key={i} style={{ flex: Math.sqrt(seg.count), background: color, borderRadius: 4, padding: 10, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+                    <div>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 12 }}>{seg.sector}</div>
+                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11, marginTop: 2 }}>{seg.deal_size}</div>
+                    </div>
+                    <div>
+                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{pct}%</div>
+                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 20 }}>{seg.count}</div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Bottom row */}
+            {icpLayout.bottom.length > 0 && (
+              <div style={{ display: 'flex', gap: 4, flex: icpLayout.bottomTotal }}>
+                {icpLayout.bottom.map((seg, i) => {
+                  const color = SECTOR_COLORS[seg.sector] ?? '#6b7280'
+                  const pct = ((seg.count / icpLayout.total) * 100).toFixed(1)
+                  return (
+                    <div key={i} style={{ flex: seg.count, background: color, borderRadius: 4, padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+                      <div>
+                        <div style={{ color: '#fff', fontWeight: 700, fontSize: 12 }}>{seg.sector}</div>
+                        <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{seg.deal_size} · {seg.company_size}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{pct}%</div>
+                        <div style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>{seg.count}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Recommendations */}
