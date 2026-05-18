@@ -20,9 +20,23 @@ CREATE TABLE IF NOT EXISTS signals (
     confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0 AND 1),
     embedding_text   TEXT,
     record_date      DATE,
+    market           TEXT,
+    sector           TEXT,
     ingested_at      TIMESTAMPTZ,
     extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                   WHERE table_name = 'signals' AND column_name = 'market') THEN
+        ALTER TABLE signals ADD COLUMN market TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                   WHERE table_name = 'signals' AND column_name = 'sector') THEN
+        ALTER TABLE signals ADD COLUMN sector TEXT;
+    END IF;
+END $$;
 
 DO $$
 BEGIN
