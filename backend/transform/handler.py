@@ -20,7 +20,7 @@ import sys
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +32,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from prompt import build_extract_prompt
+from prompt import build_extract_prompt, build_retry_prompt
 
 load_dotenv()
 
@@ -41,6 +41,8 @@ MAX_BATCH_CHARS   = 150_000
 MAX_BATCH_RECORDS = 40
 API_DELAY_S       = 1.0
 MIN_ROW_TEXT_LEN  = 10
+RETRY_CONFIDENCE_THRESHOLD = 0.4   # retry extractions below this score
+RETRY_MIN_TEXT_LEN         = 150   # skip retry if raw text is genuinely sparse
 
 _S3  = boto3.client("s3")
 _SM  = boto3.client("secretsmanager")
@@ -56,6 +58,7 @@ _VALID_SECTORS       = {"fintech", "logistics", "retail", "healthcare", "manufac
                         "software", "education", "ict", "other"}
 _VALID_COMPANY_SIZES = {"1-10", "11-50", "50-200", "200-1000", "1000+"}
 _VALID_DEAL_SIZES    = {"small", "medium", "large"}
+_VALID_MARKETS       = {"international", "korea", "japan", "vietnam"}
 
 
 class _ICP(BaseModel):
@@ -89,6 +92,8 @@ class _Extraction(BaseModel):
     confidence_score: float     = 0.5
     source_id:        str       = ""
     embedding_text:   str       = ""
+    record_date:      str | None = None
+    market:           str       = "international"
 
     @field_validator("funnel_stage")
     @classmethod
@@ -99,6 +104,11 @@ class _Extraction(BaseModel):
     @classmethod
     def _v_confidence_score(cls, v: float) -> float:
         return round(max(0.0, min(1.0, float(v))), 2)
+
+    @field_validator("market")
+    @classmethod
+    def _v_market(cls, v: str) -> str:
+        return v if v in _VALID_MARKETS else "international"
 
 
 class _ExtractionBatch(BaseModel):
@@ -169,9 +179,9 @@ def _insert_signals(rows: list[dict]) -> tuple[int, dict[str, str]]:
                     id, source, source_id, source_url, raw_text,
                     pain_points, objections, use_cases, icp,
                     funnel_stage, confidence_score, embedding_text,
-                    ingested_at, extracted_at
+                    record_date, market, sector, ingested_at, extracted_at
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (source, source_id) DO UPDATE SET
                     source_url       = EXCLUDED.source_url,
                     raw_text         = EXCLUDED.raw_text,
@@ -182,6 +192,9 @@ def _insert_signals(rows: list[dict]) -> tuple[int, dict[str, str]]:
                     funnel_stage     = EXCLUDED.funnel_stage,
                     confidence_score = EXCLUDED.confidence_score,
                     embedding_text   = EXCLUDED.embedding_text,
+                    record_date      = EXCLUDED.record_date,
+                    market           = EXCLUDED.market,
+                    sector           = EXCLUDED.sector,
                     extracted_at     = EXCLUDED.extracted_at
                 RETURNING id
                 """,
@@ -198,6 +211,9 @@ def _insert_signals(rows: list[dict]) -> tuple[int, dict[str, str]]:
                     row.get("funnel_stage"),
                     row.get("confidence_score"),
                     str(row.get("embedding_text") or "").strip() or None,
+                    row.get("record_date") or None,
+                    row.get("market") or "international",
+                    row.get("sector") or "other",
                     row.get("ingested_at"),
                     datetime.now(timezone.utc),
                 ),
@@ -297,6 +313,8 @@ def _insert_embeddings(
             "source":       row["source"],
             "funnel_stage": row.get("funnel_stage"),
             "source_url":   row.get("source_url"),
+            "market":       row.get("market"),
+            "sector":       row.get("sector"),
         }
         embedding_rows.append((db_id, embedding_text, metadata, vectors[pre_id]))
 
@@ -360,9 +378,39 @@ def _row_to_text(rec: dict) -> str:
     return "\n".join(lines).strip()
 
 
-def normalize(raw_records: list[dict], s3_key: str, ingested_at: datetime) -> list[dict]:
+_DATE_FALLBACK_FIELDS = (
+    "closedate", "close_date", "createdAt", "created_at", "createdate",
+    "created_on", "updated_on", "date", "timestamp", "receivedDateTime",
+    "sentDateTime", "meetingDate", "due_date", "modified",
+)
+
+
+def _fallback_date_from_raw(rec: dict) -> str | None:
+    for field in _DATE_FALLBACK_FIELDS:
+        val = rec.get(field)
+        if not val:
+            continue
+        try:
+            return date.fromisoformat(str(val).strip()[:10]).isoformat()
+        except (ValueError, TypeError):
+            pass
+    return None
+
+
+def _has_signal(row: dict) -> bool:
+    return bool(
+        row.get("embedding_text")
+        or row.get("pain_points")
+        or row.get("use_cases")
+        or row.get("objections")
+    )
+
+
+def normalize(raw_records: list[dict], s3_key: str, ingested_at: datetime, bucket: str = "") -> list[dict]:
     source = _source_from_key(s3_key)
+    base_url = f"s3://{bucket}/{s3_key}" if bucket else s3_key
     seen, out = set(), []
+    global_idx = 0
     for rec in raw_records:
         text = _row_to_text(rec)
         if len(text) < MIN_ROW_TEXT_LEN:
@@ -372,15 +420,17 @@ def normalize(raw_records: list[dict], s3_key: str, ingested_at: datetime) -> li
             continue
         seen.add(h)
 
-        source_url = rec.get("url") or rec.get("source_url") or None
+        source_url = rec.get("url") or rec.get("source_url") or f"{base_url}#{global_idx}"
 
         out.append({
-            "source":      source,
-            "source_id":   str(rec.get("id") or rec.get("key") or rec.get("deal_id") or h),
-            "source_url":  source_url,
-            "raw_text":    text,
-            "ingested_at": ingested_at,  # when the file arrived in S3, from S3 event eventTime
+            "source":         source,
+            "source_id":      str(rec.get("id") or rec.get("key") or rec.get("deal_id") or h),
+            "source_url":     source_url,
+            "raw_text":       text,
+            "ingested_at":    ingested_at,  # when the file arrived in S3, from S3 event eventTime
+            "_date_fallback": _fallback_date_from_raw(rec),
         })
+        global_idx += 1
     return out
 
 
@@ -405,15 +455,13 @@ def _make_batches(records: list[dict]) -> list[list[dict]]:
 
 
 def _extract_batch(
-    records: list[dict], source: str, client: Any, model_id: str, use_gemini: bool = False
+    records: list[dict], prompt: str, client: Any, model_id: str, use_gemini: bool = False
 ) -> list[_Extraction]:
-    texts  = [r["raw_text"] for r in records]
-    prompt = build_extract_prompt(texts, source, context_content="")
     if use_gemini:
         from google.genai import types as genai_types
         schema = json.dumps(_ExtractionBatch.model_json_schema())
         response = client.models.generate_content(
-            model="gemini-3.1-flash-lite-preview",
+            model=os.environ.get("LOCAL_GEMINI_MODEL", "gemini-3.1-flash-lite-preview"),
             contents=f"{prompt}\n\nRespond ONLY with valid JSON matching this schema:\n{schema}",
             config=genai_types.GenerateContentConfig(
                 response_mime_type="application/json",
@@ -435,6 +483,36 @@ def _extract_batch(
     return extractions
 
 
+def _do_retry(
+    batch: list[dict],
+    extractions: list[_Extraction],
+    source: str,
+    client: Any,
+    model_id: str,
+    use_gemini: bool,
+) -> list[_Extraction]:
+    retry_idx = [
+        i for i, (rec, ext) in enumerate(zip(batch, extractions))
+        if ext.confidence_score < RETRY_CONFIDENCE_THRESHOLD
+        and len(rec["raw_text"]) >= RETRY_MIN_TEXT_LEN
+    ]
+    if not retry_idx:
+        return extractions
+
+    retry_records = [batch[i] for i in retry_idx]
+    retry_texts   = [r["raw_text"] for r in retry_records]
+    retry_prompt  = build_retry_prompt(retry_texts, source)
+    retry_exts    = _extract_batch(retry_records, retry_prompt, client, model_id, use_gemini)
+
+    improved = 0
+    for i, new_ext in zip(retry_idx, retry_exts):
+        if new_ext.confidence_score > extractions[i].confidence_score:
+            extractions[i] = new_ext
+            improved += 1
+    print(f"  retry: {improved}/{len(retry_idx)} low-confidence extractions improved")
+    return extractions
+
+
 def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> list[dict]:
     use_gemini = not bool(os.environ.get("DB_SECRET_ARN"))
     client  = _gemini_extract_client() if use_gemini else _bedrock_client()
@@ -443,7 +521,10 @@ def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> lis
 
     for i, batch in enumerate(batches, 1):
         try:
-            extractions = _extract_batch(batch, source, client, model_id, use_gemini=use_gemini)
+            texts = [r["raw_text"] for r in batch]
+            prompt = build_extract_prompt(texts, source, context_content="")
+            extractions = _extract_batch(batch, prompt, client, model_id, use_gemini=use_gemini)
+            extractions = _do_retry(batch, extractions, source, client, model_id, use_gemini)
             for rec, ext in zip(batch, extractions):
                 results.append({
                     "id":               str(uuid.uuid4()),
@@ -458,6 +539,9 @@ def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> lis
                     "funnel_stage":     ext.funnel_stage,
                     "confidence_score": ext.confidence_score,
                     "embedding_text":   ext.embedding_text,
+                    "record_date":      ext.record_date or rec.get("_date_fallback") or None,
+                    "market":           ext.market,
+                    "sector":           ext.icp.sector,  # denormalized from icp for direct querying
                     "ingested_at":      rec["ingested_at"],  # from S3 eventTime, per-record
                 })
             print(f"  batch {i}/{len(batches)} OK ({len(batch)} records)")
@@ -466,6 +550,11 @@ def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> lis
         if i < len(batches):
             time.sleep(API_DELAY_S)
 
+    before = len(results)
+    results = [r for r in results if _has_signal(r)]
+    dropped = before - len(results)
+    if dropped:
+        print(f"  noise filter: dropped {dropped}/{before} records with no signal")
     return results
 
 
@@ -496,7 +585,7 @@ def handler(event: dict, context=None) -> dict:
                 raw_records = [raw_records]
 
             source     = _source_from_key(s3_key)
-            normalized = normalize(raw_records, s3_key, ingested_at)
+            normalized = normalize(raw_records, s3_key, ingested_at, bucket=bucket)
 
             if not normalized:
                 print(f"SKIP no usable records in {s3_key}")
