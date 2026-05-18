@@ -33,8 +33,10 @@ export interface ICP {
 
 export interface SummaryData {
   funnel_distribution: { stage: string; count: number }[]
-  top_pain_points: { label: string; count: number }[]
+  funnel_summary: string
+  top_pain_points: { label: string; count: number; insight: string }[]
   icp_summary: (ICP & { count: number })[]
+  icp_narrative: string
   period: string
   period_start: string
   period_end: string

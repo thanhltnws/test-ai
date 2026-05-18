@@ -69,10 +69,12 @@ const MOCK_SUMMARY: SummaryData = {
     { stage: 'won', count: 7 },
     { stage: 'lost', count: 2 },
   ],
+  funnel_summary: 'The funnel is heavily weighted toward consideration, indicating strong pipeline generation but significant conversion friction.',
+  icp_narrative: 'Core ICP is mid-market companies (50-200 employees) in education and software sectors pursuing small-to-medium engagements. They are internationally based and prioritize structured onboarding and career outcomes.',
   top_pain_points: [
-    { label: 'Unemployed', count: 4 },
-    { label: 'Lack of career prospects', count: 4 },
-    { label: 'Async job failures', count: 1 },
+    { label: 'Unemployed', count: 4, insight: 'Unemployment is the primary driver pushing candidates to seek retraining and upskilling opportunities.' },
+    { label: 'Lack of career prospects', count: 4, insight: 'Stagnant career growth motivates customers to invest in new skills and pivot industries.' },
+    { label: 'Async job failures', count: 1, insight: 'Technical instability in job processing pipelines disrupts customer workflows and erodes trust.' },
   ],
   icp_summary: [
     { sector: 'education', company_size: '1-10', deal_size: 'small', region: 'International', count: 5 },
@@ -105,25 +107,28 @@ const MOCK_DASHBOARD_INSIGHTS: DashboardInsights = {
 
 function toSummary(raw: BeInsightResponse): SummaryData {
   return {
-    period: raw.period,
-    period_start: raw.period_start,
+    period: raw.period ?? '',
+    period_start: raw.period_start ?? '',
     period_end: raw.period_end ?? '',
     market: raw.market ?? null,
-    funnel_distribution: raw.funnel_distribution.stages,
-    top_pain_points: raw.pain_points_summary.top_items.map(p => ({
+    funnel_distribution: raw.funnel_distribution?.stages ?? [],
+    funnel_summary: raw.funnel_distribution?.summary ?? '',
+    icp_narrative: raw.icp_narrative?.narrative ?? '',
+    top_pain_points: (raw.pain_points_summary?.top_items ?? []).map(p => ({
       label: p.item,
       count: p.count,
+      insight: p.insight ?? '',
     })),
-    icp_summary: raw.icp_narrative.top_segments,
+    icp_summary: raw.icp_narrative?.top_segments ?? [],
   }
 }
 
 function toRecommendations(raw: BeInsightResponse): RecommendationsData {
   return {
-    sales: raw.recommendations.sales,
-    marketing: raw.recommendations.marketing,
+    sales: raw.recommendations?.sales ?? [],
+    marketing: raw.recommendations?.marketing ?? [],
     recommendations: [],
-    computed_at: raw.computed_at,
+    computed_at: raw.computed_at ?? undefined,
   }
 }
 

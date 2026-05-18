@@ -24,6 +24,7 @@ export default function Chat() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
   const { sessions, createSession, updateSession, deleteSession } = useChatHistory()
 
@@ -99,20 +100,39 @@ export default function Chat() {
           <h1 style={{ fontSize: 16, fontWeight: 700 }}>AI Chatbox</h1>
           <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Hỏi bất kỳ câu hỏi nào về customer insights</div>
         </div>
-        <button
-          onClick={startNewChat}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            background: 'var(--accent)',
-            color: '#fff',
-            padding: '7px 14px',
-            borderRadius: 8,
-            fontSize: 13,
-            fontWeight: 600,
-          }}
-        >
-          + New Chat
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            onClick={startNewChat}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'var(--accent)',
+              color: '#fff',
+              padding: '7px 14px',
+              borderRadius: 8,
+              fontSize: 13,
+              fontWeight: 600,
+            }}
+          >
+            + New Chat
+          </button>
+          <button
+            onClick={() => setSidebarOpen(o => !o)}
+            title={sidebarOpen ? 'Collapse sidebar' : 'Open sidebar'}
+            style={{
+              width: 34, height: 34,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'var(--surface2)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              color: 'var(--text-muted)',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="2" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+              <line x1="10" y1="2" x2="10" y2="14" stroke="currentColor" strokeWidth="1.4"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Body */}
@@ -281,13 +301,14 @@ export default function Chat() {
 
         {/* Right panel: History (top) + Related Insights (bottom) */}
         <div style={{
-          width: 272,
-          minWidth: 272,
-          borderLeft: '1px solid var(--border)',
+          width: sidebarOpen ? 272 : 0,
+          minWidth: sidebarOpen ? 272 : 0,
+          borderLeft: sidebarOpen ? '1px solid var(--border)' : 'none',
           background: 'var(--surface)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          transition: 'width 0.2s ease, min-width 0.2s ease',
         }}>
 
           {/* History — top half */}
