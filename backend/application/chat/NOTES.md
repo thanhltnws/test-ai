@@ -43,6 +43,15 @@ Keyword matching (`raw_text ILIKE`) match theo chữ không theo nghĩa, LIMIT 8
 
 Hướng cần bàn: bỏ LIMIT ở aggregates (seed data có ~50 pain points tối đa), cân nhắc bỏ keyword matching vì pgvector cover tốt hơn.
 
+### Issue: `_extract_keywords` bị lock vào tiếng Anh
+
+`_STOP_WORDS` chỉ có English stop words. Khi user hỏi tiếng Việt:
+
+- Các Vietnamese stop words (`là`, `và`, `có`, `không`, `của`, `trong`...) không bị lọc → lọt vào WHERE clause → query quá rộng, noise cao
+- Keywords tiếng Việt match `raw_text` (Vietnamese source text) được một phần, nhưng không match `pain_points`/`use_cases` nếu chúng đang lưu tiếng Anh
+
+Gợi ý xử lý — tận dụng pre-call (Haiku) đã có trong Strategy phía trên: ngoài extract `{period, market, sector}`, pre-call cũng extract 3–5 **English keyword** từ câu hỏi tiếng Việt để dùng cho keyword matching Aurora. Một call, hai output. Không thêm latency, không đổi schema SQL, không có hallucination risk của text-to-SQL.
+
 ---
 
 ## Missing: query insight_embeddings

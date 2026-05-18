@@ -13,14 +13,14 @@ See `docs/faq.md` for technical Q&A.
 
 ## Stack
 
-| Layer | Local dev | AWS deploy |
-|---|---|---|
-| LLM | Gemini API (free) | Bedrock — Haiku (extract) · Sonnet (RAG, batch) |
-| Embeddings | Gemini Embedding | Bedrock — Cohere embed-multilingual-v3 |
-| DB | PostgreSQL + pgvector | Aurora PostgreSQL Serverless v2 + pgvector |
-| Infra | — | CDK (TypeScript) |
-| Functions | Python 3.12 + venv | Python Lambda |
-| Frontend | React + Vercel |
+| Layer      | Local dev             | AWS deploy                                      |
+| ---------- | --------------------- | ----------------------------------------------- |
+| LLM        | Gemini API (free)     | Bedrock — Haiku (extract) · Sonnet (RAG, batch) |
+| Embeddings | Gemini Embedding      | Bedrock — Cohere embed-multilingual-v3          |
+| DB         | PostgreSQL + pgvector | Aurora PostgreSQL Serverless v2 + pgvector      |
+| Infra      | —                     | CDK (TypeScript)                                |
+| Functions  | Python 3.12 + venv    | Python Lambda                                   |
+| Frontend   | React + Vercel        |
 
 Gemini → Bedrock: swap endpoint + key only, logic unchanged.
 
@@ -36,6 +36,7 @@ Gemini → Bedrock: swap endpoint + key only, logic unchanged.
 No real sources yet. Mock data in `backend/seed/data/raw/` (6 source files, ~1000 raw records, Feb–Jun 2026).
 
 Seed workflow:
+
 1. `generate.py` — LLM extraction → `signals_seed.json`
 2. `import.py` — load into Aurora (signals) + pgvector (embeddings)
 3. `run_batch.py` — backfill insights across all historical periods

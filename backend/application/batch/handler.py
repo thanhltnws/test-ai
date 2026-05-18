@@ -46,6 +46,7 @@ _VECTOR_QUERIES = [
     "product use cases and applications",
 ]
 
+# TODO: need test
 _VECTOR_TOP_K_PER_QUERY = 10
 
 

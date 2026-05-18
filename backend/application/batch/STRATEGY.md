@@ -10,12 +10,12 @@ Chạy định kỳ (EventBridge daily trigger) để tổng hợp toàn bộ t�
 
 Mỗi lần Lambda được trigger, nó xét 4 granularity:
 
-| Granularity | Period window | Điều kiện chạy |
-|---|---|---|
-| `weekly` | Thứ 2 đầu tuần → hôm nay | Luôn chạy |
-| `monthly` | Ngày 1 tháng → hôm nay | Luôn chạy |
-| `quarterly` | Ngày 1 quý → hôm nay | Mỗi thứ 2, hoặc ngày cuối quý |
-| `yearly` | 1/1 → hôm nay | Ngày 1 mỗi tháng, hoặc 31/12 |
+| Granularity | Period window            | Điều kiện chạy                |
+| ----------- | ------------------------ | ----------------------------- |
+| `weekly`    | Thứ 2 đầu tuần → hôm nay | Luôn chạy                     |
+| `monthly`   | Ngày 1 tháng → hôm nay   | Luôn chạy                     |
+| `quarterly` | Ngày 1 quý → hôm nay     | Mỗi thứ 2, hoặc ngày cuối quý |
+| `yearly`    | 1/1 → hôm nay            | Ngày 1 mỗi tháng, hoặc 31/12  |
 
 `weekly` và `monthly` chạy mỗi ngày → snapshot rolling, không phải snapshot cuối kỳ. Một trigger duy nhất có thể sinh tối đa 4 LLM calls (1 per granularity).
 
@@ -55,6 +55,7 @@ _VECTOR_QUERIES = [
 Mỗi query → embed → cosine similarity search trên `signal_embeddings`, lấy top 10. Deduplicate theo `signal_id`. Kết quả trả về sorted by score desc.
 
 **Embedding model:**
+
 - Dev (local): Gemini `gemini-embedding-001`, `RETRIEVAL_QUERY`, dim=1024
 - Prod (Lambda): Bedrock `cohere.embed-multilingual-v3`, `search_query`
 
@@ -65,6 +66,7 @@ Phải đồng bộ với model dùng lúc import (`search_document`). Nếu đ�
 1 call duy nhất với prompt gộp cả SQL context và vector context.
 
 **Model:**
+
 - Dev: Gemini `gemini-3.1-flash-lite-preview`
 - Prod: Bedrock Haiku (`BEDROCK_MODEL_ID` từ env, default `apac.anthropic.claude-3-haiku-20240307-v1:0`)
 
@@ -74,12 +76,12 @@ Chọn Haiku vì output có cấu trúc JSON rõ ràng, prompt template cố đ�
 
 LLM trả về JSON với đúng 4 keys, mỗi key là 1 `result_type`:
 
-| result_type | Nội dung |
-|---|---|
-| `pain_points_summary` | Top pain points + narrative tổng hợp |
-| `funnel_distribution` | Counts và % theo stage + nhận xét sức khỏe funnel |
-| `icp_narrative` | Top 5 ICP segments + narrative mô tả ideal customer |
-| `recommendations` | Action items cho Sales và Marketing |
+| result_type           | Nội dung                                            |
+| --------------------- | --------------------------------------------------- |
+| `pain_points_summary` | Top pain points + narrative tổng hợp                |
+| `funnel_distribution` | Counts và % theo stage + nhận xét sức khỏe funnel   |
+| `icp_narrative`       | Top 5 ICP segments + narrative mô tả ideal customer |
+| `recommendations`     | Action items cho Sales và Marketing                 |
 
 ### 5. Ghi vào DB
 
@@ -97,11 +99,26 @@ Bảng là **append-only** — không update, không xóa. Mỗi lần chạy th
 
 Provider được chọn qua `LLM_PROVIDER` env var (`gemini` | `bedrock`, default `bedrock`).
 
-| | Dev (local) | Prod (Lambda) |
-|---|---|---|
-| LLM | Gemini API | Bedrock Haiku |
-| Embedding | Gemini embedding | Bedrock Cohere multilingual |
-| DB | `DATABASE_URL` từ `.env` | Secret từ `DB_SECRET_ARN` |
+|           | Dev (local)              | Prod (Lambda)               |
+| --------- | ------------------------ | --------------------------- |
+| LLM       | Gemini API               | Bedrock Haiku               |
+| Embedding | Gemini embedding         | Bedrock Cohere multilingual |
+| DB        | `DATABASE_URL` từ `.env` | Secret từ `DB_SECRET_ARN`   |
+
+---
+
+## Language Strategy
+
+### Hướng prefer - chưa apply: Vietnamese từ transform (Hướng 1)
+
+Toàn bộ pipeline chạy tiếng Việt từ tầng transform — `pain_points`, `objections`, `use_cases`, `embedding_text` trong `signals` đều là tiếng Việt. Batch prompt thêm instruction output tiếng Việt, nhận Vietnamese SQL context → generate Vietnamese narrative tự nhiên.
+
+**Hướng thay thế đã cân nhắc — Hướng 2 (Vietnamese chỉ ở batch output):**
+Giữ transform tiếng Anh, chỉ instruct batch ra tiếng Việt. Lợi điểm: Cohere multilingual có giá trị thực ở chat (user hỏi tiếng Việt → search English `embedding_text` → cross-lingual). Nhược điểm: batch nhận SQL context tiếng Anh rồi phải "dịch ngược" khi generate narrative — không sạch; data trong DB là tiếng Anh trong khi app nội bộ thuần Việt.
+
+**Lý do chọn Hướng 1:** App nội bộ, user thuần Việt. Cohere multilingual trong Hướng 2 có giá trị nhưng chỉ ở chat, không đủ để đánh đổi sự nhất quán của toàn pipeline. Hướng 1 sạch hơn: DB tiếng Việt, batch context tiếng Việt, output tiếng Việt.
+
+**Tác động đến `_VECTOR_QUERIES`:** Khi transform ra tiếng Việt, cần đổi `_VECTOR_QUERIES` sang tiếng Việt để đồng nhất — English query search trên Vietnamese `embedding_text` hoạt động được nhờ Cohere multilingual nhưng không tối ưu.
 
 ---
 
