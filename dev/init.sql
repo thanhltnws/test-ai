@@ -22,8 +22,6 @@ CREATE TABLE IF NOT EXISTS signals (
     confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0 AND 1),
     embedding_text   TEXT,
     record_date      DATE,
-    market           TEXT,
-    sector           TEXT,
     ingested_at      TIMESTAMPTZ,
     extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
     CONSTRAINT signals_source_record_unique UNIQUE (source, source_id)

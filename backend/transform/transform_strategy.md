@@ -120,18 +120,3 @@ Switch điều kiện: `DB_SECRET_ARN` có giá trị → Bedrock path. Không c
 ## Concurrent write
 
 Aurora INSERT và embedding API call chạy song song bằng `ThreadPoolExecutor(max_workers=2)`. `_embed_rows` không access DB nên an toàn khi dùng chung global connection. Sau khi cả hai future hoàn thành, `_insert_embeddings` dùng `id_map` (từ `RETURNING id`) để map pre-assigned UUID sang actual DB id — đảm bảo FK đúng trên cả insert path lẫn conflict-update path.
-
----
-
-## Optimization roadmap
-
-Xem [rag_optimization.md](rag_optimization.md) cho toàn bộ bảng priority. Tóm tắt cho luồng Transform:
-
-| Kỹ thuật | Tầng | Impact | Effort | Trạng thái |
-|---|---|---|---|---|
-| Few-shot prompting | 1 | Cao | Thấp | ✅ Đã làm — `_FEW_SHOT_EXAMPLES` trong `prompt.py` (3 examples: Korea fintech CRM, Japan support ticket, International logistics email) |
-| Validation retry | 1 | Cao | Thấp | ✅ Đã làm — `_do_retry` retry các record có `confidence_score < 0.4` và `raw_text ≥ 150 chars`; dùng `build_retry_prompt` với preamble riêng |
-| Chain of thought | 1 | Trung bình | Thấp | Chưa làm — yêu cầu reasoning block trước JSON output |
-| Fallback routing | 2 | Cao | Trung bình | Chưa làm — escalate sang Sonnet khi Haiku trả low-confidence |
-| Multi-pass extraction | 2 | Trung bình | Cao | Defer |
-| Field-specialist agents | 3 | Trung bình | Rất cao | Defer — over-engineering cho scope hiện tại |
