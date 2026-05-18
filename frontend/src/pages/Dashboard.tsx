@@ -4,25 +4,66 @@ import {
   PieChart, Pie, Legend,
 } from 'recharts'
 import { fetchDashboardInsights } from '../api/lambdas'
-import type { DashboardFilters, SummaryData, RecommendationsData } from '../types'
+import type { PeriodType, SummaryData, RecommendationsData } from '../types'
 
-const PERIODS = [
-  { value: '', label: 'Latest' },
+const PERIODS: { value: PeriodType; label: string }[] = [
   { value: 'weekly', label: 'Weekly' },
   { value: 'monthly', label: 'Monthly' },
   { value: 'quarterly', label: 'Quarterly' },
   { value: 'yearly', label: 'Yearly' },
-] as const
+]
 
 const MARKETS = [
-  { value: '', label: 'All Markets' },
-  { value: 'vietnam', label: 'Vietnam' },
-  { value: 'japan', label: 'Japan' },
-  { value: 'korea', label: 'Korea' },
-  { value: 'international', label: 'International' },
-] as const
+  { value: '' as const, label: 'All Markets' },
+  { value: 'vietnam' as const, label: 'Vietnam' },
+  { value: 'japan' as const, label: 'Japan' },
+  { value: 'korea' as const, label: 'Korea' },
+  { value: 'international' as const, label: 'International' },
+]
 
-const EMPTY_FILTERS: DashboardFilters = { period: '', date: '', market: '' }
+function toISODate(d: Date): string {
+  return d.toISOString().split('T')[0]
+}
+
+function getPeriodStart(period: PeriodType, isoDate: string): string {
+  const d = new Date(isoDate)
+  if (period === 'weekly') {
+    const day = d.getDay()
+    const diff = day === 0 ? -6 : 1 - day
+    d.setDate(d.getDate() + diff)
+    return toISODate(d)
+  }
+  if (period === 'monthly') return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`
+  if (period === 'quarterly') {
+    const q = Math.floor(d.getMonth() / 3)
+    return `${d.getFullYear()}-${String(q * 3 + 1).padStart(2, '0')}-01`
+  }
+  return `${d.getFullYear()}-01-01`
+}
+
+function navigatePeriod(period: PeriodType, isoDate: string, dir: -1 | 1): string {
+  const d = new Date(isoDate)
+  if (period === 'weekly') d.setDate(d.getDate() + dir * 7)
+  else if (period === 'monthly') d.setMonth(d.getMonth() + dir)
+  else if (period === 'quarterly') d.setMonth(d.getMonth() + dir * 3)
+  else d.setFullYear(d.getFullYear() + dir)
+  return getPeriodStart(period, toISODate(d))
+}
+
+function getPeriodLabel(period: PeriodType, isoDate: string): string {
+  const d = new Date(isoDate)
+  if (period === 'monthly') return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+  if (period === 'weekly') {
+    const end = new Date(d); end.setDate(end.getDate() + 6)
+    const s = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+    const e = end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+    return `${s} – ${e}`
+  }
+  if (period === 'quarterly') return `Q${Math.floor(d.getMonth() / 3) + 1} ${d.getFullYear()}`
+  return String(d.getFullYear())
+}
+
+
 
 const FUNNEL_COLORS: Record<string, string> = {
   awareness: '#93c5fd',
@@ -64,12 +105,12 @@ export default function Dashboard() {
   const [recs, setRecs] = useState<RecommendationsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [retryCount, setRetryCount] = useState(0)
-  const [draft, setDraft] = useState<DashboardFilters>(EMPTY_FILTERS)
-  const [applied, setApplied] = useState<DashboardFilters>(EMPTY_FILTERS)
-  const hasFilter = applied.period !== '' || applied.date !== '' || applied.market !== ''
-
-  const dedupedPainPoints = useMemo(() => {
+  const [period, setPeriod] = useState<PeriodType>('monthly')
+  const [periodAnchor, setPeriodAnchor] = useState<string>(() => getPeriodStart('monthly', toISODate(new Date())))
+  const [market, setMarket] = useState<string>('')
+  const [retryTick, setRetryTick] = useState(0)
+  const [noData, setNoData] = useState(false)
+const dedupedPainPoints = useMemo(() => {
     if (!data) return []
     const map = new Map<string, number>()
     for (const p of data.top_pain_points) {
@@ -88,17 +129,22 @@ export default function Dashboard() {
   useEffect(() => {
     setLoading(true)
     setError(null)
-    fetchDashboardInsights(applied)
+    setNoData(false)
+    fetchDashboardInsights({ period, date: periodAnchor, market: market as '' })
       .then(({ summary, recommendations }) => {
-        setData(summary)
-        setRecs(recommendations)
+        if (summary.period_start === '') {
+          setNoData(true)
+        } else {
+          setData(summary)
+          setRecs(recommendations)
+        }
         setLoading(false)
       })
       .catch(err => {
         setError(err?.message ?? 'Không thể tải dữ liệu. Vui lòng thử lại.')
         setLoading(false)
       })
-  }, [retryCount, applied])
+  }, [period, periodAnchor, market, retryTick])
 
   if (loading) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
@@ -123,7 +169,7 @@ export default function Dashboard() {
         <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>Lỗi tải dữ liệu</div>
         <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>{error}</div>
         <button
-          onClick={() => setRetryCount(c => c + 1)}
+          onClick={() => setRetryTick(t => t + 1)}
           style={{
             background: 'var(--accent)',
             color: '#fff',
@@ -155,63 +201,68 @@ export default function Dashboard() {
         <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 4, fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.3px' }}>Customer Insight Overview</h1>
         {/* Filter bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+          {/* Period selector */}
           <select
-            value={draft.period}
-            onChange={e => setDraft(f => ({ ...f, period: e.target.value as DashboardFilters['period'], date: '' }))}
+            value={period}
+            onChange={e => {
+              const p = e.target.value as PeriodType
+              setPeriod(p)
+              setPeriodAnchor(getPeriodStart(p, toISODate(new Date())))
+            }}
             style={inputStyle}
           >
             {PERIODS.map(p => (
               <option key={p.value} value={p.value}>{p.label}</option>
             ))}
           </select>
-          {draft.period !== '' && (
-            <input
-              type="date"
-              value={draft.date}
-              onChange={e => setDraft(f => ({ ...f, date: e.target.value }))}
-              placeholder="Any date in period"
-              style={inputStyle}
-            />
-          )}
+
+          {/* Period navigator */}
+          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', borderRadius: 7, overflow: 'hidden', background: 'var(--surface)' }}>
+            <button
+              onClick={() => setPeriodAnchor(a => navigatePeriod(period, a, -1))}
+              style={{ padding: '7px 10px', fontSize: 14, color: 'var(--text-muted)', borderRight: '1px solid var(--border)' }}
+            >‹</button>
+            <span style={{ padding: '7px 14px', fontSize: 13, color: 'var(--text)', whiteSpace: 'nowrap', minWidth: 130, textAlign: 'center' }}>
+              {getPeriodLabel(period, periodAnchor)}
+            </span>
+            <button
+              onClick={() => setPeriodAnchor(a => navigatePeriod(period, a, 1))}
+              style={{ padding: '7px 10px', fontSize: 14, color: 'var(--text-muted)', borderLeft: '1px solid var(--border)' }}
+            >›</button>
+          </div>
+
+          {/* Market selector */}
           <select
-            value={draft.market}
-            onChange={e => setDraft(f => ({ ...f, market: e.target.value as DashboardFilters['market'] }))}
+            value={market}
+            onChange={e => setMarket(e.target.value)}
             style={inputStyle}
           >
             {MARKETS.map(m => (
               <option key={m.value} value={m.value}>{m.label}</option>
             ))}
           </select>
-          <button
-            onClick={() => setApplied({ ...draft })}
-            style={{
-              background: 'var(--accent)',
-              color: '#fff',
-              padding: '7px 16px',
-              borderRadius: 7,
-              fontSize: 13,
-              fontWeight: 600,
-            }}
-          >
-            Apply
-          </button>
-          {hasFilter && (
+          {(market !== '') && (
             <button
-              onClick={() => { setDraft(EMPTY_FILTERS); setApplied(EMPTY_FILTERS) }}
-              style={{
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                color: 'var(--text-muted)',
-                padding: '7px 12px',
-                borderRadius: 7,
-                fontSize: 13,
-              }}
+              onClick={() => setMarket('')}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', padding: '7px 12px', borderRadius: 7, fontSize: 13 }}
             >
               Reset
             </button>
           )}
         </div>
       </div>
+
+      {/* No data banner */}
+      {noData && (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8,
+          padding: '10px 16px', fontSize: 13, color: '#92400e',
+        }}>
+          <span>📭 Không có dữ liệu cho khoảng thời gian này. Đang hiển thị dữ liệu gần nhất.</span>
+          <button onClick={() => setNoData(false)} style={{ color: '#92400e', fontSize: 16, marginLeft: 12 }}>×</button>
+        </div>
+      )}
 
       {/* Stat cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>

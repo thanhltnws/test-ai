@@ -105,25 +105,25 @@ const MOCK_DASHBOARD_INSIGHTS: DashboardInsights = {
 
 function toSummary(raw: BeInsightResponse): SummaryData {
   return {
-    period: raw.period,
-    period_start: raw.period_start,
+    period: raw.period ?? '',
+    period_start: raw.period_start ?? '',
     period_end: raw.period_end ?? '',
     market: raw.market ?? null,
-    funnel_distribution: raw.funnel_distribution.stages,
-    top_pain_points: raw.pain_points_summary.top_items.map(p => ({
+    funnel_distribution: raw.funnel_distribution?.stages ?? [],
+    top_pain_points: (raw.pain_points_summary?.top_items ?? []).map(p => ({
       label: p.item,
       count: p.count,
     })),
-    icp_summary: raw.icp_narrative.top_segments,
+    icp_summary: raw.icp_narrative?.top_segments ?? [],
   }
 }
 
 function toRecommendations(raw: BeInsightResponse): RecommendationsData {
   return {
-    sales: raw.recommendations.sales,
-    marketing: raw.recommendations.marketing,
+    sales: raw.recommendations?.sales ?? [],
+    marketing: raw.recommendations?.marketing ?? [],
     recommendations: [],
-    computed_at: raw.computed_at,
+    computed_at: raw.computed_at ?? undefined,
   }
 }
 
