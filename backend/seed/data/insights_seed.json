@@ -1,0 +1,850 @@
+[
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "7927b2df-8bba-4d29-b9a2-b6e0beafe620",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#0",
+    "raw_text": "Prospect ID: 7927b2df-8bba-4d29-b9a2-b6e0beafe620\nLead Number: 660737\nLead Origin: API\nLead Source: Olark Chat\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 0\nTotal Time Spent on Website: 0\nPage Views Per Visit: 0\nLast Activity: Page Visited on Website\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Interested in other courses\nLead Quality: Low in Relevance\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 15\nAsymmetrique Profile Score: 15\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [
+      "Unemployment",
+      "Lack of career advancement"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Professional skills training for job acquisition"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.4,
+    "ingested_at": "2026-05-07T06:38:42.210877+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "2a272436-5132-4136-86fa-dcc88c88f482",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#1",
+    "raw_text": "Prospect ID: 2a272436-5132-4136-86fa-dcc88c88f482\nLead Number: 660728\nLead Origin: API\nLead Source: Organic Search\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 5\nTotal Time Spent on Website: 674\nPage Views Per Visit: 2.5\nLast Activity: Email Opened\nCountry: India\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Ringing\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 15\nAsymmetrique Profile Score: 15\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Email Opened",
+    "pain_points": [
+      "Unemployment",
+      "Need for career transition"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Professional training"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.5,
+    "ingested_at": "2026-05-07T06:38:42.210911+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "8cc8c611-a219-4f35-ad23-fdfd2656bd8a",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#2",
+    "raw_text": "Prospect ID: 8cc8c611-a219-4f35-ad23-fdfd2656bd8a\nLead Number: 660727\nLead Origin: Landing Page Submission\nLead Source: Direct Traffic\nDo Not Email: No\nDo Not Call: No\nConverted: 1\nTotalVisits: 2\nTotal Time Spent on Website: 1532\nPage Views Per Visit: 2\nLast Activity: Email Opened\nCountry: India\nSpecialization: Business Administration\nWhat is your current occupation: Student\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Will revert after reading the email\nLead Quality: Might be\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nLead Profile: Potential Lead\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 01.High\nAsymmetrique Activity Score: 14\nAsymmetrique Profile Score: 20\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: Yes\nLast Notable Activity: Email Opened",
+    "pain_points": [
+      "Entry-level career limitations"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Business administration certification"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:38:42.210935+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "0cc2df48-7cf4-4e39-9de9-19797f9b38cc",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#3",
+    "raw_text": "Prospect ID: 0cc2df48-7cf4-4e39-9de9-19797f9b38cc\nLead Number: 660719\nLead Origin: Landing Page Submission\nLead Source: Direct Traffic\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 1\nTotal Time Spent on Website: 305\nPage Views Per Visit: 1\nLast Activity: Unreachable\nCountry: India\nSpecialization: Media and Advertising\nHow did you hear about X Education: Word Of Mouth\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Ringing\nLead Quality: Not Sure\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 01.High\nAsymmetrique Activity Score: 13\nAsymmetrique Profile Score: 17\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [
+      "Unemployment"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Media and advertising career training"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.5,
+    "ingested_at": "2026-05-07T06:38:42.210955+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "3256f628-e534-4826-9d63-4a8b88782852",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#4",
+    "raw_text": "Prospect ID: 3256f628-e534-4826-9d63-4a8b88782852\nLead Number: 660681\nLead Origin: Landing Page Submission\nLead Source: Google\nDo Not Email: No\nDo Not Call: No\nConverted: 1\nTotalVisits: 2\nTotal Time Spent on Website: 1428\nPage Views Per Visit: 1\nLast Activity: Converted to Lead\nCountry: India\nHow did you hear about X Education: Other\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Will revert after reading the email\nLead Quality: Might be\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 01.High\nAsymmetrique Activity Score: 15\nAsymmetrique Profile Score: 18\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [
+      "Unemployment"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Vocational training for job placement"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:38:42.210975+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "2058ef08-2858-443e-a01f-a9237db2f5ce",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#5",
+    "raw_text": "Prospect ID: 2058ef08-2858-443e-a01f-a9237db2f5ce\nLead Number: 660680\nLead Origin: API\nLead Source: Olark Chat\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 0\nTotal Time Spent on Website: 0\nPage Views Per Visit: 0\nLast Activity: Olark Chat Conversation\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nAsymmetrique Activity Index: 01.High\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 17\nAsymmetrique Profile Score: 15\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "General interest in educational services"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.3,
+    "ingested_at": "2026-05-07T06:38:42.210993+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "9fae7df4-169d-489b-afe4-0f3d752542ed",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#6",
+    "raw_text": "Prospect ID: 9fae7df4-169d-489b-afe4-0f3d752542ed\nLead Number: 660673\nLead Origin: Landing Page Submission\nLead Source: Google\nDo Not Email: No\nDo Not Call: No\nConverted: 1\nTotalVisits: 2\nTotal Time Spent on Website: 1640\nPage Views Per Visit: 2\nLast Activity: Email Opened\nCountry: India\nSpecialization: Supply Chain Management\nHow did you hear about X Education: Online Search\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Will revert after reading the email\nLead Quality: Low in Relevance\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nLead Profile: Potential Lead\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 01.High\nAsymmetrique Activity Score: 14\nAsymmetrique Profile Score: 20\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [
+      "Lack of specialized skill certification"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Supply chain management professional training"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:38:42.211012+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "20ef72a2-fb3b-45e0-924e-551c5fa59095",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#7",
+    "raw_text": "Prospect ID: 20ef72a2-fb3b-45e0-924e-551c5fa59095\nLead Number: 660664\nLead Origin: API\nLead Source: Olark Chat\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 0\nTotal Time Spent on Website: 0\nPage Views Per Visit: 0\nLast Activity: Olark Chat Conversation\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 15\nAsymmetrique Profile Score: 15\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "General educational interest"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.3,
+    "ingested_at": "2026-05-07T06:38:42.211030+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "cfa0128c-a0da-4656-9d47-0aa4e67bf690",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#8",
+    "raw_text": "Prospect ID: cfa0128c-a0da-4656-9d47-0aa4e67bf690\nLead Number: 660624\nLead Origin: Landing Page Submission\nLead Source: Direct Traffic\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 2\nTotal Time Spent on Website: 71\nPage Views Per Visit: 2\nLast Activity: Email Opened\nCountry: India\nSpecialization: IT Projects Management\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nCity: Thane & Outskirts\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 14\nAsymmetrique Profile Score: 14\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: Yes\nLast Notable Activity: Email Opened",
+    "pain_points": [
+      "Professional development need in IT project management"
+    ],
+    "objections": [],
+    "use_cases": [
+      "IT projects management certification"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.5,
+    "ingested_at": "2026-05-07T06:38:42.211048+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "af465dfc-7204-4130-9e05-33231863c4b5",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#9",
+    "raw_text": "Prospect ID: af465dfc-7204-4130-9e05-33231863c4b5\nLead Number: 660616\nLead Origin: API\nLead Source: Google\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 4\nTotal Time Spent on Website: 58\nPage Views Per Visit: 4\nLast Activity: Email Opened\nCountry: India\nSpecialization: Finance Management\nHow did you hear about X Education: Word Of Mouth\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 13\nAsymmetrique Profile Score: 16\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Email Opened",
+    "pain_points": [
+      "Need for advanced finance training"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Finance management certification"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.5,
+    "ingested_at": "2026-05-07T06:38:42.211067+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13649397",
+    "source_url": "file://seed/ops/ofbiz_issues.json#0",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13649397\nself: https://issues.apache.org/jira/rest/api/2/issue/13649397\nkey: OFBIZ-13390\nfields: {'summary': 'Sales Order Screen broken (Huge font size) after order completed with email notification', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'Hi\\r\\n\\r\\nCompleted Sales Order with communication event displays broken: huge menu and screen fonts.\\r\\nScreenshot attached.\\r\\n\\r\\nHow to reproduce:\\r\\n1. Create some Sales order.\\r\\n2. Complete it with e-mail notification.\\r\\n\\r\\n3. Find order and review it - huge font size.\\r\\n\\r\\n4. Delete communication event and check order again, font size is normal now.\\r\\n\\r\\n\\xa0\\r\\n\\r\\n!Screenshot 2026-04-28 at 17.58.27.png! \\xa0', 'comment': {'comments': [], 'maxResults': 0, 'total': 0, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "UI rendering errors and font scaling issues after order completion"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Order management",
+      "E-commerce communications"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.4,
+    "ingested_at": "2026-05-07T06:39:13.854798+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13649384",
+    "source_url": "file://seed/ops/ofbiz_issues.json#1",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13649384\nself: https://issues.apache.org/jira/rest/api/2/issue/13649384\nkey: OFBIZ-13389\nfields: {'summary': 'Updating field with URL with TLD not listed in UtilHttp.extractUrls ', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'Hi,\\r\\n\\r\\nany field containing URL with TLD not listed in UtilHttp.extractUrls regex will cause form update error:\\xa0\\r\\n\\r\\n{{HTTP Status 500 – Internal Server Error}}\\r\\n\\r\\n{{java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0 java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64) java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70) java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:266) java.base/java.util.Objects.checkIndex(Objects.java:361) java.base/java.util.ArrayList.get(ArrayList.java:427) org.apache.ofbiz.base.util.UtilHttp.canonicalizeParameterMap(UtilHttp.java:420) org.apache.ofbiz.base.util.UtilHttp.getParameterMap(UtilHttp.java:189) org.apache.ofbiz.base.util.UtilHttp.getParameterMap(UtilHttp.java:144) org.apache.ofbiz.webapp.control.ControlFilter.doFilter(ControlFilter.java:182) javax.servlet.http.HttpFilter.doFilter(HttpFilter.java:53) org.apache.logging.log4j.web.Log4jServletFilter.doFilter(Log4jServletFilter.java:70)}}\\r\\n\\r\\n\\r\\n\\r\\nSteps to reproduce:\\r\\n1. Open Accounting -> Payment Gateway Config -> PayPal Gateway configuration\\r\\n2. Enter url [https://test.app/test] and press update', 'comment': {'comments': [], 'maxResults': 0, 'total': 0, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "Form validation failure on specific URL TLDs",
+      "Unhandled exceptions causing internal server errors"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Payment gateway configuration",
+      "System form handling"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.4,
+    "ingested_at": "2026-05-07T06:39:13.854844+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13648900",
+    "source_url": "file://seed/ops/ofbiz_issues.json#2",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13648900\nself: https://issues.apache.org/jira/rest/api/2/issue/13648900\nkey: OFBIZ-13388\nfields: {'summary': 'sendInvoicePerEmail fails with MissingMethodException: invalid makeValidContext() call in InvoiceServicesScript.groovy', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': '**Summary**\\r\\nThe `sendInvoicePerEmail` service in\\r\\n`component://accounting/src/main/groovy/org/apache/ofbiz/accounting/invoice/InvoiceServicesScript.groovy`\\r\\nfails at runtime with a MissingMethodException because\\r\\n`DispatchContext.makeValidContext()` is invoked with a single Map argument,\\r\\nbut no such overload exists. Valid signatures are:\\r\\n\\xa0 - makeValidContext(String, String, Map)\\r\\n\\xa0 - makeValidContext(ModelService, String, Map)\\r\\n\\r\\n**Steps to reproduce**\\r\\n1. Trigger the `sendInvoicePerEmail` service (e.g. from the invoice screen\\'s\\r\\n\\xa0 \\xa0\"Send per Email\" action, which runs it async via the JobQueue).\\r\\n2. Observe the async job failure in the OFBiz log.\\r\\n\\r\\n**Expected behaviour**\\r\\nThe invoice email is scheduled and sent via `sendMailFromScreen`.\\r\\n\\r\\n**Actual behaviour**\\r\\nAsync job fails with:\\r\\n\\xa0 groovy.lang.MissingMethodException: No signature of method:\\r\\n\\xa0 org.apache.ofbiz.service.DispatchContext.makeValidContext() is applicable\\r\\n\\xa0 for argument types: (LinkedHashMap)\\r\\n\\r\\n**Proposed fix**\\r\\nUse the 3-argument overload, passing the target service name and the IN mode:\\r\\n\\r\\n\\xa0 \\xa0 Map emailParams = dispatcher.getDispatchContext()\\r\\n\\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0 .makeValidContext(\\'sendMailFromScreen\\', \\'IN\\', ctx)\\r\\n\\r\\nPatch attached.\\r\\n\\r\\n**Environment**\\r\\nOFBiz <your version/branch>, Groovy 5.0.0-alpha-11, JDK 17', 'comment': {'comments': [], 'maxResults': 0, 'total': 0, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/2', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/critical.svg', 'name': 'Critical', 'id': '2'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "Asynchronous job failure during email notification process",
+      "Code base runtime errors"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Automated invoicing",
+      "Customer email communications"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.5,
+    "ingested_at": "2026-05-07T06:39:13.854876+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13648460",
+    "source_url": "file://seed/ops/ofbiz_issues.json#3",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13648460\nself: https://issues.apache.org/jira/rest/api/2/issue/13648460\nkey: OFBIZ-13387\nfields: {'summary': 'Currently RAT report stable and next are inversed', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'RAT report stable still runs on 18 branch. While RAT report next still runs on 24 branch.\\r\\n\\r\\nI wait an answer from INFRA-27827 before changing that.', 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074515', 'id': '18074515', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Good news, it should not be too long (see INFRA-27827)', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-18T09:16:38.203+0000', 'updated': '2026-04-18T09:16:38.203+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074636', 'id': '18074636', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': \"Actually no need to wait, it's OK as is, and I trust Gavin for PDFs general solution\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-19T08:12:37.845+0000', 'updated': '2026-04-19T08:12:37.845+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074926', 'id': '18074926', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Reopening, not sure why this is still not working', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-20T16:50:53.038+0000', 'updated': '2026-04-20T16:50:53.038+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074948', 'id': '18074948', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'It needed a push in plugins, RAT build are dependent of them.', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-20T18:31:31.722+0000', 'updated': '2026-04-20T18:31:31.722+0000'}], 'maxResults': 4, 'total': 4, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/6', 'description': 'The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/closed.png', 'name': 'Closed', 'id': '6', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/3', 'id': 3, 'key': 'done', 'colorName': 'green', 'name': 'Done'}}}",
+    "pain_points": [
+      "Report configuration and CI/CD pipeline synchronization"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Automated reporting",
+      "Quality assurance management"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:39:13.854904+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13648227",
+    "source_url": "file://seed/ops/ofbiz_issues.json#4",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13648227\nself: https://issues.apache.org/jira/rest/api/2/issue/13648227\nkey: OFBIZ-13386\nfields: {'summary': 'order item attribute autoReserve not stored', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': \"Creating an order, adding a product, checking 'Auto Reserve', no inventory reservation happens (service reserveStoreInventory is not called).\\r\\n\\r\\nThe problem results from a missing entry in the order_item_attribute table.\\r\\n\\r\\ncomponent://order/template/entry/cart/ShowCart.ftl\\xa0\\r\\n\\r\\norder_item_attr_autoReserve\\r\\n\\r\\nattribute is not stored\", 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648227/comment/18075800', 'id': '18075800', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=golja', 'name': 'golja', 'key': 'golja', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Anahita Goljahani', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Hi [~cahein], could you please clarify what kind of reservation you would like to make?\\r\\n\\r\\nI’m asking because, if you simply want to reserve inventory items when sales orders are placed, you only need to set '{*}Allocate Resource{*}' to '{*}N{*}' in the store configuration (and therefore the 'Auto Reserve' checkbox will not be displayed on the screen where you add products to the order).\\r\\n\\r\\nIf, instead, you want to use the 'Inventory (Supply) Allocation Planning' feature, you need to set 'Allocate Resource' to 'Y'. If you want some insight into this feature, please refer to OFBIZ-10518. To be honest, the ticket description does not fully clarify all aspects of the allocation planning feature. Perhaps [~deepak.nigam], [~surajk], or [~arunpati] could provide more details on the feature and verify if there are bugs to fix.\\r\\n\\r\\nBest regards\\r\\n\\r\\nAnahita\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=golja', 'name': 'golja', 'key': 'golja', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Anahita Goljahani', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-23T18:49:12.352+0000', 'updated': '2026-04-23T18:49:12.352+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648227/comment/18076537', 'id': '18076537', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=cahein', 'name': 'cahein', 'key': 'JIRAUSER312484', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=JIRAUSER312484&avatarId=54882', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=JIRAUSER312484&avatarId=54882', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=JIRAUSER312484&avatarId=54882', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=JIRAUSER312484&avatarId=54882'}, 'displayName': 'Carsten Heinrigs', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'The issue came up when i was debugging Errors related to the allocation plan (item) status. Debugging brought me to the org.apache.ofbiz.order.order.OrderServices.java\\r\\n\\r\\nString autoReserve = OrderReadHelper.getOrderItemAttribute(orderItem, \"autoReserve\");\\r\\n\\r\\nLooking into the related table (\\'order_item_attribute\\'), there was no entry, regardless of the state of the \\'Auto Reserve\\' checkbox of the add product screen.\\r\\n\\r\\nAs a temporary workaround we changed the OrderService.java to always assume \\'autoReserve\\' to be true.\\r\\n\\r\\n\\xa0\\r\\n\\r\\nHope, this helps to clarify the issue.', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=cahein', 'name': 'cahein', 'key': 'JIRAUSER312484', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=JIRAUSER312484&avatarId=54882', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=JIRAUSER312484&avatarId=54882', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=JIRAUSER312484&avatarId=54882', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=JIRAUSER312484&avatarId=54882'}, 'displayName': 'Carsten Heinrigs', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-27T11:00:49.088+0000', 'updated': '2026-04-27T11:01:21.419+0000'}], 'maxResults': 2, 'total': 2, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "Inconsistent inventory reservation logic",
+      "Database synchronization gaps for order attributes"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Inventory management",
+      "Automated order processing"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.5,
+    "ingested_at": "2026-05-07T06:39:13.854932+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13647999",
+    "source_url": "file://seed/ops/ofbiz_issues.json#5",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13647999\nself: https://issues.apache.org/jira/rest/api/2/issue/13647999\nkey: OFBIZ-13385\nfields: {'summary': 'Possible NPE in PayPal services', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'PayPalServices.setExpressCheckout:\\r\\n\\r\\n\\xa0\\r\\n\\r\\n{{ShoppingCart cart = (ShoppingCart) context.get(\"cart\");}}\\r\\n{{Locale locale = cart.getLocale();}}\\r\\n{{if (cart == null || cart.items().size() <= 0) {}}\\r\\n{{\\xa0 \\xa0 return ServiceUtil.returnError(UtilProperties.getMessage(RESOURCE,}}\\r\\n{{\\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0\"AccountingPayPalShoppingCartIsEmpty\", locale));}}\\r\\n{{}}}\\r\\n\\r\\n\\xa0\\r\\n\\r\\nusing cart before checking if it is null', 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073471', 'id': '18073471', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'Commit 1d6d655a75056272211fd9bf0a8aaad3c53951d4 in ofbiz-framework\\'s branch refs/heads/release24.09 from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=1d6d655a75 ]\\n\\nFixed: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nIn PayPalServices::setExpressCheckout, using cart before checking if it is null\\n\\nShoppingCart cart = (ShoppingCart) context.get(\"cart\");\\nLocale locale = cart.getLocale();\\nif (cart == null || cart.items().size() <= 0) {\\n\\xa0 \\xa0 return ServiceUtil.returnError(UtilProperties.getMessage(RESOURCE,\\n\\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0\"AccountingPayPalShoppingCartIsEmpty\", locale));\\n}\\n\\nThanks: Vitaly Repetenko\\n', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T13:31:40.618+0000', 'updated': '2026-04-14T13:31:40.618+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073473', 'id': '18073473', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'Commit e0677ad8ded66e4d00fae72ac8814b9315d59725 in ofbiz-framework\\'s branch refs/heads/trunk from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=e0677ad8de ]\\n\\nFixed: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nIn PayPalServices::setExpressCheckout, using cart before checking if it is null\\n\\nShoppingCart cart = (ShoppingCart) context.get(\"cart\");\\nLocale locale = cart.getLocale();\\nif (cart == null || cart.items().size() <= 0) {\\n\\xa0 \\xa0 return ServiceUtil.returnError(UtilProperties.getMessage(RESOURCE,\\n\\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0\"AccountingPayPalShoppingCartIsEmpty\", locale));\\n}\\n\\nThanks: Vitaly Repetenko\\n', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T13:31:40.850+0000', 'updated': '2026-04-14T13:31:40.850+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073476', 'id': '18073476', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'Hi, Jacques!\\r\\n\\r\\nI think the problem with NPE not solved.\\r\\n\\r\\nHere:\\r\\n\\r\\nLocale locale = cart.getLocale();\\r\\n\\r\\nIf cart is null then exception will be thrown here, not error state with message.\\r\\nAnd not sure about this:\\r\\ncart.items().size() <= 0\\r\\n\\r\\nmaybe better isEmpty() or just ==', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T13:42:07.451+0000', 'updated': '2026-04-14T13:42:07.451+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073499', 'id': '18073499', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': \"Indeed Vitalo, thanks for checking. As I said on dev ML:\\r\\nbq. That looked so easy and I did not saw all points. I'll fix that.\\xa0\\r\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-14T14:50:22.007+0000', 'updated': '2026-04-14T14:50:22.007+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073504', 'id': '18073504', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit c24ec27affc98360ab54c190a0a7536e2a5d5a02 in ofbiz-framework's branch refs/heads/release24.09 from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=c24ec27aff ]\\n\\nFixed: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nAs I said on dev ML: That looked so easy and I did not saw all points.\\nThat fixes them\\n\\nThanks: Vitaly Repetenko and Jacopo for spotting issues\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T15:00:39.598+0000', 'updated': '2026-04-14T15:00:39.598+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073505', 'id': '18073505', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit 45e8808869508089e479edafa05aedc088a2fd84 in ofbiz-framework's branch refs/heads/trunk from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=45e8808869 ]\\n\\nFixed: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nAs I said on dev ML: That looked so easy and I did not saw all points.\\nThat fixes them\\n\\nThanks: Vitaly Repetenko and Jacopo for spotting issues\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T15:00:39.735+0000', 'updated': '2026-04-14T15:00:39.735+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073506', 'id': '18073506', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Hi Vitaly,\\r\\n\\r\\nPlease dbl-chck in case, before I close  ;)', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-14T15:03:38.103+0000', 'updated': '2026-04-14T15:03:38.103+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073513', 'id': '18073513', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'Hi, Jacques!\\r\\n\\r\\nI would suggest to process cart null value with error message:\\r\\n\\r\\n{{ShoppingCart cart = (ShoppingCart) context.get(\"cart\");}}\\r\\n{{if (cart == null || cart.isEmpty()) {}}\\r\\n{{\\xa0 Locale locale;}}\\r\\n{{\\xa0 if (cart == null) {}}\\r\\n{{\\xa0 \\xa0 locale = Locale.US;}}\\r\\n{{\\xa0 } else {}}\\r\\n{{\\xa0 \\xa0 locale = cart.getLocale();}}\\r\\n\\xa0 \\xa0 }\\r\\n{{\\xa0 return ServiceUtil.returnError(UtilProperties.getMessage(RESOURCE,}}\\r\\n{{\\xa0 \\xa0 \\xa0 \\xa0\"AccountingPayPalShoppingCartIsEmpty\", locale));}}\\r\\n{{}}}\\r\\n\\r\\n\\xa0', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T15:13:23.346+0000', 'updated': '2026-04-14T15:13:36.269+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073514', 'id': '18073514', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'Better way:\\r\\n\\r\\n\\xa0\\r\\n\\r\\n{{if (cart == null || cart.isEmpty()) {}}\\r\\n{{\\xa0 return ServiceUtil.returnError(UtilProperties.getMessage(RESOURCE,}}\\r\\n{{\\xa0 \\xa0 \\xa0 \\xa0\"AccountingPayPalShoppingCartIsEmpty\", (cart == null || cart.getLocale() == null) ? Locale.US : cart.getLocale()));}}\\r\\n}', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T15:17:50.623+0000', 'updated': '2026-04-14T15:20:50.973+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073540', 'id': '18073540', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Thanks Vitaly, sounds good to me. I push.', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-14T16:47:20.502+0000', 'updated': '2026-04-14T16:47:20.502+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073548', 'id': '18073548', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit 205739bbb95750f205389cce669badddd18a1208 in ofbiz-framework's branch refs/heads/release24.09 from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=205739bbb9 ]\\n\\nImproved: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nThanks: Vitaly Repetenko for a better code\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T16:59:22.519+0000', 'updated': '2026-04-14T16:59:22.519+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073549', 'id': '18073549', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit d24228096dc7c0db201b44eafd5dcec8756a9d99 in ofbiz-framework's branch refs/heads/trunk from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=d24228096d ]\\n\\nImproved: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nThanks: Vitaly Repetenko for a better code\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T16:59:22.654+0000', 'updated': '2026-04-14T16:59:22.654+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073806', 'id': '18073806', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit c24ec27affc98360ab54c190a0a7536e2a5d5a02 in ofbiz-framework's branch refs/heads/dependabot/gradle/release24.09/org.apache.derby-derby-10.17.1.0 from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=c24ec27aff ]\\n\\nFixed: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nAs I said on dev ML: That looked so easy and I did not saw all points.\\nThat fixes them\\n\\nThanks: Vitaly Repetenko and Jacopo for spotting issues\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-15T18:32:56.463+0000', 'updated': '2026-04-15T18:32:56.463+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647999/comment/18073807', 'id': '18073807', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit 205739bbb95750f205389cce669badddd18a1208 in ofbiz-framework's branch refs/heads/dependabot/gradle/release24.09/org.apache.derby-derby-10.17.1.0 from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=205739bbb9 ]\\n\\nImproved: Possible NPE in PayPal services (OFBIZ-13385)\\n\\nThanks: Vitaly Repetenko for a better code\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-15T18:32:56.609+0000', 'updated': '2026-04-15T18:32:56.609+0000'}], 'maxResults': 14, 'total': 14, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/6', 'description': 'The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/closed.png', 'name': 'Closed', 'id': '6', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/3', 'id': 3, 'key': 'done', 'colorName': 'green', 'name': 'Done'}}}",
+    "pain_points": [
+      "Potential null pointer exceptions in payment processing logic"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Online payment processing",
+      "Shopping cart management"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:39:13.854959+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13647997",
+    "source_url": "file://seed/ops/ofbiz_issues.json#6",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13647997\nself: https://issues.apache.org/jira/rest/api/2/issue/13647997\nkey: OFBIZ-13384\nfields: {'summary': 'Accounting - New Agreement shows wrong form', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'New Agreement shows EditBillingAccount instead of Agreement Form\\r\\n\\r\\nSteps:\\r\\n # Open Accounting tab.\\r\\n # Press New Agreement button.\\r\\n # Check browser URL, it contains EditBillingAccount at the end and displayed form is not New Agreement form.\\r\\n\\r\\nReproducible on stable demo\\xa0\\r\\n\\r\\nPatch is attached.', 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647997/comment/18073472', 'id': '18073472', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit 4ede6be62a78a867ee5509d06ae9671bfc65a073 in ofbiz-framework's branch refs/heads/release24.09 from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=4ede6be62a ]\\n\\nFixed: Accounting - New Agreement shows wrong form (OFBIZ-13384)\\n\\nNew Agreement shows EditBillingAccount instead of Agreement Form\\n\\nSteps:\\nOpen Accounting tab.\\nPress New Agreement button.\\nCheck browser URL, it contains EditBillingAccount at the end and displayed form\\nis not New Agreement form.\\n\\nThanks: Vitaly Repetenko\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T13:31:40.743+0000', 'updated': '2026-04-14T13:31:40.743+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647997/comment/18073474', 'id': '18073474', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit 87d6f231405917693eff4ff28b10b28dcd8a91ec in ofbiz-framework's branch refs/heads/trunk from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=87d6f23140 ]\\n\\nFixed: Accounting - New Agreement shows wrong form (OFBIZ-13384)\\n\\nNew Agreement shows EditBillingAccount instead of Agreement Form\\n\\nSteps:\\nOpen Accounting tab.\\nPress New Agreement button.\\nCheck browser URL, it contains EditBillingAccount at the end and displayed form\\nis not New Agreement form.\\n\\nThanks: Vitaly Repetenko\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-14T13:31:40.956+0000', 'updated': '2026-04-14T13:31:40.956+0000'}], 'maxResults': 2, 'total': 2, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/6', 'description': 'The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/closed.png', 'name': 'Closed', 'id': '6', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/3', 'id': 3, 'key': 'done', 'colorName': 'green', 'name': 'Done'}}}",
+    "pain_points": [
+      "UI routing and form mapping errors in accounting module"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Accounting agreement management",
+      "Billing administration"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:39:13.854985+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13647932",
+    "source_url": "file://seed/ops/ofbiz_issues.json#7",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13647932\nself: https://issues.apache.org/jira/rest/api/2/issue/13647932\nkey: OFBIZ-13383\nfields: {'summary': 'Handle and resume stale jobs in case of application node(s) running with Auto-scaling enabled', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/3', 'id': '3', 'description': 'A task that needs to be done.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21148&avatarType=issuetype', 'name': 'Task', 'subtask': False, 'avatarId': 21148}, 'description': \"{*}Scenario{*}: \\r\\nIn an OFBiz environment running with multiple auto-scaling nodes, individual nodes may be restarted, replaced, or terminated due to ASG relaunch, health failure or unexpected node termination. When such a node goes down, the JobSandbox.runByInstanceId still holds the old node's Instance ID, causing the jobs assigned to that node to remain stuck. This prevents other active nodes from re-picking the jobs because the runByInstanceId still points to the inactive node.\\r\\n\\r\\n{*}Issue{*}:\\r\\n * Jobs remain assigned to the old, inactive node.\\r\\n * Jobs got stuck as no active node can pick these jobs considered them as owned by the old node (runByInstanceId=oldNode).\\r\\n\\r\\n*Implementation Plan to address this issue*\\r\\n\\r\\n{*}Configuration settings{*}. (at the Service-Engine thread pool level)\\r\\n * lease-refresh-millis -> 300000 (in millisecs) (every 5 minutes interval)\\r\\n * lease-validation-millis -> 480000 (in millisecs) (every 8 minutes interval)\\r\\n * lease-expiry-millis -> 600000 (leaseUpdateStamp should not be > 10 minutes from now())\\r\\n\\r\\n # A new custom field *leaseUpdatedStamp* will be introduced at the individual job level (JobSandbox.leaseUpdatedStamp) that will tracks last time when the node was still alive and actively processing their jobs.\\r\\n\\r\\n # {*}Heartbeat / Lease Renewal{*}: At a configured interval, every node will update the leaseUpdatedStamp with *now()* for the all the jobs it owned.\\r\\n\\r\\n # {*}Lease Expiry Validation{*}: All active nodes will periodically validate all the running jobs to ensure if their leaseUpdatedStamp is being updated within the configured threshold.\\r\\n\\r\\n # {*}Recover Stale Jobs{*}: While validating the jobs, any job(s) whose leaseUpdatedStamp is not updated within the threshold, the node owning that job is considered as stale/terminated and all the jobs owned by that node will be released.\\r\\n\\r\\n # {*}Logic to release stale jobs{*}:\\r\\nJobs that are in Queued or Running status having runByInstanceId assigned and leaseUpdatedStamp exceeds threshold will be moved to Pending status with runByInstanceId set as Null. With this, other active nodes will consider such job(s) as available and will pick them for further execution.\\r\\n\\r\\n*Sample Workflow with Example*\\r\\n10:00 AM – Node A picks Job X.\\r\\n10:05 AM – Node A renews its lease for Job X.\\r\\n10:10 AM – Node A renews the lease again.\\r\\n10:11 AM – Node A crashes.\\r\\n\\r\\nJob Poller Recovery Process:\\r\\n\\r\\n10:08 AM: Lease validation occurs. Node A is still considered active (because the expiry threshold hasn't been reached yet).\\r\\n10:16 AM: Lease validation runs again. Node A is still considered active (because the expiry threshold hasn't been reached yet).\\r\\n10:24 AM: Lease validation occurs. Node A is now dead because the expiry threshold (10 minutes) has passed.\\r\\nThe Job Poller will free the job assigned to Node A, and it will now be available for another active node to pick.\\r\\n\\r\\nWorkflow Diagram:\\r\\n\\r\\nRefer Stale-Jobs-Management (1).png\", 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647932/comment/18076990', 'id': '18076990', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=nmalin', 'name': 'nmalin', 'key': 'soledad', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=soledad&avatarId=21932', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=soledad&avatarId=21932', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=soledad&avatarId=21932', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=soledad&avatarId=21932'}, 'displayName': 'Nicolas Malin', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Hello [~ankit.joshi],\\r\\n\\r\\nThanks for this issue.\\r\\n\\r\\nYour proposal sound good, I propose to improve it with an orchestrator, to reduce request execute on JobSanbox\\xa0\\r\\n\\r\\nWe can add an entity JobPoller where each oOFBiz instance record himself on it. At each poll loop an instance update is state as a beat heart and check if an orchestrator is up (if not it takes the role)\\r\\n\\r\\nOFBiz instance with the orchestrator role check ofbiz instance activity like you propose for the job and if one seems down, update it status and reset job linked.\\r\\n\\r\\nWe can set the JobPoller like :\\r\\n * instanceId\\r\\n * pollId\\r\\n * lastRunnigDate\\r\\n * statusId\\r\\n * orchestrator\\r\\n * terminatedDate\\r\\n\\r\\nLike this we can reduce the execution time to control activity under 10s without overload the JobSandbox table with check request.\\r\\n\\r\\n\\xa0', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=nmalin', 'name': 'nmalin', 'key': 'soledad', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=soledad&avatarId=21932', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=soledad&avatarId=21932', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=soledad&avatarId=21932', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=soledad&avatarId=21932'}, 'displayName': 'Nicolas Malin', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-29T07:31:41.870+0000', 'updated': '2026-04-29T07:31:41.870+0000'}], 'maxResults': 1, 'total': 1, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "Inability to recover stuck jobs in auto-scaling environments"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Cloud-native infrastructure management",
+      "Job queue management"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.5,
+    "ingested_at": "2026-05-07T06:39:13.855011+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13647740",
+    "source_url": "file://seed/ops/ofbiz_issues.json#8",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13647740\nself: https://issues.apache.org/jira/rest/api/2/issue/13647740\nkey: OFBIZ-13382\nfields: {'summary': 'The logs demos are not working', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'See https://lists.apache.org/thread/ppvrrspmc473ox872v51fcj6s9yvmsxl', 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647740/comment/18072661', 'id': '18072661', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=danwatford', 'name': 'danwatford', 'key': 'danwatford', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=danwatford&avatarId=41038', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=danwatford&avatarId=41038', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=danwatford&avatarId=41038', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=danwatford&avatarId=41038'}, 'displayName': 'Daniel Watford', 'active': True, 'timeZone': 'Europe/London'}, 'body': \"When we build our docker images, we add a new user, named ofbiz, to the image.\\r\\n\\r\\nUsing this command we can see that the uid (User ID) and gid (Group ID) for this user is 1000:\\r\\n\\r\\n{{root@ofbiz-ec2-or:/home/ofbizdocker/demo-next# docker compose exec ofbiz grep ofbiz /etc/passwd}}\\r\\n{{ofbiz:x:1000:1000::/home/ofbiz:/bin/sh}}\\r\\n\\r\\nHowever, when our demos are running, we see that a different UID is used for the ofbiz processes:\\r\\n\\r\\n{{root@ofbiz-ec2-or:/home/ofbizdocker/demo-next# ps aux | grep bin/java | cut --bytes=-80}}\\r\\n{{101000 \\xa0 1179752 18.1 \\xa04.5 6990356 1496732 ? \\xa0 \\xa0 Ssl \\xa015:08 \\xa0 4:21 /opt/java/ope}}\\r\\n{{101000 \\xa0 1180722 \\xa07.8 \\xa02.2 6977472 735680 ? \\xa0 \\xa0 \\xa0Ssl \\xa015:11 \\xa0 1:37 /opt/java/ope}}\\r\\n{{101000 \\xa0 1181621 \\xa08.1 \\xa02.5 6974176 830744 ? \\xa0 \\xa0 \\xa0Ssl \\xa015:14 \\xa0 1:28 /opt/java/ope}}\\r\\n{{root \\xa0 \\xa0 1184465 \\xa00.0 \\xa00.0 \\xa0 7088 \\xa02164 pts/1 \\xa0 \\xa0S+ \\xa0 15:32 \\xa0 0:00 grep --color=}}\\r\\n\\r\\n{{The first column is the effective uid of the process, a value of 101000.}}\\r\\n\\r\\n{{Even though the container image has configured the ofbiz user to have uid 1000, docker cannot allow a process to run with that id on the host as, if the process theoretically breaks out of the container, it would have access to all the resources on the host that are available to user with uid 1000.}}\\r\\n\\r\\nInstead, docker applies subordinate uid and gids to the processes in the container. These are configured in the following files:\\r\\n\\r\\n{{root@ofbiz-ec2-or:/home/ofbizdocker/demo-next# cat /etc/subuid}}\\r\\n{{dockremap:100000:65536}}\\r\\n{{root@ofbiz-ec2-or:/home/ofbizdocker/demo-next# cat /etc/subgid}}\\r\\n{{dockremap:100000:65536}}\\r\\n\\r\\nSo user ids are mapped to the range 100000-165536, and group ids are mapped to the range 100000-165536.\\r\\n\\r\\nTaking the container's uid of 1000 and remapping to the above range gives a uid of 101000, matching the `ps aux` above. The same mapping happens for groups.\\r\\n\\r\\nIn order to have log files written, our logs directories for our demo applications needs to be writable by uid 101000. For the moment I have made the log directories writable by all, but there is probably a better solution we should employ longer-term.\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=danwatford', 'name': 'danwatford', 'key': 'danwatford', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=danwatford&avatarId=41038', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=danwatford&avatarId=41038', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=danwatford&avatarId=41038', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=danwatford&avatarId=41038'}, 'displayName': 'Daniel Watford', 'active': True, 'timeZone': 'Europe/London'}, 'created': '2026-04-10T15:42:26.142+0000', 'updated': '2026-04-10T15:42:26.142+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647740/comment/18072669', 'id': '18072669', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': \"Thanks Daniel,\\r\\n\\r\\nI don't know Docker at all. So it was completely beyond me :)\\r\\nHave you an idea how that could have happened suddenly?\\r\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-10T16:04:06.719+0000', 'updated': '2026-04-10T16:04:06.719+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13647740/comment/18072670', 'id': '18072670', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=danwatford', 'name': 'danwatford', 'key': 'danwatford', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=danwatford&avatarId=41038', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=danwatford&avatarId=41038', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=danwatford&avatarId=41038', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=danwatford&avatarId=41038'}, 'displayName': 'Daniel Watford', 'active': True, 'timeZone': 'Europe/London'}, 'body': \"No idea at the moment.\\r\\n\\r\\nI think I'll create some deployment scripts so we can deploy the demo sites from scratch.\\xa0 That way if we run into problems again we can delete and redeploy.\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=danwatford', 'name': 'danwatford', 'key': 'danwatford', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=danwatford&avatarId=41038', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=danwatford&avatarId=41038', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=danwatford&avatarId=41038', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=danwatford&avatarId=41038'}, 'displayName': 'Daniel Watford', 'active': True, 'timeZone': 'Europe/London'}, 'created': '2026-04-10T16:13:44.271+0000', 'updated': '2026-04-10T16:13:44.271+0000'}], 'maxResults': 3, 'total': 3, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/6', 'description': 'The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/closed.png', 'name': 'Closed', 'id': '6', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/3', 'id': 3, 'key': 'done', 'colorName': 'green', 'name': 'Done'}}}",
+    "pain_points": [
+      "Docker container permission management and log accessibility"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Containerized application orchestration",
+      "Logging and infrastructure monitoring"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:39:13.855036+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13646666",
+    "source_url": "file://seed/ops/ofbiz_issues.json#9",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13646666\nself: https://issues.apache.org/jira/rest/api/2/issue/13646666\nkey: OFBIZ-13379\nfields: {'summary': 'Not possible to add product to Promo Action Rule', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'Adding a product to Promo Rule with action Product For Special Price finishing with error:\\r\\n\\r\\nThe Following Errors Occurred:\\r\\n\\r\\nThe following required parameter is missing: productPromoActionSeqId\\r\\n\\r\\n\\xa0\\r\\n\\r\\nHow to reproduce:\\r\\n # Open Catalog -> Promos page\\r\\n # Click New product promo button\\r\\n # Create New product promo\\r\\n # Press Rules button on Product promo page\\r\\n # Create new rule\\r\\n # Create action with Product for [Special Promo] price\\r\\n # Choose Product in Actions Products For Action field and press Add Action Products\\r\\n\\r\\n\\xa0', 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13646666/comment/18069856', 'id': '18069856', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Hi Vitaly,\\r\\n\\r\\nCoud you please give us the exact steps you used to reproduce? TIA\\r\\n', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-03-31T09:41:08.880+0000', 'updated': '2026-03-31T09:41:08.880+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13646666/comment/18069885', 'id': '18069885', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'Hi, Jacques!\\r\\n\\r\\nSure, I have updated the ticket description.\\r\\n\\r\\nProblem is reproducible on demo site:\\xa0Rules For: Test1 [ID:10001]', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-03-31T10:58:22.183+0000', 'updated': '2026-03-31T10:58:22.183+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13646666/comment/18069996', 'id': '18069996', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': \"Thanks Vitaly, I'll have a look tmrw\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-03-31T16:36:11.081+0000', 'updated': '2026-03-31T16:36:11.081+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13646666/comment/18070350', 'id': '18070350', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit 980e6f5e2b7449f8c38004f891d39c2969f3850e in ofbiz-framework's branch refs/heads/release24.09 from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=980e6f5e2b ]\\n\\nFixed: Not possible to add product to Promo Action Rule (OFBIZ-13379)\\n\\nAdding a product to Promo Rule with action Product For Special Price finishing\\nwith error: The following required parameter is missing: productPromoActionSeqId\\n\\nHow to reproduce:\\n\\nOpen Catalog -> Promos page\\nClick New product promo button\\nCreate New product promo\\nPress Rules button on Product promo page\\nCreate new rule\\nCreate action with Product for [Special Promo] price\\nChoose Product in Actions Products For Action field and press Add Action Products\\n\\nThanks: Vitaly Repetenko\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-01T14:45:38.232+0000', 'updated': '2026-04-01T14:45:38.232+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13646666/comment/18070352', 'id': '18070352', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Commit 180ab5e72d605cf8ee0b26ef3df16e9a32c9d166 in ofbiz-framework's branch refs/heads/trunk from Jacques Le Roux\\n[ https://gitbox.apache.org/repos/asf?p=ofbiz-framework.git;h=180ab5e72d ]\\n\\nFixed: Not possible to add product to Promo Action Rule (OFBIZ-13379)\\n\\nAdding a product to Promo Rule with action Product For Special Price finishing\\nwith error: The following required parameter is missing: productPromoActionSeqId\\n\\nHow to reproduce:\\n\\nOpen Catalog -> Promos page\\nClick New product promo button\\nCreate New product promo\\nPress Rules button on Product promo page\\nCreate new rule\\nCreate action with Product for [Special Promo] price\\nChoose Product in Actions Products For Action field and press Add Action Products\\n\\nThanks: Vitaly Repetenko\\n\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jira-bot', 'name': 'jira-bot', 'key': 'jira-bot', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'ASF subversion and git services', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-01T14:45:38.476+0000', 'updated': '2026-04-01T14:45:38.476+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13646666/comment/18070356', 'id': '18070356', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': \"Hi Vitaly,\\r\\n\\r\\nPlease check it's OK with you before I close\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-01T15:02:03.781+0000', 'updated': '2026-04-01T15:02:03.781+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13646666/comment/18070529', 'id': '18070529', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'Hi, Jacques!\\r\\n\\r\\nConfirming, it works fine now.\\r\\n\\r\\nThanks!', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=vrepetenko', 'name': 'vrepetenko', 'key': 'JIRAUSER310609', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Vitaly Repetenko', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-02T08:34:26.485+0000', 'updated': '2026-04-02T08:34:26.485+0000'}], 'maxResults': 7, 'total': 7, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/6', 'description': 'The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/closed.png', 'name': 'Closed', 'id': '6', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/3', 'id': 3, 'key': 'done', 'colorName': 'green', 'name': 'Done'}}}",
+    "pain_points": [
+      "Missing parameters preventing successful promotion rule configuration"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Sales and promotion management",
+      "Retail catalog administration"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:39:13.855071+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0001",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#0",
+    "raw_text": "CustomerID: CUST0001\nIndustry: Shipping\nCompanySize: Small\nFirstPurchaseDate: 2018-04-13\nLastRenewalDate: 2021-01-31\nTotalProjects: 4\nTotalVendors: 2\nTotalSpend: 25233.0\nServicesProvided: Yes\nDeliveryEffortDays: 69\nSupportContractHours: 0\nSupportHoursUsed: 0\nCustomerSatisfactionScore: 5\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "Logistics optimization",
+      "Supply chain management"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.8,
+    "ingested_at": "2026-05-07T06:39:34.221019+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0002",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#1",
+    "raw_text": "CustomerID: CUST0002\nIndustry: Banking\nCompanySize: Small\nFirstPurchaseDate: 2020-08-10\nLastRenewalDate: 2025-08-31\nTotalProjects: 1\nTotalVendors: 2\nTotalSpend: 108822.84\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 40\nSupportHoursUsed: 28\nCustomerSatisfactionScore: 5\nIsUpsellOpportunity: No\nChurnRisk: Medium\nContractRenewed: Yes",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "Banking infrastructure support",
+      "Financial transaction processing"
+    ],
+    "icp": {
+      "sector": "fintech",
+      "company_size": "1-10",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.7,
+    "ingested_at": "2026-05-07T06:39:34.221051+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0003",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#2",
+    "raw_text": "CustomerID: CUST0003\nIndustry: Manufacturing\nCompanySize: Small\nFirstPurchaseDate: 2022-09-28\nLastRenewalDate: 2023-11-28\nTotalProjects: 5\nTotalVendors: 2\nTotalSpend: 36220.5\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 0\nSupportHoursUsed: 0\nCustomerSatisfactionScore: 1\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [
+      "Ineffective solution performance",
+      "Operational dissatisfaction"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Manufacturing process automation"
+    ],
+    "icp": {
+      "sector": "manufacturing",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.7,
+    "ingested_at": "2026-05-07T06:39:34.221072+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0004",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#3",
+    "raw_text": "CustomerID: CUST0004\nIndustry: Manufacturing\nCompanySize: Medium\nFirstPurchaseDate: 2024-10-08\nLastRenewalDate: 2024-09-27\nTotalProjects: 1\nTotalVendors: 4\nTotalSpend: 82753.07\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 0\nSupportHoursUsed: 0\nCustomerSatisfactionScore: 5\nIsUpsellOpportunity: No\nChurnRisk: Medium\nContractRenewed: No",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "Manufacturing inventory management"
+    ],
+    "icp": {
+      "sector": "manufacturing",
+      "company_size": "50-200",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "lost",
+    "confidence_score": 0.6,
+    "ingested_at": "2026-05-07T06:39:34.221092+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0005",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#4",
+    "raw_text": "CustomerID: CUST0005\nIndustry: Retail\nCompanySize: Small\nFirstPurchaseDate: 2018-10-12\nLastRenewalDate: 2018-07-07\nTotalProjects: 4\nTotalVendors: 3\nTotalSpend: 147857.12\nServicesProvided: Yes\nDeliveryEffortDays: 12\nSupportContractHours: 160\nSupportHoursUsed: 71\nCustomerSatisfactionScore: 4\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "Retail point-of-sale systems",
+      "E-commerce implementation"
+    ],
+    "icp": {
+      "sector": "retail",
+      "company_size": "1-10",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.8,
+    "ingested_at": "2026-05-07T06:39:34.221111+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0006",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#5",
+    "raw_text": "CustomerID: CUST0006\nIndustry: Telecom\nCompanySize: Small\nFirstPurchaseDate: 2020-12-29\nLastRenewalDate: 2020-10-19\nTotalProjects: 3\nTotalVendors: 2\nTotalSpend: 28693.36\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 80\nSupportHoursUsed: 71\nCustomerSatisfactionScore: 2\nIsUpsellOpportunity: No\nChurnRisk: Medium\nContractRenewed: Yes",
+    "pain_points": [
+      "High support dependency",
+      "Technical service quality issues"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Telecom network infrastructure management"
+    ],
+    "icp": {
+      "sector": "ict",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.7,
+    "ingested_at": "2026-05-07T06:39:34.221156+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0007",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#6",
+    "raw_text": "CustomerID: CUST0007\nIndustry: Energy\nCompanySize: Small\nFirstPurchaseDate: 2021-07-16\nLastRenewalDate: 2023-04-02\nTotalProjects: 5\nTotalVendors: 1\nTotalSpend: 35592.51\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 40\nSupportHoursUsed: 31\nCustomerSatisfactionScore: 4\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "Energy grid monitoring"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.7,
+    "ingested_at": "2026-05-07T06:39:34.221175+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0008",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#7",
+    "raw_text": "CustomerID: CUST0008\nIndustry: Energy\nCompanySize: Small\nFirstPurchaseDate: 2024-04-18\nLastRenewalDate: 2025-07-05\nTotalProjects: 5\nTotalVendors: 4\nTotalSpend: 135184.32\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 80\nSupportHoursUsed: 28\nCustomerSatisfactionScore: 2\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [
+      "Dissatisfaction with service delivery"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Energy data management"
+    ],
+    "icp": {
+      "sector": "other",
+      "company_size": "1-10",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.7,
+    "ingested_at": "2026-05-07T06:39:34.221193+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0009",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#8",
+    "raw_text": "CustomerID: CUST0009\nIndustry: Banking\nCompanySize: Small\nFirstPurchaseDate: 2019-09-19\nLastRenewalDate: 2020-10-17\nTotalProjects: 7\nTotalVendors: 1\nTotalSpend: 60791.26\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 80\nSupportHoursUsed: 70\nCustomerSatisfactionScore: 1\nIsUpsellOpportunity: Yes\nChurnRisk: Medium\nContractRenewed: No",
+    "pain_points": [
+      "Poor system performance",
+      "Service reliability concerns"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Banking software optimization"
+    ],
+    "icp": {
+      "sector": "fintech",
+      "company_size": "1-10",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "lost",
+    "confidence_score": 0.8,
+    "ingested_at": "2026-05-07T06:39:34.221256+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0010",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#9",
+    "raw_text": "CustomerID: CUST0010\nIndustry: Manufacturing\nCompanySize: Large\nFirstPurchaseDate: 2021-10-25\nLastRenewalDate: 2021-08-17\nTotalProjects: 5\nTotalVendors: 4\nTotalSpend: 27932.87\nServicesProvided: Yes\nDeliveryEffortDays: 33\nSupportContractHours: 40\nSupportHoursUsed: 32\nCustomerSatisfactionScore: 1\nIsUpsellOpportunity: No\nChurnRisk: Medium\nContractRenewed: Yes",
+    "pain_points": [
+      "System integration failure",
+      "Low quality implementation outcomes"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Large-scale manufacturing digital transformation"
+    ],
+    "icp": {
+      "sector": "manufacturing",
+      "company_size": "1000+",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.8,
+    "ingested_at": "2026-05-07T06:39:34.221488+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Acme Corporation",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#0",
+    "raw_text": "account: Acme Corporation\nsector: technolgy\nyear_established: 1996\nrevenue: 1100.04\nemployees: 2822\noffice_location: United States",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "software",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192443+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Betasoloin",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#1",
+    "raw_text": "account: Betasoloin\nsector: medical\nyear_established: 1999\nrevenue: 251.41\nemployees: 495\noffice_location: United States",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "healthcare",
+      "company_size": "200-1000",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192474+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Betatech",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#2",
+    "raw_text": "account: Betatech\nsector: medical\nyear_established: 1986\nrevenue: 647.18\nemployees: 1185\noffice_location: Kenya",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "healthcare",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192496+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Bioholding",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#3",
+    "raw_text": "account: Bioholding\nsector: medical\nyear_established: 2012\nrevenue: 587.34\nemployees: 1356\noffice_location: Philipines",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "healthcare",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "Southeast Asia"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192515+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Bioplex",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#4",
+    "raw_text": "account: Bioplex\nsector: medical\nyear_established: 1991\nrevenue: 326.82\nemployees: 1016\noffice_location: United States",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "healthcare",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192533+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Blackzim",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#5",
+    "raw_text": "account: Blackzim\nsector: retail\nyear_established: 2009\nrevenue: 497.11\nemployees: 1588\noffice_location: United States",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "retail",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192552+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Bluth Company",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#6",
+    "raw_text": "account: Bluth Company\nsector: technolgy\nyear_established: 1993\nrevenue: 1242.32\nemployees: 3027\noffice_location: United States\nsubsidiary_of: Acme Corporation",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "software",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192571+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Bubba Gump",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#7",
+    "raw_text": "account: Bubba Gump\nsector: software\nyear_established: 2002\nrevenue: 987.39\nemployees: 2253\noffice_location: United States",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "software",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192589+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Cancity",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#8",
+    "raw_text": "account: Cancity\nsector: retail\nyear_established: 2001\nrevenue: 718.62\nemployees: 2448\noffice_location: United States",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "retail",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192607+00:00"
+  },
+  {
+    "source": "sales_pipeline_crm",
+    "source_id": "Cheers",
+    "source_url": "file://seed/sales/sales_pipeline_crm/accounts.csv#9",
+    "raw_text": "account: Cheers\nsector: entertainment\nyear_established: 1993\nrevenue: 4269.9\nemployees: 6472\noffice_location: United States\nsubsidiary_of: Massive Dynamic",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [],
+    "icp": {
+      "sector": "other",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "awareness",
+    "confidence_score": 0.2,
+    "ingested_at": "2026-05-07T06:39:59.192625+00:00"
+  }
+]

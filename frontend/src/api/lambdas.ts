@@ -3,6 +3,7 @@ import type {
   BatchRunResponse,
   BeInsightResponse,
   ChatMessage,
+  DashboardFilters,
   DashboardInsights,
   RecommendationsData,
   SummaryData,
@@ -59,8 +60,10 @@ function requireAuthHeaders(): { Authorization: string } {
 }
 
 const MOCK_SUMMARY: SummaryData = {
-  period: 'weekly',
-  period_start: '2026-05-07',
+  period: 'monthly',
+  period_start: '2026-05-01',
+  period_end: '2026-05-31',
+  market: null,
   funnel_distribution: [
     { stage: 'consideration', count: 11 },
     { stage: 'won', count: 7 },
@@ -82,12 +85,17 @@ const MOCK_SUMMARY: SummaryData = {
 
 const MOCK_RECOMMENDATIONS: RecommendationsData = {
   computed_at: '2026-05-07T09:19:30.940150+00:00',
-  recommendations: [
-    'Prioritize outreach to small and medium-sized companies in the education, software, and healthcare sectors, as these appear to be the top segments based on the data.',
-    'Develop targeted sales strategies and messaging to address the key pain points of unemployment, lack of career prospects, and technical issues with asynchronous job processing.',
-    'Create content and campaigns that highlight the company\'s expertise in upskilling, professional development, and operational efficiency solutions.',
-    'Leverage customer success stories and testimonials from the top industry segments to showcase the value proposition of the company\'s offerings.',
+  sales: [
+    'Prioritize outreach to small and medium-sized companies in the education, software, and healthcare sectors.',
+    'Develop objection-handling scripts targeting the career transition pain point — the majority of prospects are unemployed or seeking better prospects.',
+    'Focus pipeline activity on consideration-stage deals: 58% of deals are stalled here.',
   ],
+  marketing: [
+    'Create content campaigns highlighting career placement and growth outcomes to address the dominant pain point segments.',
+    'Leverage customer success stories from education and software sectors to build credibility.',
+    'Launch nurture sequences for consideration-stage leads to accelerate pipeline movement.',
+  ],
+  recommendations: [],
 }
 
 const MOCK_DASHBOARD_INSIGHTS: DashboardInsights = {
@@ -97,8 +105,10 @@ const MOCK_DASHBOARD_INSIGHTS: DashboardInsights = {
 
 function toSummary(raw: BeInsightResponse): SummaryData {
   return {
-    period: 'daily',
+    period: raw.period,
     period_start: raw.period_start,
+    period_end: raw.period_end ?? '',
+    market: raw.market ?? null,
     funnel_distribution: raw.funnel_distribution.stages,
     top_pain_points: raw.pain_points_summary.top_items.map(p => ({
       label: p.item,
@@ -110,25 +120,28 @@ function toSummary(raw: BeInsightResponse): SummaryData {
 
 function toRecommendations(raw: BeInsightResponse): RecommendationsData {
   return {
-    recommendations: [
-      ...raw.recommendations.sales,
-      ...raw.recommendations.marketing,
-    ],
+    sales: raw.recommendations.sales,
+    marketing: raw.recommendations.marketing,
+    recommendations: [],
     computed_at: raw.computed_at,
   }
 }
 
-async function fetchInsightResponse(): Promise<BeInsightResponse> {
-  const res = await axios.get<BeInsightResponse>(lambdaEndpoints.api)
+async function fetchInsightResponse(filters?: DashboardFilters): Promise<BeInsightResponse> {
+  const params: Record<string, string> = {}
+  if (filters?.period) params.period = filters.period
+  if (filters?.date) params.date = filters.date
+  if (filters?.market) params.market = filters.market
+  const res = await axios.get<BeInsightResponse>(lambdaEndpoints.api, { params })
   return res.data
 }
 
-export async function fetchDashboardInsights(): Promise<DashboardInsights> {
+export async function fetchDashboardInsights(filters?: DashboardFilters): Promise<DashboardInsights> {
   if (!useLambdaData) {
     return MOCK_DASHBOARD_INSIGHTS
   }
 
-  const raw = await fetchInsightResponse()
+  const raw = await fetchInsightResponse(filters)
   return {
     summary: toSummary(raw),
     recommendations: toRecommendations(raw),
@@ -153,11 +166,21 @@ export async function sendChat(
 ): Promise<{ answer: string; references: ChatMessage['references'] }> {
   if (!useLambdaData) {
     return {
-      answer: `Mock response for: "${question}". Set VITE_DATA_SOURCE=lambda to call the chat Lambda.`,
-      references: [],
+      answer: `Dựa trên dữ liệu hiện có, khách hàng hay gặp các vấn đề sau:\n\n**1. Thất nghiệp / thiếu cơ hội nghề nghiệp**\nĐây là pain point xuất hiện nhiều nhất với 8 lượt đề cập. Chi tiết xem tại: https://crm.internal/insights/pain-points?filter=unemployed&market=EN&date_from=2026-01-01&date_to=2026-05-15&sort=count_desc&page=1\n\n**2. Async job failures**\n\`\`\`\nERROR: asyncJobQueue.process() timeout after 30000ms — jobId=aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899\n\`\`\`\n\nThiết lập retry logic: \`maxRetries=3, backoffMs=1000, jobTimeoutMs=aVeryLongConfigKeyNameThatShouldWrapProperly=true\`\n\nLiên hệ: support@verylongdomainname-thathasnobreaks-andkeepsgoing-forever.internal.company.com`,
+      references: [
+        { title: 'Insight #42 — Khách hàng phản ánh async job timeout liên tục trong tuần đầu triển khai', url: 'https://crm.internal/insights/42?source=ops_note&market=EN' },
+        { title: 'Pain point summary — Unemployed / lack of career prospects (8 records)', url: 'https://crm.internal/pain-points/summary?label=unemployed&count=8' },
+      ],
     }
   }
 
   const res = await axios.post(lambdaEndpoints.chat, { question, history }, { headers: requireAuthHeaders() })
-  return res.data
+  const raw = res.data
+  return {
+    answer: raw.answer ?? '',
+    references: (raw.references ?? []).map((r: { title: string; source_url: string }) => ({
+      title: r.title,
+      url: r.source_url,
+    })),
+  }
 }

@@ -1,0 +1,378 @@
+[
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "7927b2df-8bba-4d29-b9a2-b6e0beafe620",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#0",
+    "raw_text": "Prospect ID: 7927b2df-8bba-4d29-b9a2-b6e0beafe620\nLead Number: 660737\nLead Origin: API\nLead Source: Olark Chat\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 0\nTotal Time Spent on Website: 0\nPage Views Per Visit: 0\nLast Activity: Page Visited on Website\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Interested in other courses\nLead Quality: Low in Relevance\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 15\nAsymmetrique Profile Score: 15\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [
+      "Lack of career prospects"
+    ],
+    "objections": [
+      "Low relevance to course offerings"
+    ],
+    "use_cases": [
+      "Professional upskilling"
+    ],
+    "icp": {
+      "sector": "education",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "lost",
+    "confidence_score": 0.8,
+    "ingested_at": "2026-05-06T07:51:00.949190+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "2a272436-5132-4136-86fa-dcc88c88f482",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#1",
+    "raw_text": "Prospect ID: 2a272436-5132-4136-86fa-dcc88c88f482\nLead Number: 660728\nLead Origin: API\nLead Source: Organic Search\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 5\nTotal Time Spent on Website: 674\nPage Views Per Visit: 2.5\nLast Activity: Email Opened\nCountry: India\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Ringing\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 02.Medium\nAsymmetrique Activity Score: 15\nAsymmetrique Profile Score: 15\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Email Opened",
+    "pain_points": [
+      "Unemployment",
+      "Lack of career prospects"
+    ],
+    "objections": [
+      "Unresponsive to outreach (ringing)"
+    ],
+    "use_cases": [
+      "Professional upskilling"
+    ],
+    "icp": {
+      "sector": "education",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.7,
+    "ingested_at": "2026-05-06T07:51:00.949253+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "8cc8c611-a219-4f35-ad23-fdfd2656bd8a",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#2",
+    "raw_text": "Prospect ID: 8cc8c611-a219-4f35-ad23-fdfd2656bd8a\nLead Number: 660727\nLead Origin: Landing Page Submission\nLead Source: Direct Traffic\nDo Not Email: No\nDo Not Call: No\nConverted: 1\nTotalVisits: 2\nTotal Time Spent on Website: 1532\nPage Views Per Visit: 2\nLast Activity: Email Opened\nCountry: India\nSpecialization: Business Administration\nWhat is your current occupation: Student\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Will revert after reading the email\nLead Quality: Might be\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nLead Profile: Potential Lead\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 01.High\nAsymmetrique Activity Score: 14\nAsymmetrique Profile Score: 20\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: Yes\nLast Notable Activity: Email Opened",
+    "pain_points": [
+      "Lack of career prospects"
+    ],
+    "objections": [
+      "Requires follow-up after email review"
+    ],
+    "use_cases": [
+      "Professional upskilling",
+      "Business Administration training"
+    ],
+    "icp": {
+      "sector": "education",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.9,
+    "ingested_at": "2026-05-06T07:51:00.949286+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "0cc2df48-7cf4-4e39-9de9-19797f9b38cc",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#3",
+    "raw_text": "Prospect ID: 0cc2df48-7cf4-4e39-9de9-19797f9b38cc\nLead Number: 660719\nLead Origin: Landing Page Submission\nLead Source: Direct Traffic\nDo Not Email: No\nDo Not Call: No\nConverted: 0\nTotalVisits: 1\nTotal Time Spent on Website: 305\nPage Views Per Visit: 1\nLast Activity: Unreachable\nCountry: India\nSpecialization: Media and Advertising\nHow did you hear about X Education: Word Of Mouth\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Ringing\nLead Quality: Not Sure\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 01.High\nAsymmetrique Activity Score: 13\nAsymmetrique Profile Score: 17\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [
+      "Unemployment",
+      "Lack of career prospects"
+    ],
+    "objections": [
+      "Unreachable",
+      "Unresponsive to outreach (ringing)"
+    ],
+    "use_cases": [
+      "Professional upskilling",
+      "Media and Advertising training"
+    ],
+    "icp": {
+      "sector": "education",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.7,
+    "ingested_at": "2026-05-06T07:51:00.949317+00:00"
+  },
+  {
+    "source": "marketing_lead_scoring",
+    "source_id": "3256f628-e534-4826-9d63-4a8b88782852",
+    "source_url": "file://seed/marketing/marketing_lead_scoring/Lead Scoring.csv#4",
+    "raw_text": "Prospect ID: 3256f628-e534-4826-9d63-4a8b88782852\nLead Number: 660681\nLead Origin: Landing Page Submission\nLead Source: Google\nDo Not Email: No\nDo Not Call: No\nConverted: 1\nTotalVisits: 2\nTotal Time Spent on Website: 1428\nPage Views Per Visit: 1\nLast Activity: Converted to Lead\nCountry: India\nHow did you hear about X Education: Other\nWhat is your current occupation: Unemployed\nWhat matters most to you in choosing a course: Better Career Prospects\nSearch: No\nMagazine: No\nNewspaper Article: No\nX Education Forums: No\nNewspaper: No\nDigital Advertisement: No\nThrough Recommendations: No\nReceive More Updates About Our Courses: No\nTags: Will revert after reading the email\nLead Quality: Might be\nUpdate me on Supply Chain Content: No\nGet updates on DM Content: No\nCity: Mumbai\nAsymmetrique Activity Index: 02.Medium\nAsymmetrique Profile Index: 01.High\nAsymmetrique Activity Score: 15\nAsymmetrique Profile Score: 18\nI agree to pay the amount through cheque: No\nA free copy of Mastering The Interview: No\nLast Notable Activity: Modified",
+    "pain_points": [
+      "Unemployment",
+      "Lack of career prospects"
+    ],
+    "objections": [
+      "Requires follow-up after email review"
+    ],
+    "use_cases": [
+      "Professional upskilling"
+    ],
+    "icp": {
+      "sector": "education",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.9,
+    "ingested_at": "2026-05-06T07:51:00.949347+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13649397",
+    "source_url": "file://seed/ops/ofbiz_issues.json#0",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13649397\nself: https://issues.apache.org/jira/rest/api/2/issue/13649397\nkey: OFBIZ-13390\nfields: {'summary': 'Sales Order Screen broken (Huge font size) after order completed with email notification', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'Hi\\r\\n\\r\\nCompleted Sales Order with communication event displays broken: huge menu and screen fonts.\\r\\nScreenshot attached.\\r\\n\\r\\nHow to reproduce:\\r\\n1. Create some Sales order.\\r\\n2. Complete it with e-mail notification.\\r\\n\\r\\n3. Find order and review it - huge font size.\\r\\n\\r\\n4. Delete communication event and check order again, font size is normal now.\\r\\n\\r\\n\\xa0\\r\\n\\r\\n!Screenshot 2026-04-28 at 17.58.27.png! \\xa0', 'comment': {'comments': [], 'maxResults': 0, 'total': 0, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "UI rendering issues",
+      "broken screen layout after email notification"
+    ],
+    "objections": [
+      "product stability concerns"
+    ],
+    "use_cases": [
+      "Sales order management",
+      "Email notifications"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.8,
+    "ingested_at": "2026-05-06T07:51:15.582966+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13649384",
+    "source_url": "file://seed/ops/ofbiz_issues.json#1",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13649384\nself: https://issues.apache.org/jira/rest/api/2/issue/13649384\nkey: OFBIZ-13389\nfields: {'summary': 'Updating field with URL with TLD not listed in UtilHttp.extractUrls ', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'Hi,\\r\\n\\r\\nany field containing URL with TLD not listed in UtilHttp.extractUrls regex will cause form update error:\\xa0\\r\\n\\r\\n{{HTTP Status 500 – Internal Server Error}}\\r\\n\\r\\n{{java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0 java.base/jdk.internal.util.Preconditions.outOfBounds(Preconditions.java:64) java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Preconditions.java:70) java.base/jdk.internal.util.Preconditions.checkIndex(Preconditions.java:266) java.base/java.util.Objects.checkIndex(Objects.java:361) java.base/java.util.ArrayList.get(ArrayList.java:427) org.apache.ofbiz.base.util.UtilHttp.canonicalizeParameterMap(UtilHttp.java:420) org.apache.ofbiz.base.util.UtilHttp.getParameterMap(UtilHttp.java:189) org.apache.ofbiz.base.util.UtilHttp.getParameterMap(UtilHttp.java:144) org.apache.ofbiz.webapp.control.ControlFilter.doFilter(ControlFilter.java:182) javax.servlet.http.HttpFilter.doFilter(HttpFilter.java:53) org.apache.logging.log4j.web.Log4jServletFilter.doFilter(Log4jServletFilter.java:70)}}\\r\\n\\r\\n\\r\\n\\r\\nSteps to reproduce:\\r\\n1. Open Accounting -> Payment Gateway Config -> PayPal Gateway configuration\\r\\n2. Enter url [https://test.app/test] and press update', 'comment': {'comments': [], 'maxResults': 0, 'total': 0, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "Internal Server Error 500",
+      "Regex validation failure for TLDs"
+    ],
+    "objections": [
+      "technical debt",
+      "lack of flexibility in configuration"
+    ],
+    "use_cases": [
+      "Payment gateway configuration"
+    ],
+    "icp": {
+      "sector": "fintech",
+      "company_size": "200-1000",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.85,
+    "ingested_at": "2026-05-06T07:51:15.582995+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13648900",
+    "source_url": "file://seed/ops/ofbiz_issues.json#2",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13648900\nself: https://issues.apache.org/jira/rest/api/2/issue/13648900\nkey: OFBIZ-13388\nfields: {'summary': 'sendInvoicePerEmail fails with MissingMethodException: invalid makeValidContext() call in InvoiceServicesScript.groovy', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': '**Summary**\\r\\nThe `sendInvoicePerEmail` service in\\r\\n`component://accounting/src/main/groovy/org/apache/ofbiz/accounting/invoice/InvoiceServicesScript.groovy`\\r\\nfails at runtime with a MissingMethodException because\\r\\n`DispatchContext.makeValidContext()` is invoked with a single Map argument,\\r\\nbut no such overload exists. Valid signatures are:\\r\\n\\xa0 - makeValidContext(String, String, Map)\\r\\n\\xa0 - makeValidContext(ModelService, String, Map)\\r\\n\\r\\n**Steps to reproduce**\\r\\n1. Trigger the `sendInvoicePerEmail` service (e.g. from the invoice screen\\'s\\r\\n\\xa0 \\xa0\"Send per Email\" action, which runs it async via the JobQueue).\\r\\n2. Observe the async job failure in the OFBiz log.\\r\\n\\r\\n**Expected behaviour**\\r\\nThe invoice email is scheduled and sent via `sendMailFromScreen`.\\r\\n\\r\\n**Actual behaviour**\\r\\nAsync job fails with:\\r\\n\\xa0 groovy.lang.MissingMethodException: No signature of method:\\r\\n\\xa0 org.apache.ofbiz.service.DispatchContext.makeValidContext() is applicable\\r\\n\\xa0 for argument types: (LinkedHashMap)\\r\\n\\r\\n**Proposed fix**\\r\\nUse the 3-argument overload, passing the target service name and the IN mode:\\r\\n\\r\\n\\xa0 \\xa0 Map emailParams = dispatcher.getDispatchContext()\\r\\n\\xa0 \\xa0 \\xa0 \\xa0 \\xa0 \\xa0 .makeValidContext(\\'sendMailFromScreen\\', \\'IN\\', ctx)\\r\\n\\r\\nPatch attached.\\r\\n\\r\\n**Environment**\\r\\nOFBiz <your version/branch>, Groovy 5.0.0-alpha-11, JDK 17', 'comment': {'comments': [], 'maxResults': 0, 'total': 0, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/2', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/critical.svg', 'name': 'Critical', 'id': '2'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "Runtime exceptions in automated services",
+      "Async job failures"
+    ],
+    "objections": [
+      "reliability of core services"
+    ],
+    "use_cases": [
+      "Automated invoice emailing"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.9,
+    "ingested_at": "2026-05-06T07:51:15.583015+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13648460",
+    "source_url": "file://seed/ops/ofbiz_issues.json#3",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13648460\nself: https://issues.apache.org/jira/rest/api/2/issue/13648460\nkey: OFBIZ-13387\nfields: {'summary': 'Currently RAT report stable and next are inversed', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': 'RAT report stable still runs on 18 branch. While RAT report next still runs on 24 branch.\\r\\n\\r\\nI wait an answer from INFRA-27827 before changing that.', 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074515', 'id': '18074515', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Good news, it should not be too long (see INFRA-27827)', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-18T09:16:38.203+0000', 'updated': '2026-04-18T09:16:38.203+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074636', 'id': '18074636', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': \"Actually no need to wait, it's OK as is, and I trust Gavin for PDFs general solution\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-19T08:12:37.845+0000', 'updated': '2026-04-19T08:12:37.845+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074926', 'id': '18074926', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'Reopening, not sure why this is still not working', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-20T16:50:53.038+0000', 'updated': '2026-04-20T16:50:53.038+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648460/comment/18074948', 'id': '18074948', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'body': 'It needed a push in plugins, RAT build are dependent of them.', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=jleroux', 'name': 'jleroux', 'key': 'jacques.le.roux', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=jacques.le.roux&avatarId=29375', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=jacques.le.roux&avatarId=29375', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=jacques.le.roux&avatarId=29375', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=jacques.le.roux&avatarId=29375'}, 'displayName': 'Jacques Le Roux', 'active': True, 'timeZone': 'Europe/Paris'}, 'created': '2026-04-20T18:31:31.722+0000', 'updated': '2026-04-20T18:31:31.722+0000'}], 'maxResults': 4, 'total': 4, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/6', 'description': 'The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/closed.png', 'name': 'Closed', 'id': '6', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/3', 'id': 3, 'key': 'done', 'colorName': 'green', 'name': 'Done'}}}",
+    "pain_points": [
+      "Build pipeline configuration errors",
+      "Dependency management complexity"
+    ],
+    "objections": [
+      "maintenance overhead"
+    ],
+    "use_cases": [
+      "Automated reporting",
+      "CI/CD pipeline management"
+    ],
+    "icp": {
+      "sector": "software",
+      "company_size": "1000+",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.75,
+    "ingested_at": "2026-05-06T07:51:15.583031+00:00"
+  },
+  {
+    "source": "ops",
+    "source_id": "13648227",
+    "source_url": "file://seed/ops/ofbiz_issues.json#4",
+    "raw_text": "expand: operations,versionedRepresentations,editmeta,changelog,renderedFields\nid: 13648227\nself: https://issues.apache.org/jira/rest/api/2/issue/13648227\nkey: OFBIZ-13386\nfields: {'summary': 'order item attribute autoReserve not stored', 'issuetype': {'self': 'https://issues.apache.org/jira/rest/api/2/issuetype/1', 'id': '1', 'description': 'A problem which impairs or prevents the functions of the product.', 'iconUrl': 'https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype', 'name': 'Bug', 'subtask': False, 'avatarId': 21133}, 'description': \"Creating an order, adding a product, checking 'Auto Reserve', no inventory reservation happens (service reserveStoreInventory is not called).\\r\\n\\r\\nThe problem results from a missing entry in the order_item_attribute table.\\r\\n\\r\\ncomponent://order/template/entry/cart/ShowCart.ftl\\xa0\\r\\n\\r\\norder_item_attr_autoReserve\\r\\n\\r\\nattribute is not stored\", 'comment': {'comments': [{'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648227/comment/18075800', 'id': '18075800', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=golja', 'name': 'golja', 'key': 'golja', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Anahita Goljahani', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': \"Hi [~cahein], could you please clarify what kind of reservation you would like to make?\\r\\n\\r\\nI’m asking because, if you simply want to reserve inventory items when sales orders are placed, you only need to set '{*}Allocate Resource{*}' to '{*}N{*}' in the store configuration (and therefore the 'Auto Reserve' checkbox will not be displayed on the screen where you add products to the order).\\r\\n\\r\\nIf, instead, you want to use the 'Inventory (Supply) Allocation Planning' feature, you need to set 'Allocate Resource' to 'Y'. If you want some insight into this feature, please refer to OFBIZ-10518. To be honest, the ticket description does not fully clarify all aspects of the allocation planning feature. Perhaps [~deepak.nigam], [~surajk], or [~arunpati] could provide more details on the feature and verify if there are bugs to fix.\\r\\n\\r\\nBest regards\\r\\n\\r\\nAnahita\", 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=golja', 'name': 'golja', 'key': 'golja', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?avatarId=10452', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452'}, 'displayName': 'Anahita Goljahani', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-23T18:49:12.352+0000', 'updated': '2026-04-23T18:49:12.352+0000'}, {'self': 'https://issues.apache.org/jira/rest/api/2/issue/13648227/comment/18076537', 'id': '18076537', 'author': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=cahein', 'name': 'cahein', 'key': 'JIRAUSER312484', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=JIRAUSER312484&avatarId=54882', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=JIRAUSER312484&avatarId=54882', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=JIRAUSER312484&avatarId=54882', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=JIRAUSER312484&avatarId=54882'}, 'displayName': 'Carsten Heinrigs', 'active': True, 'timeZone': 'Etc/UTC'}, 'body': 'The issue came up when i was debugging Errors related to the allocation plan (item) status. Debugging brought me to the org.apache.ofbiz.order.order.OrderServices.java\\r\\n\\r\\nString autoReserve = OrderReadHelper.getOrderItemAttribute(orderItem, \"autoReserve\");\\r\\n\\r\\nLooking into the related table (\\'order_item_attribute\\'), there was no entry, regardless of the state of the \\'Auto Reserve\\' checkbox of the add product screen.\\r\\n\\r\\nAs a temporary workaround we changed the OrderService.java to always assume \\'autoReserve\\' to be true.\\r\\n\\r\\n\\xa0\\r\\n\\r\\nHope, this helps to clarify the issue.', 'updateAuthor': {'self': 'https://issues.apache.org/jira/rest/api/2/user?username=cahein', 'name': 'cahein', 'key': 'JIRAUSER312484', 'avatarUrls': {'48x48': 'https://issues.apache.org/jira/secure/useravatar?ownerId=JIRAUSER312484&avatarId=54882', '24x24': 'https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=JIRAUSER312484&avatarId=54882', '16x16': 'https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=JIRAUSER312484&avatarId=54882', '32x32': 'https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=JIRAUSER312484&avatarId=54882'}, 'displayName': 'Carsten Heinrigs', 'active': True, 'timeZone': 'Etc/UTC'}, 'created': '2026-04-27T11:00:49.088+0000', 'updated': '2026-04-27T11:01:21.419+0000'}], 'maxResults': 2, 'total': 2, 'startAt': 0}, 'priority': {'self': 'https://issues.apache.org/jira/rest/api/2/priority/3', 'iconUrl': 'https://issues.apache.org/jira/images/icons/priorities/major.svg', 'name': 'Major', 'id': '3'}, 'status': {'self': 'https://issues.apache.org/jira/rest/api/2/status/1', 'description': 'The issue is open and ready for the assignee to start work on it.', 'iconUrl': 'https://issues.apache.org/jira/images/icons/statuses/open.png', 'name': 'Open', 'id': '1', 'statusCategory': {'self': 'https://issues.apache.org/jira/rest/api/2/statuscategory/2', 'id': 2, 'key': 'new', 'colorName': 'blue-gray', 'name': 'To Do'}}}",
+    "pain_points": [
+      "Inventory reservation logic failure",
+      "Data persistence issues"
+    ],
+    "objections": [
+      "data integrity concerns",
+      "need for custom workarounds"
+    ],
+    "use_cases": [
+      "Inventory management",
+      "Order processing"
+    ],
+    "icp": {
+      "sector": "retail",
+      "company_size": "200-1000",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "consideration",
+    "confidence_score": 0.85,
+    "ingested_at": "2026-05-06T07:51:15.583046+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0001",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#0",
+    "raw_text": "CustomerID: CUST0001\nIndustry: Shipping\nCompanySize: Small\nFirstPurchaseDate: 2018-04-13\nLastRenewalDate: 2021-01-31\nTotalProjects: 4\nTotalVendors: 2\nTotalSpend: 25233.0\nServicesProvided: Yes\nDeliveryEffortDays: 69\nSupportContractHours: 0\nSupportHoursUsed: 0\nCustomerSatisfactionScore: 5\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [],
+    "objections": [],
+    "use_cases": [
+      "Logistics infrastructure management",
+      "ICT project implementation"
+    ],
+    "icp": {
+      "sector": "logistics",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.9,
+    "ingested_at": "2026-05-06T07:51:52.888678+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0002",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#1",
+    "raw_text": "CustomerID: CUST0002\nIndustry: Banking\nCompanySize: Small\nFirstPurchaseDate: 2020-08-10\nLastRenewalDate: 2025-08-31\nTotalProjects: 1\nTotalVendors: 2\nTotalSpend: 108822.84\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 40\nSupportHoursUsed: 28\nCustomerSatisfactionScore: 5\nIsUpsellOpportunity: No\nChurnRisk: Medium\nContractRenewed: Yes",
+    "pain_points": [
+      "High support utilization relative to contract"
+    ],
+    "objections": [
+      "Medium churn risk despite high satisfaction"
+    ],
+    "use_cases": [
+      "Banking software support",
+      "ICT infrastructure maintenance"
+    ],
+    "icp": {
+      "sector": "fintech",
+      "company_size": "1-10",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.85,
+    "ingested_at": "2026-05-06T07:51:52.888707+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0003",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#2",
+    "raw_text": "CustomerID: CUST0003\nIndustry: Manufacturing\nCompanySize: Small\nFirstPurchaseDate: 2022-09-28\nLastRenewalDate: 2023-11-28\nTotalProjects: 5\nTotalVendors: 2\nTotalSpend: 36220.5\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 0\nSupportHoursUsed: 0\nCustomerSatisfactionScore: 1\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [
+      "Low customer satisfaction",
+      "Lack of support contract"
+    ],
+    "objections": [
+      "Poor service experience",
+      "High churn potential"
+    ],
+    "use_cases": [
+      "Manufacturing process automation"
+    ],
+    "icp": {
+      "sector": "manufacturing",
+      "company_size": "1-10",
+      "deal_size": "small",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.8,
+    "ingested_at": "2026-05-06T07:51:52.888727+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0004",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#3",
+    "raw_text": "CustomerID: CUST0004\nIndustry: Manufacturing\nCompanySize: Medium\nFirstPurchaseDate: 2024-10-08\nLastRenewalDate: 2024-09-27\nTotalProjects: 1\nTotalVendors: 4\nTotalSpend: 82753.07\nServicesProvided: No\nDeliveryEffortDays: 0\nSupportContractHours: 0\nSupportHoursUsed: 0\nCustomerSatisfactionScore: 5\nIsUpsellOpportunity: No\nChurnRisk: Medium\nContractRenewed: No",
+    "pain_points": [
+      "High vendor fragmentation"
+    ],
+    "objections": [
+      "Contract not renewed",
+      "Medium churn risk"
+    ],
+    "use_cases": [
+      "Manufacturing systems integration"
+    ],
+    "icp": {
+      "sector": "manufacturing",
+      "company_size": "50-200",
+      "deal_size": "medium",
+      "region": "International"
+    },
+    "funnel_stage": "lost",
+    "confidence_score": 0.9,
+    "ingested_at": "2026-05-06T07:51:52.888745+00:00"
+  },
+  {
+    "source": "sales_b2b_ict",
+    "source_id": "CUST0005",
+    "source_url": "file://seed/sales/sales_b2b_ict/b2b_ict_customer_dataset.csv#4",
+    "raw_text": "CustomerID: CUST0005\nIndustry: Retail\nCompanySize: Small\nFirstPurchaseDate: 2018-10-12\nLastRenewalDate: 2018-07-07\nTotalProjects: 4\nTotalVendors: 3\nTotalSpend: 147857.12\nServicesProvided: Yes\nDeliveryEffortDays: 12\nSupportContractHours: 160\nSupportHoursUsed: 71\nCustomerSatisfactionScore: 4\nIsUpsellOpportunity: No\nChurnRisk: Low\nContractRenewed: Yes",
+    "pain_points": [
+      "High support overhead"
+    ],
+    "objections": [],
+    "use_cases": [
+      "Retail operations management",
+      "ICT service implementation"
+    ],
+    "icp": {
+      "sector": "retail",
+      "company_size": "1-10",
+      "deal_size": "large",
+      "region": "International"
+    },
+    "funnel_stage": "won",
+    "confidence_score": 0.9,
+    "ingested_at": "2026-05-06T07:51:52.888762+00:00"
+  }
+]

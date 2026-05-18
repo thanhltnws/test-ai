@@ -2,21 +2,25 @@
 
 ## Project
 
-Internal demo — AI Insight Hub. Aggregates customer insights from HubSpot, Jira, email, and ops notes into a insights store, surfaces them via dashboard and RAG chatbox.
+Internal demo — AI Insight Hub. Aggregates customer insights from CRM note, email, Teams transcript, Jira/Redmine note into a insights store, surfaces them via dashboard and RAG chatbox.
 
+See `docs/break_problem.md` for problem analysis.
 See `docs/architecture.md` for full system design.
 See `docs/schema.md` for table definitions.
 See `docs/decisions.md` for ADRs.
+See `docs/scope.md` for scope, limitations, prerequisites.
+See `docs/faq.md` for technical Q&A.
 
 ## Stack
 
 | Layer | Local dev | AWS deploy |
 |---|---|---|
-| LLM | Gemini API (free) | Bedrock — Haiku (extract) · Sonnet (RAG, Case B) |
-| DB | PostgreSQL + DBeaver | Aurora PostgreSQL Serverless v2 |
+| LLM | Gemini API (free) | Bedrock — Haiku (extract) · Sonnet (RAG, batch) |
+| Embeddings | Gemini Embedding | Bedrock — Cohere embed-multilingual-v3 |
+| DB | PostgreSQL + pgvector | Aurora PostgreSQL Serverless v2 + pgvector |
 | Infra | — | CDK (TypeScript) |
 | Functions | Python 3.12 + venv | Python Lambda |
-| Frontend | Vite + React + Recharts | Amplify |
+| Frontend | React + Vercel |
 
 Gemini → Bedrock: swap endpoint + key only, logic unchanged.
 
@@ -29,13 +33,9 @@ Gemini → Bedrock: swap endpoint + key only, logic unchanged.
 
 ## Data situation
 
-No real sources yet. Use seed data in `backend/seed/data/` (1000 mock records).
-Import directly into Aurora — skip ingestion pipeline entirely for demo.
+No real sources yet. Mock data in `backend/seed/data/raw/` (6 source files, ~1000 raw records, Feb–Jun 2026).
 
-## Do not re-suggest
-
-- OpenSearch / Titan Embeddings
-- Kinesis
-- QuickSight
-- Comprehend pre-filter
-- Text-to-SQL as primary RAG strategy — fixed SQL only, Text-to-SQL as fallback
+Seed workflow:
+1. `generate.py` — LLM extraction → `signals_seed.json`
+2. `import.py` — load into Aurora (signals) + pgvector (embeddings)
+3. `run_batch.py` — backfill insights across all historical periods

@@ -42,7 +42,22 @@ Các file raw mới chỉ là input cho ingestion/transform. Chúng chưa có:
 
 Các field đó vẫn sẽ được sinh ra ở bước sau bởi `backend/seed/generate.py` hoặc Transform Lambda.
 
-### 3. Embedding phải đồng bộ giữa import và query
+### 3. `raw_text` — dùng để làm gì
+
+`raw_text` là toàn bộ nội dung record gốc sau khi flatten thành chuỗi key-value (output của `row_to_text()`). Đây là text thực sự được truyền vào LLM để extract.
+
+**Tác dụng:**
+
+- **Re-extraction không cần refetch source** — nếu sau này update prompt hoặc đổi model, có thể chạy lại extraction từ `raw_text` trong DB mà không cần kết nối lại HubSpot/Redmine/... Đặc biệt quan trọng vì access vào workspace của khách hàng thường bị thu hồi khi dự án kết thúc.
+- **Audit/debug** — khi extraction trông sai (ví dụ `funnel_stage` bị nhầm), xem `raw_text` để hiểu LLM đã nhìn thấy gì.
+
+**Không dùng cho:**
+- Vector search → dùng `embedding_text` (LLM-generated summary, ngắn và súc tích hơn)
+- SQL filter/aggregate → dùng các structured column
+
+**Trade-off:** `raw_text` có thể nặng vài KB/record, chiếm phần lớn storage trong `signals` table nhưng không được query. Có thể bỏ nếu muốn giảm DB size — đánh đổi là mất khả năng re-extract mà không refetch source.
+
+### 4. Embedding phải đồng bộ giữa import và query
 
 Khi import vào `signal_embeddings`, embedding model dùng để index phải trùng với model dùng khi query RAG:
 
@@ -239,10 +254,10 @@ Các file này là JSON array và có schema không hoàn toàn đồng nhất g
 
 `generate.py` hỗ trợ hai provider: `gemini` (default local dev) và `bedrock`. Trong thực tế đã chạy với Bedrock để đồng nhất với AWS stack:
 
-- **Model:** `us.anthropic.claude-haiku-4-5-20251001-v1:0` (US cross-region inference profile)
+- **Model:** `apac.anthropic.claude-haiku-4-5-20251001-v1:0` (APAC cross-region inference profile)
 - **Region:** `us-east-1`
 - **Auth:** AWS SSO qua profile `aih`, load vào boto3 thông qua `AWS_PROFILE` trong `.env`
-- **Provider switch:** set `SEED_LLM_PROVIDER=bedrock` trong `.env` (không phải `EMBEDDING_PROVIDER`)
+- **Provider switch:** set `SEED_LLM_PROVIDER=bedrock` trong `.env` (không phải `SEED_EMBEDDING_PROVIDER`)
 
 Lý do chọn Haiku thay vì Sonnet cho bước extraction: extraction là structured JSON với prompt rõ ràng, không cần reasoning sâu. Haiku đủ chất lượng, cost thấp hơn đáng kể (~$0.10 cho toàn bộ 1000 records).
 

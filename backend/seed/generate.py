@@ -49,7 +49,6 @@ MAX_BATCH_RECORDS = 40
 API_DELAY_S = 1.0
 MIN_ROW_TEXT_LEN = 10
 
-DEFAULT_PROVIDER = "gemini"
 DEFAULT_GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 DEFAULT_BEDROCK_MODEL = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
 DEFAULT_AWS_REGION = "ap-southeast-1"
@@ -83,12 +82,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def get_provider(cli_provider: str | None) -> str:
-    provider = (
-        cli_provider
-        or os.getenv("SEED_LLM_PROVIDER")
-        or os.getenv("LOCAL_LLM_PROVIDER")
-        or DEFAULT_PROVIDER
-    ).strip().lower()
+    provider = (cli_provider or os.getenv("SEED_LLM_PROVIDER") or "").strip().lower()
     if provider not in {"gemini", "bedrock"}:
         raise RuntimeError("Provider must be one of: gemini, bedrock")
     return provider
@@ -195,7 +189,7 @@ class GeminiExtractor:
         if not api_key:
             raise RuntimeError("GEMINI_API_KEY not set")
         self.client = genai.Client(api_key=api_key)
-        self.model = os.getenv("LOCAL_GEMINI_MODEL", DEFAULT_GEMINI_MODEL)
+        self.model = os.getenv("GEMINI_MODEL", DEFAULT_GEMINI_MODEL)
 
     def extract_batch(self, texts: list[str], source: str) -> list[dict]:
         prompt = build_extract_prompt(texts, source, context_content="")
@@ -285,10 +279,13 @@ def normalize_extraction(ext: dict) -> dict:
         "pain_points": ext.get("pain_points") or [],
         "objections": ext.get("objections") or [],
         "use_cases": ext.get("use_cases") or [],
-        "icp": ext.get("icp") or {},
+        "market": (ext.get("market") or "international").strip().lower(),
+        "sector": (ext.get("sector") or "other").strip().lower(),
+        "icp": {k: v for k, v in (ext.get("icp") if isinstance(ext.get("icp"), dict) else {}).items() if k in ("company_size", "deal_size")},
         "funnel_stage": ext.get("funnel_stage") or "consideration",
         "confidence_score": round(float(ext.get("confidence_score") or 0.5), 2),
         "source_id": str(ext.get("source_id") or "").strip(),
+        "source_url": str(ext.get("source_url") or "").strip() or None,
         "embedding_text": str(ext.get("embedding_text") or "").strip(),
         "record_date": _parse_record_date(ext.get("record_date")),
     }
@@ -312,11 +309,13 @@ def build_signal_row(
     return {
         "source": source,
         "source_id": source_id,
-        "source_url": f"file://seed/{raw_path.name}#{row_idx}",
+        "source_url": normalized["source_url"],
         "raw_text": raw_text,
         "pain_points": normalized["pain_points"],
         "objections": normalized["objections"],
         "use_cases": normalized["use_cases"],
+        "market": normalized["market"],
+        "sector": normalized["sector"],
         "icp": normalized["icp"],
         "funnel_stage": normalized["funnel_stage"],
         "confidence_score": normalized["confidence_score"],
@@ -378,7 +377,7 @@ def main() -> None:
 
     print(f"Provider: {provider}")
     if provider == "gemini":
-        print(f"Model: {os.getenv('LOCAL_GEMINI_MODEL', DEFAULT_GEMINI_MODEL)}")
+        print(f"Model: {os.getenv('GEMINI_MODEL', DEFAULT_GEMINI_MODEL)}")
     else:
         print(f"Model: {os.getenv('BEDROCK_MODEL_ID', DEFAULT_BEDROCK_MODEL)}")
     print(f"Raw dir: {RAW_DIR}")

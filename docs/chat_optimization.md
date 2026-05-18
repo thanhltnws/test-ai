@@ -86,9 +86,9 @@ Mỗi embedding model tạo ra một vector space riêng. Nếu write dùng mode
 | Môi trường | Embedding model                                              | Dims |
 | ---------- | ------------------------------------------------------------ | ---- |
 | Local dev  | Gemini `gemini-embedding-001` (`output_dimensionality=1024`) | 1024 |
-| AWS (prod) | Bedrock Titan Embeddings V2                                  | 1024 |
+| AWS (prod) | Bedrock `cohere.embed-multilingual-v3`                       | 1024 |
 
-Cả hai dùng 1024 dims — schema không đổi giữa môi trường, nhưng **vector không tương thích chéo nhau**. Không import dump từ local lên Aurora mà không re-embed lại bằng Titan.
+Cả hai dùng 1024 dims — schema không đổi giữa môi trường, nhưng **vector không tương thích chéo nhau**. Không import dump từ local lên Aurora mà không re-embed lại bằng Cohere.
 
 **Checklist khi thêm hoặc thay embedding model:**
 

@@ -47,16 +47,19 @@ def insert_signals(records: list[dict]) -> None:
                         INSERT INTO signals (
                             id, source, source_id, source_url, raw_text,
                             pain_points, objections, use_cases,
-                            icp, funnel_stage, confidence_score, embedding_text,
+                            icp, market, sector, funnel_stage,
+                            confidence_score, embedding_text,
                             record_date, ingested_at, extracted_at
                         )
-                        VALUES (%s,%s,%s,%s,%s, %s,%s,%s, %s,%s,%s,%s, %s,%s,%s)
+                        VALUES (%s,%s,%s,%s,%s, %s,%s,%s, %s,%s,%s,%s, %s,%s, %s,%s,%s)
                         ON CONFLICT (source, source_id) DO UPDATE SET
                             raw_text         = EXCLUDED.raw_text,
                             pain_points      = EXCLUDED.pain_points,
                             objections       = EXCLUDED.objections,
                             use_cases        = EXCLUDED.use_cases,
                             icp              = EXCLUDED.icp,
+                            market           = EXCLUDED.market,
+                            sector           = EXCLUDED.sector,
                             funnel_stage     = EXCLUDED.funnel_stage,
                             confidence_score = EXCLUDED.confidence_score,
                             embedding_text   = EXCLUDED.embedding_text,
@@ -74,6 +77,8 @@ def insert_signals(records: list[dict]) -> None:
                             rec.get("objections") or [],
                             rec.get("use_cases") or [],
                             psycopg2.extras.Json(rec.get("icp") or {}),
+                            rec.get("market"),
+                            rec.get("sector"),
                             rec.get("funnel_stage"),
                             rec.get("confidence_score"),
                             str(rec.get("embedding_text") or "").strip(),
@@ -96,10 +101,10 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
 
     client = boto3.client(
         "bedrock-runtime",
-        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        region_name=os.environ.get("AWS_REGION", "ap-southeast-1"),
     )
     resp = client.invoke_model(
-        modelId="cohere.embed-multilingual-v3",
+        modelId=os.environ.get("BEDROCK_EMBEDDING_MODEL_ID", "cohere.embed-multilingual-v3"),
         contentType="application/json",
         accept="application/json",
         body=json.dumps({
@@ -125,7 +130,7 @@ def _embed_gemini(texts: list[str]) -> list[list[float]]:
         for attempt in range(4):
             try:
                 result = client.models.embed_content(
-                    model="gemini-embedding-001",
+                    model=os.environ.get("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001"),
                     contents=text,
                     config=types.EmbedContentConfig(
                         task_type="RETRIEVAL_DOCUMENT",
@@ -196,11 +201,11 @@ def _embed_cloudflare(texts: list[str]) -> list[list[float]]:
 
 
 def _get_embedding_provider() -> str:
-    provider = os.environ.get("EMBEDDING_PROVIDER", "").strip().lower()
+    provider = os.environ.get("SEED_EMBEDDING_PROVIDER", "").strip().lower()
 
     if provider not in {"bedrock", "gemini", "cloudflare"}:
         raise RuntimeError(
-            "Set EMBEDDING_PROVIDER in .env to one of: "
+            "Set SEED_EMBEDDING_PROVIDER in .env to one of: "
             "bedrock, gemini, cloudflare"
         )
 
@@ -238,6 +243,8 @@ def insert_embeddings(records: list[dict]) -> None:
         metadata = {
             "source": rec["source"],
             "funnel_stage": rec.get("funnel_stage"),
+            "market": rec.get("market"),
+            "sector": rec.get("sector"),
             "source_url": rec.get("source_url"),
         }
 

@@ -200,10 +200,8 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
 
 
 def _embed_queries(texts: list[str]) -> list[list[float]]:
-    if _is_dev():
-        print("Embeddings: Gemini (dev/local)")
+    if _llm_provider() == "gemini":
         return _embed_gemini(texts)
-    print("Embeddings: Bedrock (prod)")
     return _embed_bedrock(texts)
 
 
@@ -252,21 +250,8 @@ def query_pgvector(conn, question: str) -> list[dict]:
 
 # ── llm calls ──────────────────────────────────────────────────────────────────
 
-def _is_dev() -> bool:
-    env = (
-        os.environ.get("APP_ENV")
-        or os.environ.get("ENVIRONMENT")
-        or os.environ.get("ENV")
-        or os.environ.get("STAGE")
-        or ""
-    ).strip().lower()
-    if env:
-        return env in {"local", "dev", "development", "test"}
-
-    return not (
-        os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
-        or os.environ.get("DB_SECRET_ARN")
-    )
+def _llm_provider() -> str:
+    return os.environ.get("LLM_PROVIDER", "bedrock").strip().lower()
 
 
 def _call_gemini(prompt_text: str) -> str:
@@ -287,7 +272,7 @@ def _call_bedrock(prompt_text: str) -> str:
 
     client = boto3.client(
         "bedrock-runtime",
-        region_name=os.environ.get("AWS_REGION", "us-east-1"),
+        region_name=os.environ.get("AWS_REGION", "ap-southeast-1"),
     )
     body = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
@@ -297,7 +282,7 @@ def _call_bedrock(prompt_text: str) -> str:
     })
     resp = client.invoke_model(
         modelId=os.environ.get(
-            "BEDROCK_MODEL_ID", "apac.anthropic.claude-3-5-sonnet-20241022-v2:0"
+            "BEDROCK_MODEL_ID", "global.anthropic.claude-sonnet-4-6"
         ),
         body=body,
     )
@@ -305,10 +290,8 @@ def _call_bedrock(prompt_text: str) -> str:
 
 
 def call_llm(prompt_text: str) -> str:
-    if _is_dev():
-        print("LLM: Gemini (dev)")
+    if _llm_provider() == "gemini":
         return _call_gemini(prompt_text)
-    print("LLM: Bedrock (prod)")
     return _call_bedrock(prompt_text)
 
 
@@ -322,8 +305,6 @@ def parse_json_response(text: str) -> dict:
             text = text[4:]
     return json.loads(text.strip())
 
-
-# ── helpers ────────────────────────────────────────────────────────────────────
 
 # ── lambda handler ─────────────────────────────────────────────────────────────
 
@@ -363,8 +344,6 @@ def lambda_handler(event=None, context=None):
         )
         print(f"pgvector: {len(vector_ctx)} semantic chunks")
 
-        # TODO: Re-evaluate lightweight conversation history for demo UX.
-        # Current chat is intentionally stateless to keep prompts predictable and cost-bounded.
         prompt = build_chat_prompt(question, sql_ctx, vector_ctx)
         raw = call_llm(prompt)
         result = parse_json_response(raw)

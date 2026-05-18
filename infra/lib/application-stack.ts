@@ -160,7 +160,7 @@ export class ApplicationStack extends cdk.Stack {
     });
 
     // ── DB schema bootstrap ───────────────────────────────────────────────────
-    // Runs the idempotent MVP schema against Aurora after the cluster is ready.
+    // Runs the idempotent schema against Aurora after the cluster is ready.
     // This creates pgvector, signals, signal_embeddings, and insights.
     const dbInitDir = path.join(__dirname, '../lambda/db-init');
     const dbInitHash = crypto
@@ -193,7 +193,7 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
       },
-      description: 'Custom resource handler: initialize Aurora schema for MVP/PoC',
+      description: 'Custom resource handler: initialize Aurora schema',
     });
 
     cluster.secret!.grantRead(dbInitFn);
@@ -317,6 +317,7 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
         BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+        BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
       description: 'Transform: S3 ObjectCreated raw/ → normalize → Bedrock extract → Aurora signals + pgvector',
     });
@@ -419,7 +420,7 @@ export class ApplicationStack extends cdk.Stack {
     new scheduler.CfnSchedule(this, 'DailyInsightsBuilderSchedule', {
       name: 'ai-insight-hub-daily-insights-builder',
       description: 'Trigger daily insights-builder compute at 02:00 UTC',
-      // TODO: Enable this for a live environment. Disabled for MVP demos so
+      // TODO: Enable this for a live environment. Disabled for demos so
       // insights-builder runs are triggered manually through the Function URL.
       state: 'DISABLED',
       scheduleExpression: 'cron(0 2 * * ? *)',

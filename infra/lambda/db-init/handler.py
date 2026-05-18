@@ -13,18 +13,21 @@ SCHEMA_SQL = [
         id               UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
         source           TEXT         NOT NULL,
         source_id        TEXT         NOT NULL,
-        source_url       TEXT         NOT NULL CHECK (source_url <> ''),
+        source_url       TEXT,
         raw_text         TEXT,
         pain_points      TEXT[],
         objections       TEXT[],
         use_cases        TEXT[],
         icp              JSONB,
+        market           TEXT         CHECK (market IN ('vietnam', 'japan', 'korea', 'international')),
+        sector           TEXT,
         funnel_stage     TEXT         CHECK (funnel_stage IN ('awareness', 'consideration', 'negotiation', 'won', 'lost')),
         confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0 AND 1),
         embedding_text   TEXT,
+        record_date      DATE,
         ingested_at      TIMESTAMPTZ,
         extracted_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
-        UNIQUE (source, source_id)
+        CONSTRAINT signals_source_record_unique UNIQUE (source, source_id)
     )
     """,
     """
@@ -33,28 +36,49 @@ SCHEMA_SQL = [
         computed_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
         period       TEXT        NOT NULL,
         period_start DATE        NOT NULL,
+        period_end   DATE        NOT NULL,
         result_type  TEXT        NOT NULL,
+        market       TEXT,
         payload      JSONB       NOT NULL
     )
     """,
+    "ALTER TABLE signals ADD COLUMN IF NOT EXISTS market TEXT CHECK (market IN ('vietnam', 'japan', 'korea', 'international'))",
+    "ALTER TABLE signals ADD COLUMN IF NOT EXISTS sector TEXT",
+    "ALTER TABLE signals ADD COLUMN IF NOT EXISTS record_date DATE",
+    "ALTER TABLE insights ADD COLUMN IF NOT EXISTS market TEXT",
+    "ALTER TABLE insights ADD COLUMN IF NOT EXISTS period_end DATE NOT NULL DEFAULT now()",
     """
     CREATE TABLE IF NOT EXISTS signal_embeddings (
         signal_id      UUID         PRIMARY KEY REFERENCES signals(id) ON DELETE CASCADE,
         embedding_text TEXT         NOT NULL,
         embedding      vector(1024) NOT NULL,
+        embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
         metadata       JSONB
     )
     """,
-    "CREATE INDEX IF NOT EXISTS signals_source_idx ON signals (source)",
-    "CREATE INDEX IF NOT EXISTS signals_funnel_stage_idx ON signals (funnel_stage)",
-    "CREATE INDEX IF NOT EXISTS signals_extracted_at_idx ON signals (extracted_at DESC)",
-    "CREATE INDEX IF NOT EXISTS signals_source_url_idx ON signals (source_url)",
-    "CREATE INDEX IF NOT EXISTS signals_icp_idx ON signals USING GIN (icp)",
-    "CREATE INDEX IF NOT EXISTS signals_pain_points_idx ON signals USING GIN (pain_points)",
-    "CREATE INDEX IF NOT EXISTS insights_computed_at_idx ON insights (computed_at DESC)",
-    "CREATE INDEX IF NOT EXISTS insights_period_period_start_result_type_idx ON insights (period, period_start DESC, result_type)",
+    """
+    CREATE TABLE IF NOT EXISTS insight_embeddings (
+        insight_id     UUID         PRIMARY KEY REFERENCES insights(id) ON DELETE CASCADE,
+        embedding_text TEXT         NOT NULL,
+        embedding      vector(1024) NOT NULL,
+        embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
+        metadata       JSONB
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS signals_market_idx          ON signals (market)",
+    "CREATE INDEX IF NOT EXISTS signals_sector_idx          ON signals (sector)",
+    "CREATE INDEX IF NOT EXISTS signals_market_sector_idx   ON signals (market, sector)",
+    "CREATE INDEX IF NOT EXISTS signals_funnel_stage_idx    ON signals (funnel_stage)",
+    "CREATE INDEX IF NOT EXISTS signals_source_idx          ON signals (source)",
+    "CREATE INDEX IF NOT EXISTS signals_extracted_at_idx    ON signals (extracted_at DESC)",
+    "CREATE INDEX IF NOT EXISTS signals_pain_points_idx     ON signals USING GIN (pain_points)",
+    "CREATE INDEX IF NOT EXISTS signals_icp_idx             ON signals USING GIN (icp)",
+    "CREATE INDEX IF NOT EXISTS insights_period_slice_idx   ON insights (period, period_start, result_type, market)",
+    "CREATE INDEX IF NOT EXISTS insights_computed_at_idx    ON insights (computed_at DESC)",
     "CREATE INDEX IF NOT EXISTS signal_embeddings_embedding_idx ON signal_embeddings USING hnsw (embedding vector_cosine_ops)",
-    "CREATE INDEX IF NOT EXISTS signal_embeddings_metadata_idx ON signal_embeddings USING GIN (metadata)",
+    "CREATE INDEX IF NOT EXISTS signal_embeddings_metadata_idx  ON signal_embeddings USING GIN  (metadata)",
+    "CREATE INDEX IF NOT EXISTS insight_embeddings_embedding_idx ON insight_embeddings USING hnsw (embedding vector_cosine_ops)",
+    "CREATE INDEX IF NOT EXISTS insight_embeddings_metadata_idx  ON insight_embeddings USING GIN  (metadata)",
 ]
 
 

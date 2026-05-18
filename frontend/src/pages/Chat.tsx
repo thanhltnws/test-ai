@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { sendChat } from '../api/lambdas'
+import { useChatHistory } from '../hooks/useChatHistory'
 import type { ChatMessage, Reference } from '../types'
 
 const SUGGESTED = [
@@ -8,54 +10,71 @@ const SUGGESTED = [
   'Deal đang ở giai đoạn Consideration có điểm chung gì?',
 ]
 
-function refType(ref: Reference): { emoji: string; label: string; color: string } {
-  const s = (ref.source ?? '').toLowerCase()
-  const t = (ref.title ?? '').toLowerCase()
-  if (s.includes('pain') || t.includes('pain')) return { emoji: '🔴', label: 'Pain Point', color: '#dc2626' }
-  if (s.includes('objection') || t.includes('object')) return { emoji: '🟡', label: 'Objection', color: '#d97706' }
-  if (s.includes('win') || s.includes('won')) return { emoji: '🟢', label: 'Win Signal', color: '#16a34a' }
-  if (s.includes('hubspot')) return { emoji: '🔵', label: 'HubSpot Deal', color: '#2563eb' }
-  if (s.includes('jira')) return { emoji: '🟣', label: 'Jira Task', color: '#7c3aed' }
-  return { emoji: '📎', label: 'Insight', color: '#64748b' }
-}
-
-function sourceIcon(source: string) {
-  const s = source.toLowerCase()
-  if (s.includes('hubspot')) return '🔗'
-  if (s.includes('jira')) return '🎫'
-  if (s.includes('email')) return '✉️'
-  return '📄'
+function formatDate(iso: string) {
+  const d = new Date(iso)
+  const now = new Date()
+  const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000)
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Yesterday'
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
 }
 
 export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const { sessions, createSession, updateSession, deleteSession } = useChatHistory()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  function startNewChat() {
+    setMessages([])
+    setActiveSessionId(null)
+    setInput('')
+  }
+
+  function restoreSession(id: string) {
+    const session = sessions.find(s => s.id === id)
+    if (!session) return
+    setMessages(session.messages)
+    setActiveSessionId(id)
+    setInput('')
+  }
+
   async function send(question: string) {
     if (!question.trim() || loading) return
     const userMsg: ChatMessage = { role: 'user', content: question }
-    setMessages(prev => [...prev, userMsg])
+    const nextMessages = [...messages, userMsg]
+    setMessages(nextMessages)
     setInput('')
     setLoading(true)
 
     try {
-      const res = await sendChat(question, messages)
-      setMessages(prev => [...prev, {
+      const res = await sendChat(question, messages.slice(-6))
+      const assistantMsg: ChatMessage = {
         role: 'assistant',
         content: res.answer,
         references: res.references,
-      }])
+      }
+      const finalMessages = [...nextMessages, assistantMsg]
+      setMessages(finalMessages)
+
+      if (activeSessionId) {
+        updateSession(activeSessionId, finalMessages)
+      } else {
+        const newId = createSession(finalMessages)
+        setActiveSessionId(newId)
+      }
     } catch (err) {
-      setMessages(prev => [...prev, {
+      const errorMsg: ChatMessage = {
         role: 'assistant',
         content: err instanceof Error ? err.message : 'Unable to reach the server. Please check the backend.',
-      }])
+      }
+      setMessages([...nextMessages, errorMsg])
     } finally {
       setLoading(false)
     }
@@ -68,16 +87,35 @@ export default function Chat() {
 
       {/* Header */}
       <div style={{
-        padding: '20px 32px',
+        padding: '16px 24px',
         borderBottom: '1px solid var(--border)',
         background: 'var(--surface)',
         flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}>
-        <h1 style={{ fontSize: 18, fontWeight: 700 }}>AI Chatbox</h1>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Hỏi bất kỳ câu hỏi nào về customer insights</div>
+        <div>
+          <h1 style={{ fontSize: 16, fontWeight: 700 }}>AI Chatbox</h1>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Hỏi bất kỳ câu hỏi nào về customer insights</div>
+        </div>
+        <button
+          onClick={startNewChat}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'var(--accent)',
+            color: '#fff',
+            padding: '7px 14px',
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 600,
+          }}
+        >
+          + New Chat
+        </button>
       </div>
 
-      {/* Body: chat + right panel */}
+      {/* Body */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
         {/* Chat area */}
@@ -132,8 +170,48 @@ export default function Chat() {
                     lineHeight: 1.7,
                     color: msg.role === 'user' ? '#fff' : 'var(--text)',
                     boxShadow: 'var(--shadow)',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word',
+                    minWidth: 0,
                   }}>
-                    {msg.content}
+                    {msg.role === 'assistant' ? (
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p style={{ margin: '0 0 8px 0' }}>{children}</p>,
+                          ul: ({ children }) => <ul style={{ margin: '4px 0', paddingLeft: 20 }}>{children}</ul>,
+                          ol: ({ children }) => <ol style={{ margin: '4px 0', paddingLeft: 20 }}>{children}</ol>,
+                          li: ({ children }) => <li style={{ marginBottom: 4 }}>{children}</li>,
+                          strong: ({ children }) => <strong style={{ fontWeight: 600 }}>{children}</strong>,
+                          code: ({ children }) => (
+                            <code style={{
+                              background: 'var(--surface2)',
+                              border: '1px solid var(--border)',
+                              borderRadius: 4,
+                              padding: '1px 5px',
+                              fontSize: 12,
+                              fontFamily: 'monospace',
+                              wordBreak: 'break-all',
+                            }}>{children}</code>
+                          ),
+                          pre: ({ children }) => (
+                            <pre style={{
+                              background: 'var(--surface2)',
+                              border: '1px solid var(--border)',
+                              borderRadius: 8,
+                              padding: '10px 14px',
+                              fontSize: 12,
+                              fontFamily: 'monospace',
+                              overflowX: 'auto',
+                              whiteSpace: 'pre-wrap',
+                              wordBreak: 'break-all',
+                              margin: '8px 0',
+                            }}>{children}</pre>
+                          ),
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    ) : msg.content}
                   </div>
                 </div>
               ))}
@@ -201,84 +279,153 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* Right: Related Insights */}
+        {/* Right panel: History (top) + Related Insights (bottom) */}
         <div style={{
           width: 272,
           minWidth: 272,
           borderLeft: '1px solid var(--border)',
           background: 'var(--surface)',
-          overflowY: 'auto',
-          padding: '24px 16px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 12,
+          overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-            <span style={{ fontSize: 15 }}>📎</span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Related Insights</span>
+
+          {/* History — top half */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <span style={{ fontSize: 14 }}>🕐</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>History</span>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 8px 10px' }}>
+              {sessions.length === 0 ? (
+                <div style={{ padding: '16px 8px', fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
+                  No past conversations yet
+                </div>
+              ) : (
+                sessions.map(session => (
+                  <div
+                    key={session.id}
+                    onClick={() => restoreSession(session.id)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: 8,
+                      marginBottom: 2,
+                      cursor: 'pointer',
+                      background: activeSessionId === session.id ? 'var(--accent-bg)' : 'transparent',
+                      border: activeSessionId === session.id ? '1px solid #bfdbfe' : '1px solid transparent',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                      gap: 4,
+                    }}
+                    onMouseOver={e => {
+                      if (activeSessionId !== session.id)
+                        (e.currentTarget as HTMLDivElement).style.background = 'var(--surface2)'
+                    }}
+                    onMouseOut={e => {
+                      if (activeSessionId !== session.id)
+                        (e.currentTarget as HTMLDivElement).style.background = 'transparent'
+                    }}
+                  >
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{
+                        fontSize: 12,
+                        color: activeSessionId === session.id ? 'var(--accent)' : 'var(--text)',
+                        fontWeight: 500,
+                        lineHeight: 1.4,
+                        overflow: 'hidden',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}>
+                        {session.title}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 3 }}>
+                        {formatDate(session.createdAt)}
+                      </div>
+                    </div>
+                    <button
+                      onClick={e => {
+                        e.stopPropagation()
+                        deleteSession(session.id)
+                        if (activeSessionId === session.id) startNewChat()
+                      }}
+                      style={{
+                        flexShrink: 0,
+                        fontSize: 14,
+                        color: 'var(--text-muted)',
+                        padding: '0 3px',
+                        borderRadius: 4,
+                        lineHeight: 1,
+                      }}
+                      title="Delete"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          {lastRefs.length === 0 ? (
-            <div style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              color: 'var(--text-muted)',
-              textAlign: 'center',
-              paddingTop: 40,
-            }}>
-              <div style={{ fontSize: 32 }}>🔍</div>
-              <div style={{ fontSize: 13, lineHeight: 1.5 }}>
-                Context liên quan sẽ hiện ở đây sau khi AI trả lời
-              </div>
+          {/* Related Insights — bottom half */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <span style={{ fontSize: 14 }}>📎</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Related Insights</span>
             </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {lastRefs.map((ref, i) => {
-                const { emoji, label, color } = refType(ref)
-                return (
-                  <div key={i} style={{
-                    background: 'var(--surface2)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 10,
-                    padding: '12px 14px',
-                    borderLeft: `3px solid ${color}`,
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                      <span style={{ fontSize: 13 }}>{emoji}</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
-                    </div>
-                    <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5, marginBottom: 8 }}>
-                      "{ref.title}"
-                    </div>
-                    <a
-                      href={ref.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        fontSize: 11,
-                        color: 'var(--accent)',
-                        fontWeight: 500,
-                      }}
-                    >
-                      <span>{sourceIcon(ref.source)}</span>
-                      <span>{ref.source}</span>
-                    </a>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
+              {lastRefs.length === 0 ? (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  color: 'var(--text-muted)',
+                  textAlign: 'center',
+                  paddingTop: 24,
+                }}>
+                  <div style={{ fontSize: 28 }}>🔍</div>
+                  <div style={{ fontSize: 12, lineHeight: 1.5 }}>
+                    Context liên quan sẽ hiện ở đây sau khi AI trả lời
                   </div>
-                )
-              })}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {lastRefs.map((ref, i) => (
+                    <div key={i} style={{
+                      background: 'var(--surface2)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 10,
+                      padding: '10px 12px',
+                      borderLeft: '3px solid var(--accent)',
+                    }}>
+                      <div style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.5, marginBottom: 6 }}>
+                        "{ref.title}"
+                      </div>
+                      <a
+                        href={ref.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          fontSize: 11,
+                          color: 'var(--accent)',
+                          fontWeight: 500,
+                          wordBreak: 'break-all',
+                        }}
+                      >
+                        {ref.url}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
 
+        </div>
       </div>
     </div>
   )
 }
-

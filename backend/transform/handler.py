@@ -10,7 +10,7 @@ Aurora INSERT uses ON CONFLICT (source, source_id) DO UPDATE — re-extracted re
 
 Environment variables:
     DB_SECRET_ARN      Secrets Manager ARN for Aurora credentials (required)
-    BEDROCK_MODEL_ID   (default: us.anthropic.claude-3-haiku-20240307-v1:0)
+    BEDROCK_MODEL_ID   (default: apac.anthropic.claude-haiku-4-5-20251001-v1:0)
     AWS_REGION         (default: ap-southeast-1)
 """
 import hashlib
@@ -235,11 +235,12 @@ _GEMINI_EXTRACT_CLIENT = None
 
 
 def _embed_bedrock(text: str) -> list[float]:
+    model_id = os.environ.get("BEDROCK_EMBEDDING_MODEL_ID", "cohere.embed-multilingual-v3")
     resp = _BEDROCK.invoke_model(
-        modelId="cohere.embed-multilingual-v3",
-        body=json.dumps({"texts": [text], "input_type": "search_document"}),
+        modelId=model_id,
         contentType="application/json",
         accept="application/json",
+        body=json.dumps({"texts": [text], "input_type": "search_document"}),
     )
     return json.loads(resp["body"].read())["embeddings"][0]
 
