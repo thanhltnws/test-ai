@@ -33,12 +33,12 @@ pgvector (semantic search) ─┘
 
 `query_aurora()` chạy 6 câu SQL trên bảng `signals`, filter theo `COALESCE(record_date, extracted_at::date)`:
 
-- `summary`: tổng số signals, avg confidence score
+- `summary`: tổng số signals
 - `top_pain_points`: unnest array `pain_points`, đếm tần suất
 - `top_objections`: unnest array `objections`
 - `top_use_cases`: unnest array `use_cases`
 - `funnel_distribution`: đếm theo `funnel_stage`, tính %
-- `icp_breakdown`: GROUP BY `sector` (column), `icp->>'company_size'`, `icp->>'deal_size'`
+- `icp_breakdown`: GROUP BY flat columns `deal_size`, `client_type`, `tech_maturity`, `sector`, `market`
 
 **Đánh giá 6 queries:**
 
@@ -118,20 +118,66 @@ Provider được chọn qua `LLM_PROVIDER` env var (`gemini` | `bedrock`, defau
 
 ## Language Strategy
 
-### Hướng prefer - chưa apply: Vietnamese từ transform (Hướng 1)
+### Hướng đang apply (Hướng 2): Vietnamese chỉ ở batch output
 
-Toàn bộ pipeline chạy tiếng Việt từ tầng transform — `pain_points`, `objections`, `use_cases`, `embedding_text` trong `signals` đều là tiếng Việt. Batch prompt thêm instruction output tiếng Việt, nhận Vietnamese SQL context → generate Vietnamese narrative tự nhiên.
+Transform vẫn ra tiếng Anh — `pain_points`, `objections`, `use_cases`, `embedding_text` trong `signals` là tiếng Anh. `prompt.py` thêm instruction output tiếng Việt → batch nhận SQL context tiếng Anh nhưng generate narrative tiếng Việt.
 
-**Hướng thay thế đã cân nhắc — Hướng 2 (Vietnamese chỉ ở batch output):**
-Giữ transform tiếng Anh, chỉ instruct batch ra tiếng Việt. Lợi điểm: Cohere multilingual có giá trị thực ở chat (user hỏi tiếng Việt → search English `embedding_text` → cross-lingual). Nhược điểm: batch nhận SQL context tiếng Anh rồi phải "dịch ngược" khi generate narrative — không sạch; data trong DB là tiếng Anh trong khi app nội bộ thuần Việt.
+**Hướng thay thế cần cân nhắc — Hướng 1 (Vietnamese từ transform):**
+Toàn bộ pipeline chạy tiếng Việt từ tầng transform. Lợi điểm: nhất quán hoàn toàn, batch nhận Vietnamese context → generate Vietnamese tự nhiên hơn. Nhược điểm: Cohere multilingual mất lợi thế ở chat (user hỏi tiếng Việt → search Vietnamese `embedding_text` — cross-lingual không còn cần thiết, nhưng cũng không còn là giá trị thêm).
 
-**Lý do chọn Hướng 1:** App nội bộ, user thuần Việt. Cohere multilingual trong Hướng 2 có giá trị nhưng chỉ ở chat, không đủ để đánh đổi sự nhất quán của toàn pipeline. Hướng 1 sạch hơn: DB tiếng Việt, batch context tiếng Việt, output tiếng Việt.
+**Tradeoff chính:** Hướng 2 hiện tại không sạch — DB tiếng Anh nhưng app hiển thị tiếng Việt. Hướng 1 sạch hơn nhưng đòi hỏi re-generate seed data và đổi `_VECTOR_QUERIES` sang tiếng Việt. Chưa quyết định, để lại để cân nhắc sau.
 
-**Tác động đến `_VECTOR_QUERIES`:** Khi transform ra tiếng Việt, cần đổi `_VECTOR_QUERIES` sang tiếng Việt để đồng nhất — English query search trên Vietnamese `embedding_text` hoạt động được nhờ Cohere multilingual nhưng không tối ưu.
+---
+
+## Pending Design Decisions
+
+### icp_breakdown query — 5D GROUP BY vs per-dimension distributions
+
+Hiện tại `icp_breakdown` GROUP BY 5 columns cùng lúc (`deal_size`, `client_type`, `tech_maturity`, `sector`, `market`). Với data nhỏ, hầu hết combinations có count=1 — LLM khó rút ra ICP profile có nghĩa.
+
+**Hướng cần xem lại:** Đổi sang 5 distribution riêng (1D per column) — LLM nhận "40% startup, 35% corporate..." thay vì list exact combos sparse. Cũng là input tốt hơn cho `icp_chart` nếu thêm result_type đó sau.
+
+### Phân loại theo ICP và funnel_stage — pre-compute vs chat
+
+Requirement "phân loại theo market, ICP và funnel_stage" có thể tách làm 2 use case:
+
+- **Market:** đã pre-compute per slice trong `insights` — hợp lý vì Japan vs Vietnam có narrative khác nhau căn bản.
+- **ICP và funnel_stage:** *không* nên pre-compute thêm slice — quá nhiều LLM calls (sector×funnel = 45 combos), giá trị narrative không tương xứng.
+
+**Hướng đề xuất:**
+
+1. Thêm `result_type` thứ 5 (`icp_chart`) vào cùng batch prompt — LLM generate chart-ready data từ distributions sẵn có, không tốn thêm LLM call.
+2. "Phân loại theo ICP/funnel_stage" theo kiểu dynamic → use case của **chat lambda**: user hỏi → chat filter `signals` bằng flat indexed columns + RAG retrieval.
+
+Chưa implement, cần quyết định trước khi làm frontend dashboard chart.
 
 ---
 
 ## Known Issues
+
+### Không có minimum signal threshold
+
+Hiện tại chỉ skip khi `total_signals == 0`. Slice có `signals=1` vẫn call LLM và ra 4 insight rows — `icp_narrative` từ 1 signal, `funnel_distribution` từ 1 signal không có nghĩa, LLM sẽ hallucinate.
+
+Fix: đổi `if total == 0` thành `if total < MIN_SIGNALS` (đề xuất 3–5) trong cả `handler.py` lẫn `run_batch.py`.
+
+### `query_pgvector` không filter theo date range
+
+`query_pgvector(conn, p_start, p_end)` nhận `p_start`/`p_end` nhưng thực tế search toàn bộ `signal_embeddings` không giới hạn period. Hậu quả: slice `signals=1` nhưng `semantic=11` — LLM nhận context từ signals ngoài period window, insight bị lẫn lộn cross-period.
+
+Fix: thêm JOIN `signal_embeddings → signals ON signal_id` với filter `record_date BETWEEN p_start AND p_end` trong query cosine similarity.
+
+### Payload chứa content không grounded vào signals thực tế
+
+Nhiều insight rows có narrative/recommendations "sáng tạo" — không phản ánh data trong bảng `signals`. Nguyên nhân có thể là tổ hợp: (1) vector context cross-period (issue trên), (2) threshold quá thấp (1 signal), (3) top_k semantic search chưa được tune đúng.
+
+Cần review: so sánh payload trong `insights` với raw signals trong cùng period/market để xác định LLM đang hallucinate ở mức nào.
+
+### top_k semantic search chưa được review
+
+`query_pgvector` hiện lấy top 10 per query (3 queries cố định) → tối đa 30 chunks trước dedup. Chưa đánh giá: top_k = 10 có phù hợp không, hay nên scale theo `total_signals` (ít signals → top_k nhỏ hơn để tránh over-retrieve), hoặc dùng threshold similarity score thay vì fixed k.
+
+Cần review kỹ trước khi dùng batch insights cho demo.
 
 ### `write_insight_embeddings` dùng sai `input_type`
 

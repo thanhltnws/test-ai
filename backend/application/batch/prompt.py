@@ -2,7 +2,7 @@ import json
 from datetime import date
 
 _BATCH_TEMPLATE = """\
-You are an AI analyst for a B2B software company.
+You are an AI analyst for a B2B software outsourcing company.
 Below is aggregated customer insight data for the {granularity} period \
 ({period_start} to {period_end}){market_context}.
 
@@ -18,31 +18,32 @@ with exactly these 4 keys:
 {{
   "pain_points_summary": {{
     "top_items": [
-      {{"item": "...", "count": N, "insight": "one-sentence interpretation"}}
+      {{"item": "...", "count": N, "insight": "một câu diễn giải bằng tiếng Việt"}}
     ],
-    "summary": "2-3 sentence narrative about recurring pain themes, grounded in both SQL counts and semantic patterns"
+    "summary": "2-3 câu tóm tắt tiếng Việt về các vấn đề lặp lại, dựa trên cả SQL counts và semantic patterns"
   }},
   "funnel_distribution": {{
     "stages": [{{"stage": "...", "count": N, "pct": 0.0}}],
-    "summary": "2-3 sentence interpretation of funnel health and drop-off risk"
+    "summary": "2-3 câu tiếng Việt nhận xét sức khoẻ funnel và rủi ro drop-off"
   }},
   "icp_narrative": {{
     "top_segments": [
-      {{"sector": "...", "company_size": "...", "deal_size": "...", "count": N}}
+      {{"sector": "...", "market": "...", "client_type": "...", "tech_maturity": "...", "deal_size": "...", "count": N}}
     ],
-    "narrative": "3-4 sentence ICP profile describing the ideal customer based on top segments"
+    "narrative": "3-4 câu tiếng Việt mô tả ICP lý tưởng dựa trên các segment hàng đầu"
   }},
   "recommendations": {{
-    "sales": ["actionable recommendation 1", "actionable recommendation 2"],
-    "marketing": ["actionable recommendation 1", "actionable recommendation 2"],
-    "summary": "1-2 sentences on overall strategic direction"
+    "sales": ["khuyến nghị hành động 1 bằng tiếng Việt", "khuyến nghị hành động 2"],
+    "marketing": ["khuyến nghị hành động 1 bằng tiếng Việt", "khuyến nghị hành động 2"],
+    "summary": "1-2 câu tiếng Việt về định hướng chiến lược tổng thể"
   }}
 }}
 
 Rules:
+- All narrative text fields (insight, summary, narrative, recommendations) must be written in Vietnamese
 - pain_points_summary.top_items: include all items from SQL data, sorted by count desc
 - funnel_distribution.stages: preserve exact counts and pct from SQL input
-- icp_narrative.top_segments: top 5 segments by count from SQL input
+- icp_narrative.top_segments: top 5 segments by count from SQL input; use exact values from icp_breakdown
 - recommendations: 3-5 items each, grounded in both SQL aggregates and semantic context
 - Do NOT invent data not present in the input"""
 

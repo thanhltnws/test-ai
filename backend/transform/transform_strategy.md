@@ -100,6 +100,21 @@ Nếu response trả ít hơn số records trong batch, handler pad bằng `_Ext
 
 ---
 
+## Confidence-based retry
+
+Sau mỗi batch extraction, handler chạy một lượt retry có chọn lọc cho các record có chất lượng thấp.
+
+**Cơ chế:**
+
+1. LLM tự báo cáo `confidence_score` (0.0–1.0) cho mỗi record — phản ánh mức độ chắc chắn khi infer các field từ raw text.
+2. Record nào có `confidence_score < 0.4` **và** `len(raw_text) >= 150 chars` được đưa vào retry. Điều kiện thứ hai đảm bảo chỉ retry khi record đủ dài để có thêm thông tin — record ngắn < 150 chars thì retry cũng không cải thiện được.
+3. Các record low-confidence được gom lại, gửi lên LLM lần hai với `build_retry_prompt` (prompt focused hơn, ít nhiễu hơn).
+4. Kết quả retry chỉ được dùng nếu `confidence_score` mới **cao hơn** lần đầu — không bao giờ ghi đè khi không cải thiện.
+
+**`confidence_score` không persist vào DB** — chỉ dùng trong-memory trong `extract_and_merge` để điều phối retry. `generate.py` (seed pipeline) không implement pattern này.
+
+---
+
 ## Idempotency
 
 - S3 object tag `processed=true` set sau khi Lambda chạy thành công — retry hoặc duplicate event không re-call Bedrock.

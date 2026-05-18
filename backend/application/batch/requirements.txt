@@ -2,3 +2,4 @@ pg8000==1.31.2
 python-dotenv==1.2.2
 google-genai
 boto3
+json-repair

@@ -40,65 +40,60 @@ from prompt import build_batch_prompt  # noqa: E402
 
 # ── period definitions ────────────────────────────────────────────────────────
 
-DATA_START = date(2026, 3, 1)   # first meaningful spike in seed data
-DATA_END   = date(2026, 5, 16)  # last date in seed data
+def _get_data_range(conn) -> tuple[date, date]:
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "SELECT MIN(record_date), MAX(record_date) FROM signals WHERE record_date IS NOT NULL"
+        )
+        data_start, data_end = cur.fetchone()
+        if data_start is None or data_end is None:
+            raise RuntimeError("No records with record_date found in signals table")
+        return data_start, data_end
+    finally:
+        cur.close()
 
 
-def _weekly_periods() -> list[tuple[date, date]]:
-    """Every Mon–Sun week that overlaps with seed data range."""
+def _weekly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
     periods = []
-    # Start from Monday of the week containing DATA_START
-    cursor = DATA_START - timedelta(days=DATA_START.weekday())
-    while cursor <= DATA_END:
-        p_start = cursor
-        p_end   = min(cursor + timedelta(days=6), DATA_END)
-        periods.append((p_start, p_end))
+    cursor = data_start - timedelta(days=data_start.weekday())
+    while cursor <= data_end:
+        periods.append((cursor, min(cursor + timedelta(days=6), data_end)))
         cursor += timedelta(weeks=1)
     return periods
 
 
-def _monthly_periods() -> list[tuple[date, date]]:
-    """Each calendar month that overlaps with seed data range."""
+def _monthly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
     periods = []
-    cursor = DATA_START.replace(day=1)
-    while cursor <= DATA_END:
+    cursor = data_start.replace(day=1)
+    while cursor <= data_end:
         year, month = cursor.year, cursor.month
-        if month == 12:
-            last_day = date(year, 12, 31)
-        else:
-            last_day = date(year, month + 1, 1) - timedelta(days=1)
-        p_end = min(last_day, DATA_END)
-        periods.append((cursor, p_end))
-        if month == 12:
-            cursor = date(year + 1, 1, 1)
-        else:
-            cursor = date(year, month + 1, 1)
+        last_day = date(year, 12, 31) if month == 12 else date(year, month + 1, 1) - timedelta(days=1)
+        periods.append((cursor, min(last_day, data_end)))
+        cursor = date(year + 1, 1, 1) if month == 12 else date(year, month + 1, 1)
     return periods
 
 
-def _quarterly_periods() -> list[tuple[date, date]]:
-    """Each calendar quarter that overlaps with seed data range."""
-    quarters = [
-        (date(2026, 1, 1),  date(2026, 3, 31)),
-        (date(2026, 4, 1),  date(2026, 6, 30)),
-    ]
+def _quarterly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
+    quarters = []
+    for year in range(data_start.year, data_end.year + 1):
+        for q_start, q_end in [
+            (date(year, 1, 1), date(year, 3, 31)),
+            (date(year, 4, 1), date(year, 6, 30)),
+            (date(year, 7, 1), date(year, 9, 30)),
+            (date(year, 10, 1), date(year, 12, 31)),
+        ]:
+            if q_start <= data_end and q_end >= data_start:
+                quarters.append((max(q_start, data_start), min(q_end, data_end)))
+    return quarters
+
+
+def _yearly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
     return [
-        (max(p_start, DATA_START), min(p_end, DATA_END))
-        for p_start, p_end in quarters
-        if p_start <= DATA_END and p_end >= DATA_START
+        (date(year, 1, 1), min(date(year, 12, 31), data_end))
+        for year in range(data_start.year, data_end.year + 1)
+        if date(year, 12, 31) >= data_start
     ]
-
-
-def _yearly_periods() -> list[tuple[date, date]]:
-    return [(date(2026, 1, 1), DATA_END)]
-
-
-GRANULARITIES: dict[str, list[tuple[date, date]]] = {
-    "weekly":    _weekly_periods(),
-    "monthly":   _monthly_periods(),
-    "quarterly": _quarterly_periods(),
-    "yearly":    _yearly_periods(),
-}
 
 EMBED_BATCH_SIZE = 96
 
@@ -146,10 +141,22 @@ def _insert_insight_embeddings(conn, rows: list[tuple[str, str, str, dict]]) -> 
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    total_periods = sum(len(v) for v in GRANULARITIES.values())
+    conn = _pg_connect()
+    data_start, data_end = _get_data_range(conn)
+    conn.close()
+
+    granularities: dict[str, list[tuple[date, date]]] = {
+        "weekly":    _weekly_periods(data_start, data_end),
+        "monthly":   _monthly_periods(data_start, data_end),
+        "quarterly": _quarterly_periods(data_start, data_end),
+        "yearly":    _yearly_periods(data_start, data_end),
+    }
+
+    print(f"Data range from DB: {data_start} → {data_end}")
+    total_periods = sum(len(v) for v in granularities.values())
     total_slices  = total_periods * len(MARKETS)
     print(f"Backfill plan: {total_periods} periods × {len(MARKETS)} markets = {total_slices} slices")
-    for g, periods in GRANULARITIES.items():
+    for g, periods in granularities.items():
         print(f"  {g}: {len(periods)} period(s)")
     print(f"  markets: {[m or 'all' for m in MARKETS]}")
     print()
@@ -163,7 +170,7 @@ def main() -> None:
     try:
         for market in MARKETS:
             mkt_label = market or "all"
-            for granularity, periods in GRANULARITIES.items():
+            for granularity, periods in granularities.items():
                 for p_start, p_end in periods:
                     label = f"[{granularity}/{mkt_label}] {p_start} → {p_end}"
 

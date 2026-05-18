@@ -136,14 +136,11 @@ def query_aurora(
         mp  = (market,) if market else ()
 
         cur.execute(
-            f"SELECT COUNT(*), AVG(confidence_score) FROM signals WHERE {date_filter} {mkt_filter}",
+            f"SELECT COUNT(*) FROM signals WHERE {date_filter} {mkt_filter}",
             dp + mp,
         )
         row = cur.fetchone()
-        ctx["summary"] = {
-            "total_signals": row[0],
-            "avg_confidence": round(float(row[1] or 0), 2),
-        }
+        ctx["summary"] = {"total_signals": row[0]}
 
         cur.execute(
             f"""
@@ -204,16 +201,16 @@ def query_aurora(
 
         cur.execute(
             f"""
-            SELECT sector, icp->>'company_size', icp->>'deal_size', COUNT(*) AS cnt
+            SELECT deal_size, client_type, tech_maturity, sector, market, COUNT(*) AS cnt
             FROM signals
-            WHERE sector IS NOT NULL AND icp IS NOT NULL AND {date_filter} {mkt_filter}
-            GROUP BY sector, icp->>'company_size', icp->>'deal_size'
+            WHERE deal_size IS NOT NULL AND {date_filter} {mkt_filter}
+            GROUP BY deal_size, client_type, tech_maturity, sector, market
             ORDER BY cnt DESC
             """,
             dp + mp,
         )
         ctx["icp_breakdown"] = [
-            {"sector": r[0], "company_size": r[1], "deal_size": r[2], "count": r[3]}
+            {"deal_size": r[0], "client_type": r[1], "tech_maturity": r[2], "sector": r[3], "market": r[4], "count": r[5]}
             for r in cur.fetchall()
         ]
 
@@ -368,12 +365,13 @@ def call_llm(prompt_text: str) -> str:
 # ── response parsing ───────────────────────────────────────────────────────────
 
 def parse_json_response(text: str) -> dict:
+    from json_repair import repair_json
     text = text.strip()
     if text.startswith("```"):
         text = text.split("```", 2)[1]
         if text.startswith("json"):
             text = text[4:]
-    return json.loads(text.strip())
+    return json.loads(repair_json(text.strip()))
 
 
 # ── write results ──────────────────────────────────────────────────────────────
@@ -420,7 +418,7 @@ def _derive_embedding_text(result_type: str, payload: dict) -> str:
         parts = [payload.get("narrative", "")]
         for seg in payload.get("top_segments", []):
             parts.append(
-                f"{seg.get('sector','')} {seg.get('company_size','')} {seg.get('deal_size','')}".strip()
+                f"{seg.get('sector','')} {seg.get('market','')} {seg.get('client_type','')} {seg.get('deal_size','')}".strip()
             )
         return " ".join(p for p in parts if p).strip()
     if result_type == "recommendations":
