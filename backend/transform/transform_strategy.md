@@ -28,14 +28,14 @@ S3 raw/{source}/{date}/{ts}.json
 | `pain_points` | `TEXT[]` | LLM | Vấn đề thực sự của customer, inferred từ signal |
 | `objections` | `TEXT[]` | LLM | Chỉ lấy từ voice của prospect, không phải vendor ghi nhận |
 | `use_cases` | `TEXT[]` | LLM | Cách customer dùng hoặc có thể dùng sản phẩm |
-| `icp` | `JSONB` | LLM | `sector`, `company_size`, `deal_size`, `region` |
+| `icp` | `JSONB` | LLM | `company_size`, `deal_size` |
 | `funnel_stage` | `TEXT` | LLM | `awareness` · `consideration` · `negotiation` · `won` · `lost` |
 | `confidence_score` | `NUMERIC` | LLM | 0.0–1.0, self-reported theo evidence thickness |
 | `source_id` | `TEXT` | LLM | Unique ID từ chính record — fallback về hash nếu thiếu |
 | `embedding_text` | `TEXT` | LLM | 2–4 câu summary tối ưu cho semantic search |
 | `record_date` | `DATE` | LLM + fallback | Date ngữ nghĩa nhất trong record; fallback về candidate fields trong raw nếu LLM không trả |
-| `market` | `TEXT` | LLM | `domestic` · `regional` · `international` — scope thị trường của customer |
-| `sector` | `TEXT` | Denorm | Lấy từ `icp.sector` — denormalized để query trực tiếp không cần JSONB extract |
+| `market` | `TEXT` | LLM | `vietnam` · `japan` · `korea` · `international` — target geographic market |
+| `sector` | `TEXT` | LLM | Top-level column — không nằm trong `icp`; extracted trực tiếp để index và filter hiệu quả |
 
 ---
 
@@ -68,11 +68,11 @@ Các record type khác nhau (marketing lead, CRM profile, ops ticket) cho signal
 **Tại sao `objections` chỉ lấy từ voice của prospect?**
 CRM tags, ticket descriptions, và scoring labels phản ánh góc nhìn của vendor, không phải prospect. Lẫn hai nguồn này tạo ra false objections làm sai lệch sales analysis.
 
-**Tại sao `sector` vừa là field trong `icp` vừa là top-level column?**
-`icp` là JSONB — filter `icp->>'sector' = 'fintech'` chậm hơn filter `sector = 'fintech'`. Top-level column là denormalized copy để tối ưu query pattern phổ biến nhất (filter by sector trong Dashboard và RAG metadata filter).
+**Tại sao `sector` và `market` là top-level column thay vì field trong `icp`?**
+Cả hai cần indexed filtering (Dashboard filter, RAG metadata filter) — không thể index trực tiếp trên JSONB field. `sector` và `market` được extract thẳng thành column riêng; `icp` chỉ còn giữ `company_size` và `deal_size` là hai field chỉ dùng cho LLM narrative, không cần filter trực tiếp.
 
-**Tại sao `market` là field riêng thay vì dùng `icp.region`?**
-`region` trong `icp` mô tả vị trí địa lý của company (headquarters). `market` mô tả scope thị trường mà company đang target hoặc vận hành — hai chiều thông tin khác nhau. Ví dụ: một công ty ở Vietnam (`region = Vietnam`) nhưng bán hàng toàn ASEAN (`market = regional`).
+**Tại sao `market` là top-level column thay vì field trong `icp`?**
+`market` cần indexed filtering (Dashboard filter theo thị trường, RAG metadata filter) — không thể index trực tiếp trên JSONB field. `region` từng nằm trong `icp` nhưng đã bị loại bỏ khi `market` được promote thành column riêng với enum cụ thể (`vietnam` · `japan` · `korea` · `international`).
 
 ---
 

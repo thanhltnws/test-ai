@@ -62,15 +62,8 @@ _VALID_MARKETS       = {"international", "korea", "japan", "vietnam"}
 
 
 class _ICP(BaseModel):
-    sector:       str = "other"
     company_size: str = "50-200"
     deal_size:    str = "medium"
-    region:       str = "Southeast Asia"
-
-    @field_validator("sector")
-    @classmethod
-    def _v_sector(cls, v: str) -> str:
-        return v if v in _VALID_SECTORS else "other"
 
     @field_validator("company_size")
     @classmethod
@@ -94,6 +87,7 @@ class _Extraction(BaseModel):
     embedding_text:   str       = ""
     record_date:      str | None = None
     market:           str       = "international"
+    sector:           str       = "other"
 
     @field_validator("funnel_stage")
     @classmethod
@@ -109,6 +103,11 @@ class _Extraction(BaseModel):
     @classmethod
     def _v_market(cls, v: str) -> str:
         return v if v in _VALID_MARKETS else "international"
+
+    @field_validator("sector")
+    @classmethod
+    def _v_sector(cls, v: str) -> str:
+        return v if v in _VALID_SECTORS else "other"
 
 
 class _ExtractionBatch(BaseModel):
@@ -535,13 +534,13 @@ def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> lis
                     "pain_points":      ext.pain_points,
                     "objections":       ext.objections,
                     "use_cases":        ext.use_cases,
-                    "icp":              ext.icp.model_dump(),
+                    "icp":              ext.icp.model_dump(),  # company_size, deal_size only
                     "funnel_stage":     ext.funnel_stage,
                     "confidence_score": ext.confidence_score,
                     "embedding_text":   ext.embedding_text,
                     "record_date":      ext.record_date or rec.get("_date_fallback") or None,
                     "market":           ext.market,
-                    "sector":           ext.icp.sector,  # denormalized from icp for direct querying
+                    "sector":           ext.sector,
                     "ingested_at":      rec["ingested_at"],  # from S3 eventTime, per-record
                 })
             print(f"  batch {i}/{len(batches)} OK ({len(batch)} records)")

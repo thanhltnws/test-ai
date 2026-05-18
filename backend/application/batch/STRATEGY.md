@@ -31,14 +31,23 @@ pgvector (semantic search) ─┘
 
 ### 1. Query Aurora
 
-`query_aurora()` chạy 5 câu SQL trên bảng `signals`, filter theo `COALESCE(record_date, extracted_at::date)`:
+`query_aurora()` chạy 6 câu SQL trên bảng `signals`, filter theo `COALESCE(record_date, extracted_at::date)`:
 
 - `summary`: tổng số signals, avg confidence score
 - `top_pain_points`: unnest array `pain_points`, đếm tần suất
 - `top_objections`: unnest array `objections`
 - `top_use_cases`: unnest array `use_cases`
 - `funnel_distribution`: đếm theo `funnel_stage`, tính %
-- `icp_breakdown`: GROUP BY `icp->>'sector'`, `company_size`, `deal_size`, `region`
+- `icp_breakdown`: GROUP BY `sector` (column), `icp->>'company_size'`, `icp->>'deal_size'`
+
+**Đánh giá 6 queries:**
+
+6 queries là hợp lý cho batch job — latency không phải ưu tiên, mỗi query phục vụ đúng 1 slice context cho LLM prompt, không có query nào thừa.
+
+Điểm cần lưu ý:
+
+- `top_pain_points`, `top_objections`, `top_use_cases` cùng pattern unnest-GROUP BY-COUNT, chỉ khác tên array column. Có thể gộp thành helper function trong code để tránh lặp logic, nhưng không cần thiết về mặt SQL.
+- `summary` chỉ trả về count + avg confidence. Có thể bổ sung `COUNT(DISTINCT customer_id)` nếu schema có field đó, để LLM biết số lượng khách hàng thực sự (không chỉ số tín hiệu).
 
 ### 2. Query pgvector
 

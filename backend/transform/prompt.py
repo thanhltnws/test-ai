@@ -14,7 +14,7 @@ the regulatory deadline. The price is manageable but the timeline worries us.
 → {"pain_points":["Legacy core banking integration required under 90-day regulatory deadline"],\
 "objections":["Timeline worries us — 90-day integration window is too tight"],\
 "use_cases":["Core banking integration","Regulatory compliance workflow"],\
-"icp":{"sector":"fintech","company_size":"200-1000","deal_size":"large","region":"Southeast Asia"},\
+"icp":{"company_size":"200-1000","deal_size":"large"},\
 "funnel_stage":"negotiation","confidence_score":0.87,"source_id":"seoul-digital-partners",\
 "embedding_text":"Seoul Digital Partners, a 320-person fintech firm in South Korea, faces a hard \
 90-day regulatory deadline driving urgency on a legacy core banking integration. At contract stage \
@@ -33,7 +33,7 @@ created_on: 2025-01-08
 "Data export disruption for Osaka branch"],\
 "objections":[],\
 "use_cases":["Data export for Japanese-language records","Multi-encoding support for regional offices"],\
-"icp":{"sector":"other","company_size":"50-200","deal_size":"medium","region":"Southeast Asia"},\
+"icp":{"company_size":"50-200","deal_size":"medium"},\
 "funnel_stage":"consideration","confidence_score":0.52,"source_id":"8821",\
 "embedding_text":"A Japan-based customer branch is experiencing CSV export failures due to \
 Japanese character encoding conflicts. The open ticket indicates an engaged customer with a \
@@ -53,7 +53,7 @@ receivedDateTime: 2025-02-14
 "objections":["Cannot store data outside Vietnam per internal policy",\
 "6-month onboarding is too long — previous vendor delivered in 8 weeks"],\
 "use_cases":["AI customer insight platform","Sales and procurement analytics"],\
-"icp":{"sector":"logistics","company_size":"1000+","deal_size":"large","region":"Vietnam"},\
+"icp":{"company_size":"1000+","deal_size":"large"},\
 "funnel_stage":"consideration","confidence_score":0.81,"source_id":"globallogistics-re-proposal",\
 "embedding_text":"A large Vietnam-based logistics company is evaluating AI insight platforms \
 but raised two direct objections from the prospect side: strict data residency policy and \
@@ -90,7 +90,10 @@ use_cases: list[str]
   How this customer uses or could use the product/service. Infer from industry, role, and \
 the problems they face.
 
-icp: object — sector, company_size, deal_size, region
+sector: one of fintech | logistics | retail | healthcare | manufacturing | software | education | ict | other
+  Infer from company/industry context; map any unlisted industry to "other".
+
+icp: object — company_size, deal_size
   Infer from all available signals together. When signals conflict (e.g. a "Small" label but \
 high spend volume), weigh them and pick the most plausible value. Use domain knowledge about \
 what companies of this type typically look like.
@@ -152,7 +155,6 @@ Constraints:
 - sector: fintech | logistics | retail | healthcare | manufacturing | software | education | ict | other
 - company_size: 1-10 | 11-50 | 50-200 | 200-1000 | 1000+
 - deal_size: small | medium | large
-- region: Vietnam | Southeast Asia | International
 - Return [] for empty lists
 - record_date must be exactly YYYY-MM-DD format or null — no other format accepted
 
