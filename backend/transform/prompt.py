@@ -14,8 +14,9 @@ the regulatory deadline. The price is manageable but the timeline worries us.
 → {"pain_points":["Legacy core banking integration required under 90-day regulatory deadline"],\
 "objections":["Timeline worries us — 90-day integration window is too tight"],\
 "use_cases":["Core banking integration","Regulatory compliance workflow"],\
-"icp":{"company_size":"200-1000","deal_size":"large"},\
+"deal_size":"large","client_type":"corporate","tech_maturity":"semi-tech",\
 "funnel_stage":"negotiation","confidence_score":0.87,"source_id":"seoul-digital-partners",\
+"source_url":"https://example.com/twenty_crm/seoul-digital-partners",\
 "embedding_text":"Seoul Digital Partners, a 320-person fintech firm in South Korea, faces a hard \
 90-day regulatory deadline driving urgency on a legacy core banking integration. At contract stage \
 with deal ~$85K, the prospect flagged timeline risk — not pricing — as the primary concern.",\
@@ -33,8 +34,9 @@ created_on: 2025-01-08
 "Data export disruption for Osaka branch"],\
 "objections":[],\
 "use_cases":["Data export for Japanese-language records","Multi-encoding support for regional offices"],\
-"icp":{"company_size":"50-200","deal_size":"medium"},\
+"deal_size":"medium","client_type":"corporate","tech_maturity":"semi-tech",\
 "funnel_stage":"consideration","confidence_score":0.52,"source_id":"8821",\
+"source_url":"https://example.com/redmine/8821",\
 "embedding_text":"A Japan-based customer branch is experiencing CSV export failures due to \
 Japanese character encoding conflicts. The open ticket indicates an engaged customer with a \
 specific localization pain point blocking daily operations.",\
@@ -53,8 +55,9 @@ receivedDateTime: 2025-02-14
 "objections":["Cannot store data outside Vietnam per internal policy",\
 "6-month onboarding is too long — previous vendor delivered in 8 weeks"],\
 "use_cases":["AI customer insight platform","Sales and procurement analytics"],\
-"icp":{"company_size":"1000+","deal_size":"large"},\
+"deal_size":"large","client_type":"corporate","tech_maturity":"technical",\
 "funnel_stage":"consideration","confidence_score":0.81,"source_id":"globallogistics-re-proposal",\
+"source_url":"https://example.com/outlook_email/globallogistics-re-proposal",\
 "embedding_text":"A large Vietnam-based logistics company is evaluating AI insight platforms \
 but raised two direct objections from the prospect side: strict data residency policy and \
 onboarding twice as long as a competitor's. Deal is live and competitive.",\
@@ -93,10 +96,17 @@ the problems they face.
 sector: one of fintech | logistics | retail | healthcare | manufacturing | software | education | ict | other
   Infer from company/industry context; map any unlisted industry to "other".
 
-icp: object — company_size, deal_size
-  Infer from all available signals together. When signals conflict (e.g. a "Small" label but \
-high spend volume), weigh them and pick the most plausible value. Use domain knowledge about \
-what companies of this type typically look like.
+deal_size: one of small | medium | large
+  Estimated deal value. Infer from company size, amount fields, team size, or project scope. \
+When signals conflict, weigh them and pick the most plausible value.
+
+client_type: one of individual | startup | corporate
+  individual — solo buyer or 1-2 person team; startup — early-stage company with informal \
+process; corporate — established organisation with budget owners and approval chain.
+
+tech_maturity: one of non-tech | semi-tech | technical
+  non-tech needs full guidance on requirements; technical can define specs and review code. \
+Infer from how the customer communicates, what they ask for, and their role.
 
 funnel_stage: one of awareness | consideration | negotiation | won | lost
   Where this customer sits in the buying relationship — not the status of a ticket or a CRM \
@@ -127,6 +137,11 @@ A bug report or ops ticket is an indirect signal about customer health — score
 
 source_id: unique identifier from the record's own fields
 
+source_url: str
+  If a full http/https URL is explicitly present in the record, use it exactly. Otherwise \
+construct a fictional demo URL: https://example.com/{{source}}/{{source_id}} where {{source}} \
+is the source name and {{source_id}} is the value you chose. Always return a full URL — never null.
+
 embedding_text: str
   2–4 sentence natural-language summary of this record, written to maximise semantic search \
 relevance when embedded. Weave together: who the company is, the core problem they face, \
@@ -153,8 +168,9 @@ explicit geographic mentions. When the record provides no usable signal, return 
 Constraints:
 - market: international | korea | japan | vietnam
 - sector: fintech | logistics | retail | healthcare | manufacturing | software | education | ict | other
-- company_size: 1-10 | 11-50 | 50-200 | 200-1000 | 1000+
 - deal_size: small | medium | large
+- client_type: individual | startup | corporate
+- tech_maturity: non-tech | semi-tech | technical
 - Return [] for empty lists
 - record_date must be exactly YYYY-MM-DD format or null — no other format accepted
 

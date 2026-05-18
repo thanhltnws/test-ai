@@ -8,7 +8,6 @@ Input:
       redmine.json
       outlook_email.json
       teams_transcript.json
-      sharepoint.json
 
 Output:
     backend/seed/data/signals_seed.json
@@ -19,9 +18,6 @@ Defaults:
 
 Usage:
     python backend/seed/generate.py
-    python backend/seed/generate.py --limit 10
-    python backend/seed/generate.py --provider bedrock
-    python backend/seed/generate.py --source redmine --source outlook_email
 """
 
 from __future__ import annotations
@@ -237,6 +233,7 @@ def get_extractor(provider: str) -> GeminiExtractor | BedrockExtractor:
     return GeminiExtractor()
 
 
+
 def _has_signal(row: dict) -> bool:
     return bool(
         row.get("embedding_text")
@@ -276,18 +273,19 @@ def normalize_extraction(ext: dict) -> dict:
     if not isinstance(ext, dict):
         ext = {}
     return {
-        "pain_points": ext.get("pain_points") or [],
-        "objections": ext.get("objections") or [],
-        "use_cases": ext.get("use_cases") or [],
-        "market": (ext.get("market") or "international").strip().lower(),
-        "sector": (ext.get("sector") or "other").strip().lower(),
-        "icp": {k: v for k, v in (ext.get("icp") if isinstance(ext.get("icp"), dict) else {}).items() if k in ("company_size", "deal_size")},
-        "funnel_stage": ext.get("funnel_stage") or "consideration",
-        "confidence_score": round(float(ext.get("confidence_score") or 0.5), 2),
-        "source_id": str(ext.get("source_id") or "").strip(),
-        "source_url": str(ext.get("source_url") or "").strip() or None,
+        "pain_points":   ext.get("pain_points") or [],
+        "objections":    ext.get("objections") or [],
+        "use_cases":     ext.get("use_cases") or [],
+        "market":        (ext.get("market") or "international").strip().lower(),
+        "sector":        (ext.get("sector") or "other").strip().lower(),
+        "deal_size":     (ext.get("deal_size") or "medium").strip().lower(),
+        "client_type":   (ext.get("client_type") or "startup").strip().lower(),
+        "tech_maturity": (ext.get("tech_maturity") or "semi-tech").strip().lower(),
+        "funnel_stage":  ext.get("funnel_stage") or "consideration",
+        "source_id":     str(ext.get("source_id") or "").strip(),
+        "source_url":    str(ext.get("source_url") or "").strip() or None,
         "embedding_text": str(ext.get("embedding_text") or "").strip(),
-        "record_date": _parse_record_date(ext.get("record_date")),
+        "record_date":   _parse_record_date(ext.get("record_date")),
     }
 
 
@@ -296,7 +294,6 @@ def build_signal_row(
     raw_path: Path,
     row_idx: int,
     raw_row: dict,
-    raw_text: str,
     ext: dict,
 ) -> dict:
     normalized = normalize_extraction(ext)
@@ -307,21 +304,21 @@ def build_signal_row(
     )
 
     return {
-        "source": source,
-        "source_id": source_id,
-        "source_url": normalized["source_url"],
-        "raw_text": raw_text,
-        "pain_points": normalized["pain_points"],
-        "objections": normalized["objections"],
-        "use_cases": normalized["use_cases"],
-        "market": normalized["market"],
-        "sector": normalized["sector"],
-        "icp": normalized["icp"],
-        "funnel_stage": normalized["funnel_stage"],
-        "confidence_score": normalized["confidence_score"],
+        "source":        source,
+        "source_id":     source_id,
+        "source_url":    normalized["source_url"],
+        "pain_points":   normalized["pain_points"],
+        "objections":    normalized["objections"],
+        "use_cases":     normalized["use_cases"],
+        "deal_size":     normalized["deal_size"],
+        "client_type":   normalized["client_type"],
+        "tech_maturity": normalized["tech_maturity"],
+        "market":        normalized["market"],
+        "sector":        normalized["sector"],
+        "funnel_stage":  normalized["funnel_stage"],
         "embedding_text": normalized["embedding_text"],
-        "record_date": normalized["record_date"] or _fallback_date_from_raw(raw_row),
-        "ingested_at": datetime.now(timezone.utc).isoformat(),
+        "record_date":   normalized["record_date"] or _fallback_date_from_raw(raw_row),
+        "ingested_at":   datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -348,8 +345,8 @@ def process_source_file(
             while len(extractions) < len(batch):
                 extractions.append({})
 
-            for (row_idx, raw_row, raw_text), ext in zip(batch, extractions):
-                row = build_signal_row(source, path, row_idx, raw_row, raw_text, ext)
+            for (row_idx, raw_row, _), ext in zip(batch, extractions):
+                row = build_signal_row(source, path, row_idx, raw_row, ext)
                 if _has_signal(row):
                     records.append(row)
 

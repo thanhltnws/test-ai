@@ -28,14 +28,16 @@ S3 raw/{source}/{date}/{ts}.json
 | `pain_points` | `TEXT[]` | LLM | Vấn đề thực sự của customer, inferred từ signal |
 | `objections` | `TEXT[]` | LLM | Chỉ lấy từ voice của prospect, không phải vendor ghi nhận |
 | `use_cases` | `TEXT[]` | LLM | Cách customer dùng hoặc có thể dùng sản phẩm |
-| `icp` | `JSONB` | LLM | `company_size`, `deal_size` |
+| `deal_size` | `TEXT` | LLM | `small` · `medium` · `large` |
+| `client_type` | `TEXT` | LLM | `individual` · `startup` · `corporate` |
+| `tech_maturity` | `TEXT` | LLM | `non-tech` · `semi-tech` · `technical` |
 | `funnel_stage` | `TEXT` | LLM | `awareness` · `consideration` · `negotiation` · `won` · `lost` |
-| `confidence_score` | `NUMERIC` | LLM | 0.0–1.0, self-reported theo evidence thickness |
 | `source_id` | `TEXT` | LLM | Unique ID từ chính record — fallback về hash nếu thiếu |
+| `source_url` | `TEXT` | LLM | URL gốc nếu có; nếu không, fictional demo URL dạng `https://example.com/{source}/{source_id}` |
 | `embedding_text` | `TEXT` | LLM | 2–4 câu summary tối ưu cho semantic search |
 | `record_date` | `DATE` | LLM + fallback | Date ngữ nghĩa nhất trong record; fallback về candidate fields trong raw nếu LLM không trả |
 | `market` | `TEXT` | LLM | `vietnam` · `japan` · `korea` · `international` — target geographic market |
-| `sector` | `TEXT` | LLM | Top-level column — không nằm trong `icp`; extracted trực tiếp để index và filter hiệu quả |
+| `sector` | `TEXT` | LLM | `fintech` · `logistics` · `retail` · `healthcare` · `manufacturing` · `software` · `education` · `ict` · `other` |
 
 ---
 
@@ -68,11 +70,11 @@ Các record type khác nhau (marketing lead, CRM profile, ops ticket) cho signal
 **Tại sao `objections` chỉ lấy từ voice của prospect?**
 CRM tags, ticket descriptions, và scoring labels phản ánh góc nhìn của vendor, không phải prospect. Lẫn hai nguồn này tạo ra false objections làm sai lệch sales analysis.
 
-**Tại sao `sector` và `market` là top-level column thay vì field trong `icp`?**
-Cả hai cần indexed filtering (Dashboard filter, RAG metadata filter) — không thể index trực tiếp trên JSONB field. `sector` và `market` được extract thẳng thành column riêng; `icp` chỉ còn giữ `company_size` và `deal_size` là hai field chỉ dùng cho LLM narrative, không cần filter trực tiếp.
+**Tại sao `deal_size`, `client_type`, `tech_maturity` là flat column thay vì gom vào `icp` JSONB?**
+Cả ba cần indexed filtering trực tiếp (Dashboard filter, RAG metadata filter). JSONB không thể index theo field con hiệu quả. Flat columns cũng làm CHECK constraint và Pydantic validation đơn giản hơn. `icp` JSONB đã bị loại bỏ hoàn toàn.
 
-**Tại sao `market` là top-level column thay vì field trong `icp`?**
-`market` cần indexed filtering (Dashboard filter theo thị trường, RAG metadata filter) — không thể index trực tiếp trên JSONB field. `region` từng nằm trong `icp` nhưng đã bị loại bỏ khi `market` được promote thành column riêng với enum cụ thể (`vietnam` · `japan` · `korea` · `international`).
+**Tại sao `sector` và `market` là top-level column?**
+Cùng lý do — cần indexed filtering. `sector` và `market` được extract thẳng thành column riêng từ đầu, không qua JSONB.
 
 ---
 
@@ -90,7 +92,7 @@ Nếu response trả ít hơn số records trong batch, handler pad bằng `_Ext
 
 ## Validation và noise filter
 
-**Pydantic validation** (`_Extraction`, `_ICP`): enforce enum values cho `funnel_stage`, `sector`, `company_size`, `deal_size`, `market`. Giá trị ngoài enum bị coerce về default thay vì raise exception — giữ record với phần data hợp lệ thay vì bỏ cả record.
+**Pydantic validation** (`_Extraction`): enforce enum values cho `funnel_stage`, `sector`, `deal_size`, `client_type`, `tech_maturity`, `market`. Giá trị ngoài enum bị coerce về default thay vì raise exception — giữ record với phần data hợp lệ thay vì bỏ cả record.
 
 **Noise filter** (`_has_signal`): record không có `embedding_text`, `pain_points`, `use_cases`, hoặc `objections` bị drop trước khi insert. Ngăn data rỗng vào store làm nhiễu search và dashboard.
 

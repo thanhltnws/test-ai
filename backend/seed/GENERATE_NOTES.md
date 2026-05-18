@@ -84,6 +84,41 @@ Nếu cập nhật code seed/import sau này, ưu tiên giữ nguyên nguyên t�
 
 ---
 
+## Kết quả generate thực tế (lần chạy 2026-05-19 — 30 records, May 2026)
+
+| Metric | Giá trị | Nhận xét |
+| --- | --- | --- |
+| Total raw records | 30 | 5 sources (bỏ sharepoint) |
+| Signals sau noise filter | 27 | 3 bị drop: redmine 5002 (infra), 5004 (bug nội bộ), mail_10005 (all-hands) |
+| Schema fields | Đúng | Flat ICP, không có `raw_text`/`confidence_score`/`icp` |
+| `funnel_stage` | OK | CLOSED_WON → `won`; open ticket → `consideration` đúng |
+| Multilingual | OK | JP/KR transcript xử lý được |
+
+### Known issues (chưa fix — nhắc lại sau)
+
+**1. `source_url` sai cho 3 records của twenty_crm**
+
+LLM dùng field `entity` của record (`deal`, `contact`, `activity`) thay vì source subfolder name khi construct URL:
+
+| source_id | Output thực tế | Đúng phải là |
+| --- | --- | --- |
+| deal_3000 | `example.com/deal/deal_3000` | `example.com/twenty_crm/deal_3000` |
+| deal_3004 | `example.com/contact/deal_3004` | `example.com/twenty_crm/deal_3004` |
+| deal_3005 | `example.com/activity/deal_3005` | `example.com/twenty_crm/deal_3005` |
+
+**Cách fix:** code-level trong `build_signal_row()` — `source` và `source_id` đã biết, validate/reconstruct URL nếu không khớp pattern. Không cần thay prompt.
+
+**2. `market` sai / không nhất quán cho Finamo KK**
+
+- redmine/5000: `vietnam` thay vì `japan` — LLM đọc ngôn ngữ tiếng Việt của notes nội bộ thay vì tên công ty
+- twenty_crm/deal_3000, deal_3004: `international` thay vì `japan` — record không có country/currency field rõ ràng, suffix `KK` không được catch nhất quán
+
+Các source khác (hubspot, outlook, teams) ra đúng `japan`.
+
+**Cách fix:** context file (`context.json` hoặc `context.md`) trong subfolder với mapping company → market. Prompt đã support `context_section` sẵn — không cần thay code.
+
+---
+
 ## TODO
 
 ### run_batch.py: dynamic time range from DB

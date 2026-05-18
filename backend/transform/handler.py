@@ -53,41 +53,45 @@ _DB_CONN = None
 
 # ── Pydantic output schema ────────────────────────────────────────────────────
 
-_VALID_STAGES        = {"awareness", "consideration", "negotiation", "won", "lost"}
-_VALID_SECTORS       = {"fintech", "logistics", "retail", "healthcare", "manufacturing",
-                        "software", "education", "ict", "other"}
-_VALID_COMPANY_SIZES = {"1-10", "11-50", "50-200", "200-1000", "1000+"}
-_VALID_DEAL_SIZES    = {"small", "medium", "large"}
-_VALID_MARKETS       = {"international", "korea", "japan", "vietnam"}
+_VALID_STAGES          = {"awareness", "consideration", "negotiation", "won", "lost"}
+_VALID_SECTORS         = {"fintech", "logistics", "retail", "healthcare", "manufacturing",
+                          "software", "education", "ict", "other"}
+_VALID_DEAL_SIZES      = {"small", "medium", "large"}
+_VALID_MARKETS         = {"international", "korea", "japan", "vietnam"}
+_VALID_CLIENT_TYPES    = {"individual", "startup", "corporate"}
+_VALID_TECH_MATURITIES = {"non-tech", "semi-tech", "technical"}
 
 
-class _ICP(BaseModel):
-    company_size: str = "50-200"
-    deal_size:    str = "medium"
-
-    @field_validator("company_size")
-    @classmethod
-    def _v_company_size(cls, v: str) -> str:
-        return v if v in _VALID_COMPANY_SIZES else "50-200"
+class _Extraction(BaseModel):
+    pain_points:      list[str]  = Field(default_factory=list)
+    objections:       list[str]  = Field(default_factory=list)
+    use_cases:        list[str]  = Field(default_factory=list)
+    deal_size:        str        = "medium"
+    client_type:      str        = "startup"
+    tech_maturity:    str        = "semi-tech"
+    funnel_stage:     str        = "consideration"
+    confidence_score: float      = 0.5
+    source_id:        str        = ""
+    source_url:       str        = ""
+    embedding_text:   str        = ""
+    record_date:      str | None = None
+    market:           str        = "international"
+    sector:           str        = "other"
 
     @field_validator("deal_size")
     @classmethod
     def _v_deal_size(cls, v: str) -> str:
         return v if v in _VALID_DEAL_SIZES else "medium"
 
+    @field_validator("client_type")
+    @classmethod
+    def _v_client_type(cls, v: str) -> str:
+        return v if v in _VALID_CLIENT_TYPES else "startup"
 
-class _Extraction(BaseModel):
-    pain_points:      list[str] = Field(default_factory=list)
-    objections:       list[str] = Field(default_factory=list)
-    use_cases:        list[str] = Field(default_factory=list)
-    icp:              _ICP      = Field(default_factory=_ICP)
-    funnel_stage:     str       = "consideration"
-    confidence_score: float     = 0.5
-    source_id:        str       = ""
-    embedding_text:   str       = ""
-    record_date:      str | None = None
-    market:           str       = "international"
-    sector:           str       = "other"
+    @field_validator("tech_maturity")
+    @classmethod
+    def _v_tech_maturity(cls, v: str) -> str:
+        return v if v in _VALID_TECH_MATURITIES else "semi-tech"
 
     @field_validator("funnel_stage")
     @classmethod
@@ -175,26 +179,27 @@ def _insert_signals(rows: list[dict]) -> tuple[int, dict[str, str]]:
             cur.execute(
                 """
                 INSERT INTO signals (
-                    id, source, source_id, source_url, raw_text,
-                    pain_points, objections, use_cases, icp,
-                    funnel_stage, confidence_score, embedding_text,
+                    id, source, source_id, source_url,
+                    pain_points, objections, use_cases,
+                    deal_size, client_type, tech_maturity,
+                    funnel_stage, embedding_text,
                     record_date, market, sector, ingested_at, extracted_at
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (source, source_id) DO UPDATE SET
-                    source_url       = EXCLUDED.source_url,
-                    raw_text         = EXCLUDED.raw_text,
-                    pain_points      = EXCLUDED.pain_points,
-                    objections       = EXCLUDED.objections,
-                    use_cases        = EXCLUDED.use_cases,
-                    icp              = EXCLUDED.icp,
-                    funnel_stage     = EXCLUDED.funnel_stage,
-                    confidence_score = EXCLUDED.confidence_score,
-                    embedding_text   = EXCLUDED.embedding_text,
-                    record_date      = EXCLUDED.record_date,
-                    market           = EXCLUDED.market,
-                    sector           = EXCLUDED.sector,
-                    extracted_at     = EXCLUDED.extracted_at
+                    source_url     = EXCLUDED.source_url,
+                    pain_points    = EXCLUDED.pain_points,
+                    objections     = EXCLUDED.objections,
+                    use_cases      = EXCLUDED.use_cases,
+                    deal_size      = EXCLUDED.deal_size,
+                    client_type    = EXCLUDED.client_type,
+                    tech_maturity  = EXCLUDED.tech_maturity,
+                    funnel_stage   = EXCLUDED.funnel_stage,
+                    embedding_text = EXCLUDED.embedding_text,
+                    record_date    = EXCLUDED.record_date,
+                    market         = EXCLUDED.market,
+                    sector         = EXCLUDED.sector,
+                    extracted_at   = EXCLUDED.extracted_at
                 RETURNING id
                 """,
                 (
@@ -202,13 +207,13 @@ def _insert_signals(rows: list[dict]) -> tuple[int, dict[str, str]]:
                     row["source"],
                     row["source_id"],
                     row["source_url"],
-                    row["raw_text"],
                     row.get("pain_points") or [],
                     row.get("objections") or [],
                     row.get("use_cases") or [],
-                    json.dumps(row.get("icp") or {}),
+                    row.get("deal_size") or "medium",
+                    row.get("client_type") or "startup",
+                    row.get("tech_maturity") or "semi-tech",
                     row.get("funnel_stage"),
-                    row.get("confidence_score"),
                     str(row.get("embedding_text") or "").strip() or None,
                     row.get("record_date") or None,
                     row.get("market") or "international",
@@ -377,6 +382,7 @@ def _row_to_text(rec: dict) -> str:
     return "\n".join(lines).strip()
 
 
+
 _DATE_FALLBACK_FIELDS = (
     "closedate", "close_date", "createdAt", "created_at", "createdate",
     "created_on", "updated_on", "date", "timestamp", "receivedDateTime",
@@ -526,22 +532,22 @@ def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> lis
             extractions = _do_retry(batch, extractions, source, client, model_id, use_gemini)
             for rec, ext in zip(batch, extractions):
                 results.append({
-                    "id":               str(uuid.uuid4()),
-                    "source":           rec["source"],
-                    "source_id":        ext.source_id or rec["source_id"],
-                    "source_url":       rec["source_url"],
-                    "raw_text":         rec["raw_text"],
-                    "pain_points":      ext.pain_points,
-                    "objections":       ext.objections,
-                    "use_cases":        ext.use_cases,
-                    "icp":              ext.icp.model_dump(),  # company_size, deal_size only
-                    "funnel_stage":     ext.funnel_stage,
-                    "confidence_score": ext.confidence_score,
-                    "embedding_text":   ext.embedding_text,
-                    "record_date":      ext.record_date or rec.get("_date_fallback") or None,
-                    "market":           ext.market,
-                    "sector":           ext.sector,
-                    "ingested_at":      rec["ingested_at"],  # from S3 eventTime, per-record
+                    "id":            str(uuid.uuid4()),
+                    "source":        rec["source"],
+                    "source_id":     ext.source_id or rec["source_id"],
+                    "source_url":    ext.source_url or rec["source_url"],
+                    "pain_points":   ext.pain_points,
+                    "objections":    ext.objections,
+                    "use_cases":     ext.use_cases,
+                    "deal_size":     ext.deal_size,
+                    "client_type":   ext.client_type,
+                    "tech_maturity": ext.tech_maturity,
+                    "funnel_stage":  ext.funnel_stage,
+                    "embedding_text": ext.embedding_text,
+                    "record_date":   ext.record_date or rec.get("_date_fallback") or None,
+                    "market":        ext.market,
+                    "sector":        ext.sector,
+                    "ingested_at":   rec["ingested_at"],
                 })
             print(f"  batch {i}/{len(batches)} OK ({len(batch)} records)")
         except Exception as exc:
