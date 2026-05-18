@@ -135,6 +135,7 @@ The following decisions are architectural — not yet in decisions.md:
 - **Two-layer idempotency in Transform Lambda** — S3 object tag `processed=true` is the file-level guard: on duplicate S3 events the tag is checked first and the Lambda returns early (Bedrock never called). `ON CONFLICT (source, source_id) DO UPDATE` in Aurora is the record-level guard: re-processing the same file overwrites existing rows with the latest extraction result rather than creating duplicates. The UPSERT semantics are intentional — re-running with an updated prompt or model produces better extractions that should replace the old ones.
 - **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich the Bedrock prompt with context from Aurora (structured) and pgvector (semantic) before generating output.
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
+- **Embedding model must be consistent between write and query** — the model used to embed `embedding_text` when writing to `signal_embeddings` / `insight_embeddings` must be the same model used to embed the user question at query time in the Chat Lambda. Mixing models produces incorrect cosine similarity with no error or warning. Full rule and checklist in [`docs/chat_optimization.md`](chat_optimization.md).
 
 ---
 
