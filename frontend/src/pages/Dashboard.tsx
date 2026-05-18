@@ -13,6 +13,22 @@ const PERIODS: { value: PeriodType; label: string }[] = [
   { value: 'yearly', label: 'Yearly' },
 ]
 
+function getPeriodOptions(period: PeriodType): { value: string; label: string }[] {
+  const now = new Date()
+  const count = period === 'quarterly' ? 8 : period === 'yearly' ? 5 : 12
+  const options: { value: string; label: string }[] = []
+  for (let i = 0; i < count; i++) {
+    const d = new Date(now)
+    if (period === 'monthly') d.setMonth(d.getMonth() - i)
+    else if (period === 'quarterly') d.setMonth(d.getMonth() - i * 3)
+    else d.setFullYear(d.getFullYear() - i)
+    const anchor = getPeriodStart(period, toISODate(d))
+    if (!options.find(o => o.value === anchor))
+      options.push({ value: anchor, label: getPeriodLabel(period, anchor) })
+  }
+  return options
+}
+
 const MARKETS = [
   { value: '' as const, label: 'All Markets' },
   { value: 'vietnam' as const, label: 'Vietnam' },
@@ -41,14 +57,6 @@ function getPeriodStart(period: PeriodType, isoDate: string): string {
   return `${d.getFullYear()}-01-01`
 }
 
-function navigatePeriod(period: PeriodType, isoDate: string, dir: -1 | 1): string {
-  const d = new Date(isoDate)
-  if (period === 'weekly') d.setDate(d.getDate() + dir * 7)
-  else if (period === 'monthly') d.setMonth(d.getMonth() + dir)
-  else if (period === 'quarterly') d.setMonth(d.getMonth() + dir * 3)
-  else d.setFullYear(d.getFullYear() + dir)
-  return getPeriodStart(period, toISODate(d))
-}
 
 function getPeriodLabel(period: PeriodType, isoDate: string): string {
   const d = new Date(isoDate)
@@ -65,17 +73,6 @@ function getPeriodLabel(period: PeriodType, isoDate: string): string {
 
 
 
-const SECTOR_COLORS: Record<string, string> = {
-  education:     '#7c3aed',
-  fintech:       '#0d9488',
-  retail:        '#ea580c',
-  healthcare:    '#db2777',
-  software:      '#2563eb',
-  manufacturing: '#b45309',
-  logistics:     '#0369a1',
-  ict:           '#7c3aed',
-  other:         '#6b7280',
-}
 
 const FUNNEL_COLORS: Record<string, string> = {
   awareness: '#93c5fd',
@@ -103,14 +100,6 @@ const card: React.CSSProperties = {
   boxShadow: 'var(--shadow)',
 }
 
-const statCard = (accent: string): React.CSSProperties => ({
-  background: 'var(--surface)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius)',
-  padding: '20px 24px',
-  boxShadow: 'var(--shadow)',
-  borderTop: `3px solid ${accent}`,
-})
 
 export default function Dashboard() {
   const [data, setData] = useState<SummaryData | null>(null)
@@ -121,19 +110,11 @@ export default function Dashboard() {
   const [periodAnchor, setPeriodAnchor] = useState<string>(() => getPeriodStart('monthly', toISODate(new Date())))
   const [market, setMarket] = useState<string>('')
   const [retryTick, setRetryTick] = useState(0)
+  const [draftPeriod, setDraftPeriod] = useState<PeriodType>('monthly')
+  const [draftAnchor, setDraftAnchor] = useState<string>(() => getPeriodStart('monthly', toISODate(new Date())))
+  const [draftMarket, setDraftMarket] = useState<string>('')
   const [noData, setNoData] = useState(false)
-
-  const icpLayout = useMemo(() => {
-    if (!data) return null
-    const total = data.icp_summary.reduce((s, x) => s + x.count, 0)
-    const sorted = [...data.icp_summary].sort((a, b) => b.count - a.count)
-    const main = sorted[0]
-    const topRight = sorted.slice(1, 4)
-    const bottom = sorted.slice(4)
-    const topTotal = sorted.slice(0, 4).reduce((s, x) => s + x.count, 0)
-    const bottomTotal = bottom.reduce((s, x) => s + x.count, 0)
-    return { total, main, topRight, bottom, topTotal, bottomTotal }
-  }, [data])
+  const [labelTooltip, setLabelTooltip] = useState<{ item: { fullLabel: string; count: number; insight: string }; x: number; y: number } | null>(null)
 
   const dedupedPainPoints = useMemo(() => {
     if (!data) return []
@@ -218,11 +199,6 @@ export default function Dashboard() {
   )
   if (!data) return null
 
-  const total = data.funnel_distribution.reduce((s, d) => s + d.count, 0)
-  const won = data.funnel_distribution.find(d => d.stage === 'won')?.count ?? 0
-  const lost = data.funnel_distribution.find(d => d.stage === 'lost')?.count ?? 0
-  const closed = won + lost
-  const closeRate = closed ? Math.round((won / closed) * 100) : 0
 
 
   return (
@@ -233,13 +209,13 @@ export default function Dashboard() {
         <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 4, fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.3px' }}>Customer Insight Overview</h1>
         {/* Filter bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-          {/* Period selector */}
+          {/* Period type */}
           <select
-            value={period}
+            value={draftPeriod}
             onChange={e => {
               const p = e.target.value as PeriodType
-              setPeriod(p)
-              setPeriodAnchor(getPeriodStart(p, toISODate(new Date())))
+              setDraftPeriod(p)
+              setDraftAnchor(getPeriodStart(p, toISODate(new Date())))
             }}
             style={inputStyle}
           >
@@ -248,39 +224,42 @@ export default function Dashboard() {
             ))}
           </select>
 
-          {/* Period navigator */}
-          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', borderRadius: 7, overflow: 'hidden', background: 'var(--surface)' }}>
-            <button
-              onClick={() => setPeriodAnchor(a => navigatePeriod(period, a, -1))}
-              style={{ padding: '7px 10px', fontSize: 14, color: 'var(--text-muted)', borderRight: '1px solid var(--border)' }}
-            >‹</button>
-            <span style={{ padding: '7px 14px', fontSize: 13, color: 'var(--text)', whiteSpace: 'nowrap', minWidth: 130, textAlign: 'center' }}>
-              {getPeriodLabel(period, periodAnchor)}
-            </span>
-            <button
-              onClick={() => setPeriodAnchor(a => navigatePeriod(period, a, 1))}
-              style={{ padding: '7px 10px', fontSize: 14, color: 'var(--text-muted)', borderLeft: '1px solid var(--border)' }}
-            >›</button>
-          </div>
-
-          {/* Market selector */}
+          {/* Period dropdown */}
           <select
-            value={market}
-            onChange={e => setMarket(e.target.value)}
+            value={draftAnchor}
+            onChange={e => setDraftAnchor(e.target.value)}
+            style={{ ...inputStyle, minWidth: 140 }}
+          >
+            {getPeriodOptions(draftPeriod).map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+
+          {/* Market */}
+          <select
+            value={draftMarket}
+            onChange={e => setDraftMarket(e.target.value)}
             style={inputStyle}
           >
             {MARKETS.map(m => (
               <option key={m.value} value={m.value}>{m.label}</option>
             ))}
           </select>
-          {(market !== '') && (
-            <button
-              onClick={() => setMarket('')}
-              style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', padding: '7px 12px', borderRadius: 7, fontSize: 13 }}
-            >
-              Reset
-            </button>
-          )}
+
+          {/* Apply */}
+          <button
+            onClick={() => {
+              setPeriod(draftPeriod)
+              setPeriodAnchor(draftAnchor)
+              setMarket(draftMarket)
+            }}
+            style={{
+              background: 'var(--accent)', color: '#fff',
+              padding: '7px 18px', borderRadius: 7, fontSize: 13, fontWeight: 600,
+            }}
+          >
+            Apply
+          </button>
         </div>
       </div>
 
@@ -296,19 +275,42 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-        {[
-          { label: 'Total Insights', value: total, accent: '#2563eb' },
-          { label: 'Close Rate', value: `${closeRate}%`, accent: '#16a34a' },
-          { label: 'Pain Points', value: dedupedPainPoints.length, accent: '#d97706' },
-          { label: 'ICP Segments', value: data.icp_summary.length, accent: '#7c3aed' },
-        ].map(({ label, value, accent }) => (
-          <div key={label} style={statCard(accent)}>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>{label}</div>
-            <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--text)' }}>{value}</div>
-          </div>
-        ))}
+      {/* Recommendations */}
+      <div style={card}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>AI Recommendations</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          {([
+            { key: 'sales', label: '🎯 Sales', items: recs?.sales ?? [], bg: 'var(--accent-bg)', border: '#bfdbfe', accent: 'var(--accent)' },
+            { key: 'marketing', label: '📣 Marketing', items: recs?.marketing ?? [], bg: '#f0fdf4', border: '#bbf7d0', accent: '#16a34a' },
+          ] as const).map(col => (
+            <div key={col.key}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: col.accent, marginBottom: 10, letterSpacing: '0.03em' }}>
+                {col.label}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {col.items.map((rec, i) => (
+                  <div key={i} style={{
+                    display: 'flex', gap: 10,
+                    padding: '12px 14px',
+                    background: col.bg,
+                    border: `1px solid ${col.border}`,
+                    borderRadius: 8,
+                    fontSize: 13,
+                    lineHeight: 1.6,
+                  }}>
+                    <span style={{
+                      background: col.accent, color: '#fff',
+                      borderRadius: '50%', width: 20, height: 20, minWidth: 20,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 10, fontWeight: 700, marginTop: 1, flexShrink: 0,
+                    }}>{i + 1}</span>
+                    <span style={{ color: 'var(--text)' }}>{rec}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Row: Funnel + Pain Points */}
@@ -316,7 +318,7 @@ export default function Dashboard() {
 
         {/* Funnel Distribution */}
         <div style={{ ...card, display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 20 }}>Funnel Distribution</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 20 }}>Funnel Distribution</h2>
           <ResponsiveContainer width="100%" height={230}>
             <PieChart>
               <Pie
@@ -357,7 +359,7 @@ export default function Dashboard() {
         {/* Top Pain Points */}
         <div style={{ ...card, display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>Top Pain Points</h2>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>Top Pain Points</h2>
             <span style={{ fontSize: 11, color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 20, padding: '3px 10px', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
               <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
                 <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5"/>
@@ -376,11 +378,20 @@ export default function Dashboard() {
                 axisLine={false}
                 tickLine={false}
                 interval={0}
-                tick={(props: { x: string | number; y: string | number; payload: { value: string } }) => (
-                  <text x={props.x} y={props.y} dy={4} textAnchor="end" fill="var(--text)" fontSize={11}>
-                    {props.payload.value}
-                  </text>
-                )}
+                tick={(props: { x: string | number; y: string | number; index: number; payload: { value: string } }) => {
+                  const item = dedupedPainPoints[props.index]
+                  return (
+                    <text
+                      x={props.x} y={props.y} dy={4} textAnchor="end" fill="var(--text)" fontSize={11}
+                      style={{ cursor: 'default' }}
+                      onMouseEnter={e => item && setLabelTooltip({ item, x: e.clientX, y: e.clientY })}
+                      onMouseMove={e => setLabelTooltip(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : null)}
+                      onMouseLeave={() => setLabelTooltip(null)}
+                    >
+                      {props.payload.value}
+                    </text>
+                  )
+                }}
               />
               <Tooltip
                 content={({ active, payload }) => {
@@ -407,128 +418,97 @@ export default function Dashboard() {
 
       {/* ICP — Narrative + Treemap */}
       <div style={card}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 12 }}>Ideal Customer Profile (ICP)</h2>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Ideal Customer Profile (ICP)</h2>
 
         {/* Narrative callout */}
         {data.icp_narrative && (
           <div style={{
             marginBottom: 16, padding: '10px 14px',
-            background: '#f0fdf4', border: '1px solid #bbf7d0',
-            borderLeft: '3px solid #16a34a', borderRadius: 7,
-            fontSize: 12, fontWeight: 500, color: '#14532d', lineHeight: 1.6,
+            background: '#faf5ff', border: '1px solid #ede9fe',
+            borderLeft: '3px solid #7c3aed', borderRadius: 7,
+            fontSize: 12, fontWeight: 500, color: '#3b0764', lineHeight: 1.6,
           }}>
-            <div style={{ fontWeight: 700, fontSize: 11, color: '#16a34a', marginBottom: 5, letterSpacing: '0.06em' }}>
+            <div style={{ fontWeight: 700, fontSize: 11, color: '#7c3aed', marginBottom: 5, letterSpacing: '0.06em' }}>
               ICP ANALYSIS
             </div>
             {data.icp_narrative}
           </div>
         )}
 
-        {/* Treemap */}
-        {icpLayout && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, height: 160, borderRadius: 8, overflow: 'hidden' }}>
-            {/* Top row */}
-            <div style={{ display: 'flex', gap: 4, flex: icpLayout.topTotal }}>
-              {/* Main segment */}
-              {icpLayout.main && (() => {
-                const seg = icpLayout.main
-                const color = SECTOR_COLORS[seg.sector] ?? '#6b7280'
-                const pct = ((seg.count / icpLayout.total) * 100).toFixed(1)
-                return (
-                  <div key="main" style={{ flex: Math.sqrt(seg.count), background: color, borderRadius: 4, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
-                    <div>
-                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 13 }}>{seg.sector}</div>
-                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11, marginTop: 2 }}>{seg.deal_size} · {seg.company_size}</div>
-                    </div>
-                    <div>
-                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{pct}%</div>
-                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 22 }}>{seg.count}</div>
-                    </div>
-                  </div>
-                )
-              })()}
-              {/* Secondary segments */}
-              {icpLayout.topRight.map((seg, i) => {
-                const color = SECTOR_COLORS[seg.sector] ?? '#6b7280'
-                const pct = ((seg.count / icpLayout.total) * 100).toFixed(1)
-                return (
-                  <div key={i} style={{ flex: Math.sqrt(seg.count), background: color, borderRadius: 4, padding: 10, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
-                    <div>
-                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 12 }}>{seg.sector}</div>
-                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11, marginTop: 2 }}>{seg.deal_size}</div>
-                    </div>
-                    <div>
-                      <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{pct}%</div>
-                      <div style={{ color: '#fff', fontWeight: 700, fontSize: 20 }}>{seg.count}</div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Bottom row */}
-            {icpLayout.bottom.length > 0 && (
-              <div style={{ display: 'flex', gap: 4, flex: icpLayout.bottomTotal }}>
-                {icpLayout.bottom.map((seg, i) => {
-                  const color = SECTOR_COLORS[seg.sector] ?? '#6b7280'
-                  const pct = ((seg.count / icpLayout.total) * 100).toFixed(1)
-                  return (
-                    <div key={i} style={{ flex: seg.count, background: color, borderRadius: 4, padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
-                      <div>
-                        <div style={{ color: '#fff', fontWeight: 700, fontSize: 12 }}>{seg.sector}</div>
-                        <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{seg.deal_size} · {seg.company_size}</div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ color: 'rgba(255,255,255,0.92)', fontSize: 11 }}>{pct}%</div>
-                        <div style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>{seg.count}</div>
-                      </div>
-                    </div>
-                  )
-                })}
+        {/* Segment cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+          {[...data.icp_summary].sort((a, b) => b.count - a.count).map((seg, i) => (
+            <div key={i} style={{
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
+              borderLeft: i === 0 ? '3px solid var(--accent)' : '1px solid var(--border)',
+              borderRadius: 8,
+              padding: '12px 14px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+            }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)', textTransform: 'capitalize' }}>
+                  {seg.sector}
+                </div>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>#{i + 1}</span>
               </div>
-            )}
-          </div>
-        )}
-      </div>
 
-      {/* Recommendations */}
-      <div style={card}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 16 }}>AI Recommendations</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          {([
-            { key: 'sales', label: '🎯 Sales', items: recs?.sales ?? [], bg: 'var(--accent-bg)', border: '#bfdbfe', accent: 'var(--accent)' },
-            { key: 'marketing', label: '📣 Marketing', items: recs?.marketing ?? [], bg: '#f0fdf4', border: '#bbf7d0', accent: '#16a34a' },
-          ] as const).map(col => (
-            <div key={col.key}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: col.accent, marginBottom: 10, letterSpacing: '0.03em' }}>
-                {col.label}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {col.items.map((rec, i) => (
-                  <div key={i} style={{
-                    display: 'flex', gap: 10,
-                    padding: '12px 14px',
-                    background: col.bg,
-                    border: `1px solid ${col.border}`,
-                    borderRadius: 8,
-                    fontSize: 13,
-                    lineHeight: 1.6,
-                  }}>
-                    <span style={{
-                      background: col.accent, color: '#fff',
-                      borderRadius: '50%', width: 20, height: 20, minWidth: 20,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 10, fontWeight: 700, marginTop: 1, flexShrink: 0,
-                    }}>{i + 1}</span>
-                    <span style={{ color: 'var(--text)' }}>{rec}</span>
+              {/* Metadata */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 8px' }}>
+                {([
+                  { label: 'Employees', value: seg.company_size },
+                  { label: 'Deal size', value: seg.deal_size },
+                  ...(seg.region ? [{ label: 'Region', value: seg.region }] : []),
+                ] as { label: string; value: string }[]).map((row, j) => (
+                  <div key={j}>
+                    <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>
+                      {row.label}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text)', fontWeight: 500, textTransform: 'capitalize' }}>
+                      {row.value}
+                    </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Count */}
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, display: 'flex', alignItems: 'baseline', gap: 5 }}>
+                <span style={{ fontSize: 22, fontWeight: 700, color: 'var(--accent)' }}>{seg.count}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>deals</span>
               </div>
             </div>
           ))}
         </div>
       </div>
 
+      {/* Floating label tooltip for pain point Y-axis */}
+      {labelTooltip && (
+        <div style={{
+          position: 'fixed',
+          left: labelTooltip.x + 14,
+          top: labelTooltip.y - 10,
+          background: '#fff',
+          border: '1px solid var(--border)',
+          borderRadius: 8,
+          padding: '10px 14px',
+          fontSize: 13,
+          maxWidth: 300,
+          zIndex: 100,
+          pointerEvents: 'none',
+          boxShadow: 'var(--shadow-md)',
+        }}>
+          <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 6, lineHeight: 1.4 }}>{labelTooltip.item.fullLabel}</div>
+          <div style={{ color: 'var(--text-muted)', marginBottom: labelTooltip.item.insight ? 8 : 0 }}>Count: <strong style={{ color: 'var(--text)' }}>{labelTooltip.item.count}</strong></div>
+          {labelTooltip.item.insight && (
+            <div style={{ fontSize: 12, color: '#374151', lineHeight: 1.6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+              {labelTooltip.item.insight}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
