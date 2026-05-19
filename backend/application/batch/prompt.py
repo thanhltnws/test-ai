@@ -41,7 +41,7 @@ with exactly these 4 keys:
 
 Rules:
 - All narrative text fields (insight, summary, narrative, recommendations) must be written in Vietnamese
-- pain_points_summary.top_items: include all items from SQL data, sorted by count desc
+- pain_points_summary.top_items: group semantically similar pain points from SQL data into canonical themes (e.g. "Compliance complexity", "Timeline pressure"), sum their counts, return top 8-10 sorted by count desc
 - funnel_distribution.stages: preserve exact counts and pct from SQL input
 - icp_narrative.top_segments: top 5 segments by count from SQL input; use exact values from icp_breakdown
 - recommendations: 3-5 items each, grounded in both SQL aggregates and semantic context

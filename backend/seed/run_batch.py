@@ -152,6 +152,12 @@ def main() -> None:
         "yearly":    _yearly_periods(data_start, data_end),
     }
 
+    provider = os.environ.get("LLM_PROVIDER", "bedrock").strip().lower()
+    if provider == "gemini":
+        model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite-preview")
+    else:
+        model = os.environ.get("BEDROCK_MODEL_ID", "global.anthropic.claude-haiku-4-5-20251001-v1:0")
+    print(f"Provider: {provider}  Model: {model}")
     print(f"Data range from DB: {data_start} → {data_end}")
     total_periods = sum(len(v) for v in granularities.values())
     total_slices  = total_periods * len(MARKETS)
