@@ -10,7 +10,7 @@
     "probability": 60,
     "closeDate": "2026-06-30",
     "owner": "nam.nguyen",
-    "createdAt": "2026-05-02T09:00:00Z",
+    "createdAt": "2026-05-18T09:00:00Z",
     "source": "inbound",
     "services": [
       "custom_development",
@@ -21,12 +21,12 @@
       {
         "summary": "Buổi discovery call đầu tiên. Khách confirm budget khoảng $100-130k cho phase 1.",
         "type": "call",
-        "at": "2026-05-03T10:00:00Z"
+        "at": "2026-05-18T10:00:00Z"
       },
       {
         "summary": "Gửi technical proposal draft. Khách hỏi về kinh nghiệm tích hợp với core banking JP.",
         "type": "email",
-        "at": "2026-05-06T14:00:00Z"
+        "at": "2026-05-18T14:00:00Z"
       }
     ]
   },
@@ -41,7 +41,7 @@
     "probability": 40,
     "closeDate": "2026-07-15",
     "owner": "hoa.pham",
-    "createdAt": "2026-05-05T11:00:00Z",
+    "createdAt": "2026-05-18T11:00:00Z",
     "source": "referral",
     "services": [
       "mobile_development",
@@ -52,7 +52,7 @@
       {
         "summary": "Initial call. Khách hỏi về process bảo mật khi handle dữ liệu bệnh nhân.",
         "type": "call",
-        "at": "2026-05-07T09:30:00Z"
+        "at": "2026-05-18T15:30:00Z"
       }
     ]
   },
@@ -67,7 +67,7 @@
     "probability": 75,
     "closeDate": "2026-05-31",
     "owner": "nam.nguyen",
-    "createdAt": "2026-04-10T08:00:00Z",
+    "createdAt": "2026-05-19T08:00:00Z",
     "source": "marketing_handoff",
     "services": [
       "custom_development",
@@ -78,12 +78,12 @@
       {
         "summary": "Review commercial terms. Khách muốn rút ngắn payment milestone từ 4 xuống 3 giai đoạn.",
         "type": "meeting",
-        "at": "2026-05-08T14:00:00Z"
+        "at": "2026-05-19T09:00:00Z"
       },
       {
         "summary": "Khách confirm về việc cần hỗ trợ 6 tháng post-launch. Đang chờ legal review contract.",
         "type": "email",
-        "at": "2026-05-12T10:00:00Z"
+        "at": "2026-05-19T10:00:00Z"
       }
     ]
   }

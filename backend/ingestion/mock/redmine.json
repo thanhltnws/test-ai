@@ -1,5 +1,26 @@
 [
   {
+    "id": 5002,
+    "project": "INFRA",
+    "tracker": "Task",
+    "subject": "Upgrade Node.js 18 → 20 trên CI pipeline",
+    "description": "LTS support cho Node 18 kết thúc tháng 4. Cần upgrade để không bị security warning.",
+    "status": "Closed",
+    "priority": "Normal",
+    "author": "DevOps",
+    "assigned_to": "DevOps",
+    "updated_on": "2026-05-18T09:00:00+07:00",
+    "tags": [
+      "infra"
+    ],
+    "custom_fields": {
+      "sprint": null,
+      "env": "ci",
+      "client_name": null
+    },
+    "journals": []
+  },
+  {
     "id": 5000,
     "project": "FINAMO-PAY",
     "tracker": "Support",
@@ -9,7 +30,7 @@
     "priority": "Urgent",
     "author": "Khanh",
     "assigned_to": "Huy",
-    "updated_on": "2026-05-06T10:00:00+07:00",
+    "updated_on": "2026-05-18T10:00:00+07:00",
     "tags": [
       "customer-feedback",
       "compliance"
@@ -40,7 +61,7 @@
     "priority": "High",
     "author": "Linh",
     "assigned_to": "Minh",
-    "updated_on": "2026-05-09T14:30:00+07:00",
+    "updated_on": "2026-05-19T14:30:00+07:00",
     "tags": [
       "customer-feedback",
       "client-request"
@@ -56,26 +77,5 @@
         "notes": "Scope change so với ban đầu. Cần estimate thêm và confirm với khách về timeline impact."
       }
     ]
-  },
-  {
-    "id": 5002,
-    "project": "INFRA",
-    "tracker": "Task",
-    "subject": "Upgrade Node.js 18 → 20 trên CI pipeline",
-    "description": "LTS support cho Node 18 kết thúc tháng 4. Cần upgrade để không bị security warning.",
-    "status": "Closed",
-    "priority": "Normal",
-    "author": "DevOps",
-    "assigned_to": "DevOps",
-    "updated_on": "2026-05-03T09:00:00+07:00",
-    "tags": [
-      "infra"
-    ],
-    "custom_fields": {
-      "sprint": null,
-      "env": "ci",
-      "client_name": null
-    },
-    "journals": []
   }
 ]
