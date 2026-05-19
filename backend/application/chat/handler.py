@@ -26,7 +26,7 @@ from common.auth import auth_error, cors_headers, error_response, is_options_req
 from prompt import build_chat_prompt
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
-BEDROCK_INTENT_MODEL = "global.anthropic.claude-haiku-4-5-20251001"
+BEDROCK_INTENT_MODEL = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
 _VECTOR_TOP_K  = 8
 _INSIGHT_TOP_K = 4
 _MAX_QUESTION_CHARS = 2000
@@ -100,6 +100,24 @@ def _default_period_start(period: str, today: date) -> date:
     return today - timedelta(days=today.weekday())
 
 
+def _default_period_end(period: str, period_start: date) -> date:
+    from datetime import timedelta
+    if period == "weekly":
+        return period_start + timedelta(days=6)
+    if period == "monthly":
+        if period_start.month == 12:
+            return period_start.replace(day=31)
+        return period_start.replace(month=period_start.month + 1, day=1) - timedelta(days=1)
+    if period == "quarterly":
+        end_month = period_start.month + 2
+        if end_month >= 12:
+            return date(period_start.year, 12, 31)
+        return date(period_start.year, end_month + 1, 1) - timedelta(days=1)
+    if period == "yearly":
+        return period_start.replace(month=12, day=31)
+    return period_start + timedelta(days=6)
+
+
 # ── embeddings ─────────────────────────────────────────────────────────────────
 
 def _embed_gemini(texts: list[str]) -> list[list[float]]:
@@ -149,14 +167,20 @@ def _embed_queries(texts: list[str]) -> list[list[float]]:
 _INTENT_SCHEMA = '{"market": null|"vietnam"|"japan"|"korea"|"international", "sector": null|string, "period": "weekly"|"monthly"|"quarterly"|"yearly", "period_start": null|"YYYY-MM-DD", "use_latest": false|true, "result_type": null|"pain_points_summary"|"funnel_distribution"|"icp_narrative"|"recommendations", "funnel_stage": null|"awareness"|"consideration"|"negotiation"|"won"|"lost", "needs_citations": false|true, "out_of_scope": false|true}'
 
 _INTENT_PROMPT = """\
-Extract search intent from the user question below. Return ONLY valid JSON matching this schema:
+Today is {today}. Extract search intent from the user question below. Return ONLY valid JSON matching this schema:
 {schema}
 
 Rules:
 - market: null if not mentioned
 - sector: null if not mentioned; industry/domain string if clearly stated (e.g. "fintech", "healthcare")
 - period: "weekly" if not mentioned
-- period_start: null means "compute from today"; ISO date for specific period ("Q1 2026" → "2026-01-01", "tháng 3 2026" → "2026-03-01", "2026" → "2026-01-01")
+- period_start: ISO date (YYYY-MM-DD) for the start of the target period. Compute relative references using today's date:
+  "tuần này"/"this week" → Monday of current week
+  "tuần trước"/"last week" → Monday of last week
+  "tháng này"/"this month" → first day of current month
+  "tháng trước"/"last month" → first day of last month
+  Named period: "Q1 2026" → "2026-01-01", "tháng 3 2026" → "2026-03-01", "2026" → "2026-01-01"
+  null only if truly ambiguous (no time reference at all)
 - use_latest: true ONLY for "gần đây", "mới nhất", "latest", "most recent"
 - result_type: null if not clearly one of the four types
 - funnel_stage: null if not mentioned; one of the enum values if the question is about a specific stage
@@ -213,7 +237,7 @@ def _call_bedrock_small(prompt_text: str) -> str:
 
 
 def detect_intent(question: str) -> dict:
-    prompt_text = _INTENT_PROMPT.format(schema=_INTENT_SCHEMA, question=question)
+    prompt_text = _INTENT_PROMPT.format(schema=_INTENT_SCHEMA, today=date.today().isoformat(), question=question)
     try:
         if _llm_provider() == "gemini":
             raw = _call_gemini_small(prompt_text)
@@ -251,15 +275,6 @@ def rewrite_question(question: str, history: list[dict]) -> str:
 
 # ── db queries ─────────────────────────────────────────────────────────────────
 
-def _count_signals(conn) -> int:
-    cur = conn.cursor()
-    try:
-        cur.execute("SELECT COUNT(*) FROM signals")
-        return cur.fetchone()[0]
-    finally:
-        cur.close()
-
-
 def query_signal_embeddings(conn, question_vector: list[float], intent: dict) -> list[dict]:
     cur = conn.cursor()
     try:
@@ -274,6 +289,12 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict) ->
         if intent.get("funnel_stage"):
             where_clauses.append("s.funnel_stage = %s")
             where_params.append(intent["funnel_stage"])
+        if not intent.get("use_latest"):
+            period_start_val = intent.get("period_start")
+            ps = date.fromisoformat(period_start_val) if period_start_val else _default_period_start(intent["period"], date.today())
+            pe = _default_period_end(intent["period"], ps)
+            where_clauses.append("s.record_date >= %s AND s.record_date <= %s")
+            where_params.extend([ps, pe])
 
         where = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
         cur.execute(
@@ -311,6 +332,68 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict) ->
         cur.close()
 
 
+def query_insights_structured(conn, intent: dict) -> list[dict]:
+    """Structured retrieval: query insights directly by period/market/result_type.
+    Used when intent has a clear period anchor. Returns score=1.0 (exact match)."""
+    cur = conn.cursor()
+    try:
+        where_clauses = []
+        where_params = []
+
+        if intent.get("use_latest"):
+            where_clauses.append("i.computed_at = (SELECT MAX(computed_at) FROM insights)")
+        else:
+            period_start_val = intent.get("period_start")
+            anchor = date.fromisoformat(period_start_val) if period_start_val else _default_period_start(intent["period"], date.today())
+            where_clauses.append("i.period = %s")
+            where_params.append(intent["period"])
+            where_clauses.append("i.period_start <= %s AND i.period_end >= %s")
+            where_params.extend([anchor, anchor])
+
+        if intent.get("market"):
+            where_clauses.append("i.market = %s")
+            where_params.append(intent["market"])
+
+        if intent.get("result_type"):
+            where_clauses.append("i.result_type = %s")
+            where_params.append(intent["result_type"])
+
+        where = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+        cur.execute(
+            f"""
+            SELECT
+                i.id,
+                i.result_type,
+                i.period,
+                i.market,
+                ie.embedding_text
+            FROM insights i
+            LEFT JOIN insight_embeddings ie ON ie.insight_id = i.id
+            {where}
+            ORDER BY i.computed_at DESC
+            LIMIT %s
+            """,
+            (*where_params, _INSIGHT_TOP_K),
+        )
+        return [
+            {
+                "insight_id": str(r[0]),
+                "result_type": r[1],
+                "period": r[2],
+                "market": r[3],
+                "embedding_text": r[4],
+                "score": 1.0,
+            }
+            for r in cur.fetchall()
+            if r[4]
+        ]
+    except Exception as exc:
+        print(f"insights structured query skipped: {exc}")
+        return []
+    finally:
+        cur.close()
+
+
 def query_insight_embeddings(conn, question_vector: list[float], intent: dict) -> list[dict]:
     cur = conn.cursor()
     try:
@@ -322,13 +405,15 @@ def query_insight_embeddings(conn, question_vector: list[float], intent: dict) -
         else:
             period_start_val = intent.get("period_start")
             if period_start_val:
-                ps = date.fromisoformat(period_start_val)
+                anchor = date.fromisoformat(period_start_val)
             else:
-                ps = _default_period_start(intent["period"], date.today())
+                anchor = _default_period_start(intent["period"], date.today())
             where_clauses.append("i.period = %s")
             where_params.append(intent["period"])
-            where_clauses.append("i.period_start = %s")
-            where_params.append(ps)
+            # range overlap: find the insight window that contains the anchor date
+            # avoids off-by-1 errors when intent model returns a date within the correct week
+            where_clauses.append("i.period_start <= %s AND i.period_end >= %s")
+            where_params.extend([anchor, anchor])
 
         if intent.get("market"):
             where_clauses.append("i.market = %s")
@@ -409,9 +494,7 @@ def _call_bedrock(prompt_text: str) -> str:
         "messages": [{"role": "user", "content": prompt_text}],
     })
     resp = client.invoke_model(
-        modelId=os.environ.get(
-            "BEDROCK_MODEL_ID", "global.anthropic.claude-sonnet-4-6"
-        ),
+        modelId=os.environ.get("BEDROCK_CHAT_MODEL_ID", "global.anthropic.claude-sonnet-4-6"),
         body=body,
     )
     return json.loads(resp["body"].read())["content"][0]["text"]
@@ -460,25 +543,36 @@ def lambda_handler(event=None, context=None):
         return error_response(413, f"Question is too long. Max {_MAX_QUESTION_CHARS} characters.")
 
     import time
+    provider = _llm_provider()
+    intent_model = BEDROCK_INTENT_MODEL if provider == "bedrock" else f"gemini/{GEMINI_MODEL}"
+    answer_model = os.environ.get("BEDROCK_CHAT_MODEL_ID", "global.anthropic.claude-sonnet-4-6") if provider == "bedrock" else f"gemini/{GEMINI_MODEL}"
+
     print(f"\n{'='*60}")
-    print(f"[chat] question: {question!r}")
-    print(f"[chat] session_id: {session_id!r}  provider: {_llm_provider()}")
+    print(f"[chat]         question: {question!r}")
+    print(f"[chat]         session_id: {session_id!r}  provider: {provider}")
 
     history = _get_history(session_id) if session_id else []
-    standalone = rewrite_question(question, history) if history else question
+    if history:
+        standalone = rewrite_question(question, history)
+        if standalone != question:
+            print(f"[rewrite]      {question!r} → {standalone!r}")
+    else:
+        standalone = question
 
     conn = _pg_connect()
     try:
         t0 = time.perf_counter()
 
+        # parallel: intent detection (LLM call) + embedding
+        print(f"[llm/intent]   calling {intent_model} + embed in parallel …")
         with ThreadPoolExecutor(max_workers=2) as ex:
             f_intent = ex.submit(detect_intent, standalone)
             f_embed  = ex.submit(_embed_queries, [standalone])
         intent          = f_intent.result()
         question_vector = f_embed.result()[0]
         t_intent_embed  = time.perf_counter() - t0
-        print(f"[intent]   {intent}")
-        print(f"[timing]   intent+embed={t_intent_embed*1000:.0f}ms")
+        print(f"[intent]       {intent}")
+        print(f"[timing]       intent+embed={t_intent_embed*1000:.0f}ms")
 
         if intent.get("out_of_scope"):
             return {
@@ -493,46 +587,42 @@ def lambda_handler(event=None, context=None):
                 ),
             }
 
+        # phase 1: structured-first on insights, semantic fallback via insight_embeddings
         t1 = time.perf_counter()
-        conn2 = _pg_connect()
-        try:
-            with ThreadPoolExecutor(max_workers=2) as ex:
-                f_count   = ex.submit(_count_signals, conn)
-                f_insight = ex.submit(query_insight_embeddings, conn2, question_vector, intent)
-            total_signals = f_count.result()
-            insight_ctx   = f_insight.result()
-        finally:
-            conn2.close()
-        t_phase1 = time.perf_counter() - t1
-        print(f"[phase1]   total_signals={total_signals}  insight_chunks={len(insight_ctx)}")
-        print(f"[timing]   phase1={t_phase1*1000:.0f}ms")
+        intent_has_period = intent.get("period_start") is not None or bool(intent.get("use_latest"))
+        retrieval_mode = "structured" if intent_has_period else "semantic"
 
-        if total_signals == 0:
-            return {
-                "statusCode": 200,
-                "headers": cors_headers(),
-                "body": json.dumps(
-                    {
-                        "answer": "Hệ thống chưa có dữ liệu tín hiệu nào. Vui lòng chạy pipeline ingestion trước.",
-                        "references": [],
-                    },
-                    ensure_ascii=False,
-                ),
-            }
+        if intent_has_period:
+            insight_ctx = query_insights_structured(conn, intent)
+            if not insight_ctx:
+                insight_ctx = query_insight_embeddings(conn, question_vector, intent)
+                retrieval_mode = "semantic-fallback"
+        else:
+            insight_ctx = query_insight_embeddings(conn, question_vector, intent)
+
+        t_phase1 = time.perf_counter() - t1
+        print(f"[phase1]       mode={retrieval_mode}  chunks={len(insight_ctx)}  scores={[c['score'] for c in insight_ctx]}")
+        print(f"[timing]       phase1={t_phase1*1000:.0f}ms")
 
         top_insight_score = insight_ctx[0]["score"] if insight_ctx else 0.0
         insight_low = top_insight_score < 0.5
+        print(f"[insight_low]  {insight_low}  (top_score={top_insight_score})")
 
+        # phase 2: signal vector search — only if insight is insufficient or citations needed
         signal_ctx: list[dict] = []
         if intent.get("needs_citations") or insight_low:
+            trigger = "needs_citations=True" if intent.get("needs_citations") else f"insight_low=True (top_score={top_insight_score})"
+            print(f"[trigger]      {trigger} → querying signal_embeddings")
             t2 = time.perf_counter()
             signal_ctx = query_signal_embeddings(conn, question_vector, intent)
             t_phase2 = time.perf_counter() - t2
-            print(f"[phase2]   signal_chunks={len(signal_ctx)}  scores={[c['score'] for c in signal_ctx]}")
-            print(f"[timing]   phase2={t_phase2*1000:.0f}ms")
+            print(f"[vec/signal]   chunks={len(signal_ctx)}  scores={[c['score'] for c in signal_ctx]}")
+            print(f"[timing]       phase2 (signal_vec)={t_phase2*1000:.0f}ms")
 
         prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history, insight_low)
 
+        # LLM answer generation
+        print(f"[llm/answer]   calling {answer_model} …")
         t3 = time.perf_counter()
         raw = call_llm(prompt)
         t_llm = time.perf_counter() - t3
@@ -543,8 +633,8 @@ def lambda_handler(event=None, context=None):
         references = result.get("references", [])[:5]
 
         t_total = time.perf_counter() - t0
-        print(f"[timing]   llm={t_llm*1000:.0f}ms  total={t_total*1000:.0f}ms")
-        print(f"[refs]     {len(references)} reference(s) returned")
+        print(f"[timing]       llm={t_llm*1000:.0f}ms  total={t_total*1000:.0f}ms")
+        print(f"[refs]         {len(references)} reference(s) returned")
         print(f"{'='*60}\n")
 
         if session_id:

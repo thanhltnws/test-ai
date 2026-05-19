@@ -180,6 +180,17 @@ def main() -> None:
                 for p_start, p_end in periods:
                     label = f"[{granularity}/{mkt_label}] {p_start} → {p_end}"
 
+                    cur = conn.cursor()
+                    cur.execute(
+                        "SELECT COUNT(*) FROM insights WHERE period=%s AND period_start=%s AND market IS NOT DISTINCT FROM %s",
+                        (granularity, p_start, market),
+                    )
+                    already_done = cur.fetchone()[0] > 0
+                    cur.close()
+                    if already_done:
+                        print(f"{label}  — skip (already computed)")
+                        continue
+
                     sql_ctx = query_aurora(conn, p_start, p_end, market=market)
                     total   = sql_ctx["summary"]["total_signals"]
                     print(f"{label}  signals={total}", end="")
