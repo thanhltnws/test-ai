@@ -14,11 +14,15 @@ Do not invent data, statistics, or source references not present in the context.
 === RELEVANT SIGNALS (Aurora — keyword-matched rows) ===
 {sql_relevant}
 
-=== SEMANTIC CONTEXT (pgvector — similar text chunks) ===
-{vector_context}
+=== SIGNAL CHUNKS (pgvector — semantically similar raw signals) ===
+{signal_context}
+
+=== INSIGHT NARRATIVES (pgvector — pre-computed synthesized trends) ===
+{insight_context}
 
 Instructions:
 - Answer the question directly and concisely, grounded in the context above.
+- Prefer INSIGHT NARRATIVES for trend/summary questions; prefer SIGNAL CHUNKS for specific evidence.
 - When citing a specific insight, reference its source_url.
 - If the context does not contain enough information to answer confidently, say so explicitly.
 - Do NOT invent numbers or source URLs.
@@ -38,7 +42,8 @@ Maximum 5 references. Empty array if no specific sources were cited."""
 def build_chat_prompt(
     question: str,
     sql_ctx: dict,
-    vector_ctx: list[dict],
+    signal_ctx: list[dict],
+    insight_ctx: list[dict],
 ) -> str:
     aggregates = {
         "total_signals": sql_ctx.get("total_signals", 0),
@@ -55,15 +60,22 @@ def build_chat_prompt(
         else "(no keyword-matched signals found)"
     )
 
-    vector_section = (
-        json.dumps(vector_ctx, indent=2, ensure_ascii=False)
-        if vector_ctx
-        else "(no vector data available - pgvector returned no semantic chunks)"
+    signal_section = (
+        json.dumps(signal_ctx, indent=2, ensure_ascii=False)
+        if signal_ctx
+        else "(no relevant signal chunks found)"
+    )
+
+    insight_section = (
+        json.dumps(insight_ctx, indent=2, ensure_ascii=False)
+        if insight_ctx
+        else "(no insight narratives found)"
     )
 
     return _CHAT_TEMPLATE.format(
         question=question,
         sql_aggregates=json.dumps(aggregates, indent=2, ensure_ascii=False),
         sql_relevant=relevant_section,
-        vector_context=vector_section,
+        signal_context=signal_section,
+        insight_context=insight_section,
     )

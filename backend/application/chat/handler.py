@@ -25,7 +25,8 @@ from common.auth import auth_error, cors_headers, error_response, is_options_req
 from prompt import build_chat_prompt
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
-_VECTOR_TOP_K = 8
+_VECTOR_TOP_K  = 8
+_INSIGHT_TOP_K = 4
 _MAX_QUESTION_CHARS = 2000
 
 _STOP_WORDS = {
@@ -206,13 +207,7 @@ def _embed_queries(texts: list[str]) -> list[list[float]]:
     return _embed_bedrock(texts)
 
 
-def query_pgvector(conn, question: str) -> list[dict]:
-    try:
-        question_vector = _embed_queries([question])[0]
-    except Exception as exc:
-        print(f"pgvector embedding skipped: {exc}")
-        return []
-
+def query_signal_embeddings(conn, question_vector: list[float]) -> list[dict]:
     cur = conn.cursor()
     try:
         cur.execute(
@@ -243,7 +238,44 @@ def query_pgvector(conn, question: str) -> list[dict]:
             for r in cur.fetchall()
         ]
     except Exception as exc:
-        print(f"pgvector query skipped: {exc}")
+        print(f"signal_embeddings query skipped: {exc}")
+        return []
+    finally:
+        cur.close()
+
+
+def query_insight_embeddings(conn, question_vector: list[float]) -> list[dict]:
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            """
+            SELECT
+                ie.insight_id,
+                i.result_type,
+                i.period,
+                i.market,
+                ie.embedding_text,
+                1 - (ie.embedding <=> %s::vector) AS score
+            FROM insight_embeddings ie
+            JOIN insights i ON i.id = ie.insight_id
+            ORDER BY ie.embedding <=> %s::vector
+            LIMIT %s
+            """,
+            (str(question_vector), str(question_vector), _INSIGHT_TOP_K),
+        )
+        return [
+            {
+                "insight_id": str(r[0]),
+                "result_type": r[1],
+                "period": r[2],
+                "market": r[3],
+                "embedding_text": r[4],
+                "score": round(float(r[5]), 3),
+            }
+            for r in cur.fetchall()
+        ]
+    except Exception as exc:
+        print(f"insight_embeddings query skipped: {exc}")
         return []
     finally:
         cur.close()
@@ -340,22 +372,33 @@ def lambda_handler(event=None, context=None):
     conn = _pg_connect()
     try:
         t0 = time.perf_counter()
+
+        # Phase 1: aurora query + embedding in parallel
         with ThreadPoolExecutor(max_workers=2) as ex:
-            f_sql    = ex.submit(query_aurora, conn, question)
-            f_vector = ex.submit(query_pgvector, conn, question)
-        sql_ctx    = f_sql.result()
-        vector_ctx = f_vector.result()
+            f_sql   = ex.submit(query_aurora, conn, question)
+            f_embed = ex.submit(_embed_queries, [question])
+        sql_ctx         = f_sql.result()
+        question_vector = f_embed.result()[0]
+        t_phase1 = time.perf_counter() - t0
+
+        # Phase 2: both vector stores in parallel (shared question vector)
+        with ThreadPoolExecutor(max_workers=2) as ex:
+            f_signals  = ex.submit(query_signal_embeddings, conn, question_vector)
+            f_insights = ex.submit(query_insight_embeddings, conn, question_vector)
+        signal_ctx  = f_signals.result()
+        insight_ctx = f_insights.result()
         t_query = time.perf_counter() - t0
 
-        top_score   = vector_ctx[0]["score"] if vector_ctx else None
-        score_list  = [round(c["score"], 3) for c in vector_ctx]
+        top_score  = signal_ctx[0]["score"] if signal_ctx else None
+        score_list = [round(c["score"], 3) for c in signal_ctx]
 
         print(f"[aurora]   total_signals={sql_ctx['total_signals']}  keyword_matches={len(sql_ctx['relevant_signals'])}")
-        print(f"[pgvector] chunks={len(vector_ctx)}  scores={score_list}")
-        print(f"[pgvector] top-1 score={top_score}  {'⚠ LOW — context may be irrelevant' if top_score is not None and top_score < 0.55 else ''}")
-        print(f"[timing]   query={t_query*1000:.0f}ms (SQL+pgvector parallel)")
+        print(f"[signals]  chunks={len(signal_ctx)}  scores={score_list}")
+        print(f"[signals]  top-1 score={top_score}  {'⚠ LOW — context may be irrelevant' if top_score is not None and top_score < 0.55 else ''}")
+        print(f"[insights] chunks={len(insight_ctx)}  types={[c['result_type'] for c in insight_ctx]}")
+        print(f"[timing]   phase1(aurora+embed)={t_phase1*1000:.0f}ms  phase2(vectors)={(t_query-t_phase1)*1000:.0f}ms")
 
-        prompt = build_chat_prompt(question, sql_ctx, vector_ctx)
+        prompt = build_chat_prompt(question, sql_ctx, signal_ctx, insight_ctx)
 
         t1 = time.perf_counter()
         raw = call_llm(prompt)
