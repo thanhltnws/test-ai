@@ -12,6 +12,7 @@ Local run:
 import json
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -335,8 +336,11 @@ def lambda_handler(event=None, context=None):
 
     conn = _pg_connect()
     try:
-        sql_ctx = query_aurora(conn, question)
-        vector_ctx = query_pgvector(conn, question)
+        with ThreadPoolExecutor(max_workers=2) as ex:
+            f_sql    = ex.submit(query_aurora, conn, question)
+            f_vector = ex.submit(query_pgvector, conn, question)
+        sql_ctx    = f_sql.result()
+        vector_ctx = f_vector.result()
 
         print(
             f"Aurora: {sql_ctx['total_signals']} total signals, "

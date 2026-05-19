@@ -1,96 +1,144 @@
-# Chat Lambda — Notes
+# Chat Lambda — Implementation Notes
 
-## Strategy: LLM pre-call để extract query intent
-
-Thêm 1 LLM pre-call (Haiku) phân tích câu hỏi trước khi query DB, extract `{period_start, period_end, market, sector, result_type_hint}`. Dùng kết quả này làm filter cho cả Aurora lẫn pgvector metadata pre-filter.
-
-Lợi ích:
-
-- Giải quyết vấn đề LIMIT — query filtered by market/sector trả ít rows, không cần LIMIT cứng
-- pgvector metadata pre-filter chính xác hơn
-- Consistent với cách batch store data (insights/insight_embeddings đều có metadata theo slice)
-
-Trade-off: thêm 1 LLM call → latency tăng. Pre-call nhẹ, dùng Haiku là đủ.
-
-### Fail-visible và quyết định skip LLM
-
-Nếu pre-call extract sai sector → SQL WHERE filter trả 0 relevant rows → LLM trả lời "không đủ dữ liệu" → **fail visible**, không phải silent wrong answer như text-to-SQL. Điều này mở ra một chiến thuật: dùng output của pre-call (hoặc kiểm tra `relevant_signals == []` sau query) để quyết định có thực sự cần RAG bằng SQL không — nếu không match, fallback về pgvector-only.
-
-**Empty context hiện tại:** code không có gate nào — `build_chat_prompt` và `call_llm` luôn được gọi dù `relevant_signals` rỗng và pgvector trả `[]`. Chi phí LLM bị tốn dù context trống. Cần thêm gate: nếu `total_signals == 0` (DB chưa có data), trả về canned response mà không call LLM. Nếu chỉ `relevant_signals` rỗng, vẫn call LLM bình thường vì background aggregates (`top_pain_points`, `funnel_distribution`) vẫn có giá trị làm context.
-
-### Câu hỏi không có filter rõ ràng
-
-Câu như *"deal bị stuck ở đâu nhiều nhất?"* không chứa sector hay market → pre-call phải nhận ra **không cần filter**, để SQL chạy toàn dataset. Rủi ro: LLM infer sector từ context khi không được hỏi rõ. Cần prompt pre-call chỉ định rõ: output `null` cho field không có signal trong câu hỏi, không được suy diễn.
+> Xem `docs/chat_optimization.md` cho full design doc. File này là backlog implement cụ thể cho `handler.py` + `prompt.py`.
 
 ---
 
-## Strategy: `insights` thành primary query, `signals` thành evidence fallback
+## Trạng thái hiện tại (gaps)
 
-Sau khi add `insight_embeddings`, cân nhắc đổi priority:
+- Stateless — không nhớ lịch sử hội thoại
+- Sequential — `query_aurora` xong mới `query_pgvector`, không song song
+- Không có graceful fallback khi context rỗng hoặc score thấp
+- `query_pgvector` chỉ query `signal_embeddings`, bỏ qua `insight_embeddings`
+- Keyword matching (`raw_text ILIKE`) bị lock vào English stop words, miss tiếng Việt
+- `query_aurora` dùng LIMIT cứng (top 15/10) không filter theo intent câu hỏi
+- Citation format `{label, url}` chưa được enforce đúng trong prompt
+- Không có empty context gate — LLM vẫn được gọi khi `total_signals == 0`
 
-- `insights` → primary narrative context (icp_narrative, recommendations, pain_points_summary theo period/market)
-- `signals` → fallback cho evidence cụ thể + source_url references
+---
 
-Lưu ý: `insights` chỉ tồn tại cho các period đã batch. Signal rất gần đây (chưa qua batch) chỉ có trong `signals` — không thể bỏ hẳn, chỉ thay đổi priority.
+## P1 — Impact cao / Effort thấp
 
-**Strategy mới kết hợp cả hai ý:**
+### ~~① Parallel SQL + pgvector~~ ✓ done
 
-```
-1. Pre-call (Haiku): extract {period, market, sector} từ câu hỏi
-2. Query insights (filter by slice)           → primary narrative
-3. Query insight_embeddings (metadata filter) → semantic match trên narratives
-4. Query signal_embeddings (metadata filter)  → granular evidence + source_url
-5. Final call (Sonnet): merge all context → answer + references
+`handler.py:336–340` — hiện tại tuần tự. Dùng `ThreadPoolExecutor` (không cần async rewrite toàn handler):
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+with ThreadPoolExecutor(max_workers=2) as ex:
+    f_sql    = ex.submit(query_aurora, conn, question)
+    f_vector = ex.submit(query_pgvector, conn, question)
+sql_ctx, vector_ctx = f_sql.result(), f_vector.result()
 ```
 
----
+### ② Graceful fallback khi thiếu data
 
-## query_aurora — LIMIT và keyword matching cần bàn lại
+Hai trường hợp cần xử lý:
 
-Background aggregates dùng LIMIT cứng (top_pain_points: 15, top_use_cases: 10) không filter theo intent câu hỏi — câu hỏi về fintech vẫn nhận top N toàn dataset, miss các item nằm ngoài top N dù liên quan trực tiếp.
+- `total_signals == 0` → DB chưa có data → trả canned response ngay, không call LLM (tránh tốn token)
+- `vector_ctx` empty hoặc top-1 score < 0.5 → inject `[KHÔNG CÓ KẾT QUẢ PHÙ HỢP]` vào prompt thay vì để model hallucinate
 
-Keyword matching (`raw_text ILIKE`) match theo chữ không theo nghĩa, LIMIT 8 cắt cứng. Câu hỏi về "vấn đề tích hợp" sẽ miss signal nói "khó kết nối hệ thống". Phần semantic đang được đẩy hoàn toàn cho pgvector.
+Cần pass `vector_top_score` vào `build_chat_prompt`.
 
-Hướng cần bàn: bỏ LIMIT ở aggregates (seed data có ~50 pain points tối đa), cân nhắc bỏ keyword matching vì pgvector cover tốt hơn.
+### ③ Query insight_embeddings
 
-### Issue: `_extract_keywords` bị lock vào tiếng Anh
+`query_pgvector` hiện chỉ query `signal_embeddings`. Cần thêm query song song trên `insight_embeddings` JOIN `insights` để có narrative context từ batch pipeline. Merge cả hai vào prompt.
 
-`_STOP_WORDS` chỉ có English stop words. Khi user hỏi tiếng Việt:
-
-- Các Vietnamese stop words (`là`, `và`, `có`, `không`, `của`, `trong`...) không bị lọc → lọt vào WHERE clause → query quá rộng, noise cao
-- Keywords tiếng Việt match `raw_text` (Vietnamese source text) được một phần, nhưng không match `pain_points`/`use_cases` nếu chúng đang lưu tiếng Anh
-
-Gợi ý xử lý — tận dụng pre-call (Haiku) đã có trong Strategy phía trên: ngoài extract `{period, market, sector}`, pre-call cũng extract 3–5 **English keyword** từ câu hỏi tiếng Việt để dùng cho keyword matching Aurora. Một call, hai output. Không thêm latency, không đổi schema SQL, không có hallucination risk của text-to-SQL.
-
----
-
-## Strategy: Phân vai rõ SQL và pgvector, không dùng LLM quyết định query
-
-Thay vì dùng pre-call để quyết định SQL filter (dẫn đến text-to-SQL territory), phân vai rõ ràng:
-
-- **pgvector** → relevance: *"signal nào liên quan đến câu hỏi này?"* — đây là câu hỏi semantic, pgvector làm tốt hơn SQL bất kỳ dạng nào
-- **SQL** → distribution: *"toàn dataset phân bố như thế nào?"* — background stats (funnel counts, top pain points tổng thể), LIMIT chấp nhận được vì đây là context tổng quan, không phải câu trả lời cụ thể
-
-Theo hướng này: bỏ keyword matching SQL (`raw_text ILIKE`) vì pgvector cover semantic matching tốt hơn. Pre-call chỉ cần để extract metadata filter cho pgvector (`{sector, market, funnel_stage}`) — mục tiêu hẹp, rủi ro thấp, không cần LLM quyết định SQL WHERE clause.
-
-### `metadata` trong `signal_embeddings`
-
-```json
-{ "source": "hubspot", "funnel_stage": "consideration", "market": "vietnam", "sector": "fintech", "source_url": "..." }
+```
+signal_embeddings  → granular evidence + source_url
+insight_embeddings → pre-computed narratives (icp, pain_points_summary, recommendations)
 ```
 
-GIN index trên `metadata` cho phép pre-filtered similarity search: filter theo `{sector, market}` **trước** khi tính cosine similarity → thu hẹp search space, kết quả sát câu hỏi hơn. Hiện tại `query_pgvector` không dùng metadata filter — search toàn bộ `signal_embeddings` không phân biệt sector/market. Đây là điểm cần bổ sung khi implement pre-call.
+### ④ Citation format trong prompt
+
+Verify `build_chat_prompt` enforce output format `references: [{label, url}]` rõ ràng. `source_url` đã có trong cả pgvector result lẫn signal row — chỉ cần prompt instruction.
 
 ---
 
-## Missing: query insight_embeddings
+## P2 — Impact trung bình / Effort thấp-trung bình
 
-`query_pgvector` currently only queries `signal_embeddings` (raw customer signals).
-Per architecture, chat RAG should also query `insight_embeddings` (pre-computed LLM
-narratives from the batch pipeline) and join with `insights` for richer prompt context.
+### ⑤ Session history — sliding window N=6
 
-## Conversation history
+Thêm `session_id` vào request body. Lưu history tạm bằng in-memory dict trước (Redis sau nếu cần). Prepend N=6 turns `{role, content}` gần nhất vào prompt. TTL conceptual: 30 phút.
 
-Current chat is stateless — each request is independent. Consider adding lightweight
-conversation history (last N turns) to the prompt so follow-up questions can reference
-prior context. Trade-off: longer prompts → higher token cost and latency.
+```python
+_sessions: dict[str, list[dict]] = {}  # session_id → turns
+
+def _get_history(sid: str) -> list[dict]:
+    return _sessions.get(sid, [])[-6:]  # last 6 turns
+
+def _append_history(sid: str, role: str, content: str) -> None:
+    _sessions.setdefault(sid, []).append({"role": role, "content": content})
+```
+
+### ⑥ Follow-up resolution
+
+Nếu session có history, rewrite câu hỏi thành dạng standalone trước khi embed + search:
+
+```
+turn[-1]: "Khách fintech gặp vấn đề gì với tích hợp API?"
+turn[0]:  "Còn về chi phí thì sao?"
+→ rewrite: "Khách fintech gặp vấn đề gì về chi phí tích hợp API?"
+```
+
+1 LLM call nhỏ (Haiku) trước khi embed. Bỏ qua nếu session history empty.
+
+### ⑦ Pre-call intent + metadata filter
+
+1 LLM call (Haiku) phân tích câu hỏi, output `{sector, market, funnel_stage, period_hint, keywords_en[]}`.
+
+Dùng output này để:
+
+- pgvector metadata pre-filter (`WHERE metadata->>'sector' = ?`) — GIN index đã sẵn
+- `keywords_en` thay thế `_extract_keywords` (English stop words bị lock)
+- Detect out-of-scope → trả fallback ngay không cần query DB
+
+Quan trọng: output `null` cho field không có signal rõ ràng trong câu hỏi, không được suy diễn.
+
+---
+
+## P2 — Cần làm ngay (fix bugs / logic)
+
+### ⑧ Bỏ keyword matching `raw_text ILIKE`
+
+`_extract_keywords` + `raw_text ILIKE` có 2 vấn đề:
+
+1. Stop words chỉ có English — tiếng Việt lọt qua hết
+2. Match theo chữ, miss semantic ("khó kết nối" ≠ "vấn đề tích hợp")
+
+pgvector semantic search cover tốt hơn. Bỏ keyword matching, giữ background aggregates SQL (funnel counts, top pain points toàn dataset).
+
+### ⑨ Bỏ LIMIT cứng ở background aggregates
+
+`top_pain_points LIMIT 15`, `top_use_cases LIMIT 10` không filter theo intent. Seed data ~50 pain points tối đa — bỏ LIMIT, trả hết để LLM có đủ context, không bị miss item liên quan.
+
+---
+
+## P3 — Defer / sau demo
+
+### ⑩ Response streaming
+
+`invoke_model_with_response_stream` (Bedrock) + `FunctionResponseTypes: [RESPONSE_STREAM]` (Lambda) + SSE (frontend). Đụng infra, để sau.
+
+### ⑪ Response cache Redis
+
+Demo scale — ít câu hỏi lặp. Skip.
+
+### ⑫ Structured logging
+
+Log per request: `{session_id, intent, sql_rows, vector_top_score, tokens_in, tokens_out, latency_ms, cache_hit}`. Implement sau khi P1/P2 xong.
+
+### ⑬ Rolling summary
+
+Sliding window N=6 đủ cho demo. Defer.
+
+---
+
+## Thứ tự implement
+
+```text
+① Parallel  →  ② Fallback  →  ③ insight_embeddings  →  ④ Citation
+→  ⑧ Bỏ keyword matching  →  ⑨ Bỏ LIMIT
+→  ⑤ Session history  →  ⑥ Follow-up rewrite  →  ⑦ Pre-call intent
+→  ⑩ Streaming (nếu còn thời gian)
+```
