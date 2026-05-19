@@ -332,29 +332,43 @@ def lambda_handler(event=None, context=None):
     if len(question) > _MAX_QUESTION_CHARS:
         return error_response(413, f"Question is too long. Max {_MAX_QUESTION_CHARS} characters.")
 
-    print(f"Question: {question!r}")
+    import time
+    print(f"\n{'='*60}")
+    print(f"[chat] question: {question!r}")
+    print(f"[chat] provider: {_llm_provider()}")
 
     conn = _pg_connect()
     try:
+        t0 = time.perf_counter()
         with ThreadPoolExecutor(max_workers=2) as ex:
             f_sql    = ex.submit(query_aurora, conn, question)
             f_vector = ex.submit(query_pgvector, conn, question)
         sql_ctx    = f_sql.result()
         vector_ctx = f_vector.result()
+        t_query = time.perf_counter() - t0
 
-        print(
-            f"Aurora: {sql_ctx['total_signals']} total signals, "
-            f"{len(sql_ctx['relevant_signals'])} keyword-matched rows"
-        )
-        print(f"pgvector: {len(vector_ctx)} semantic chunks")
+        top_score   = vector_ctx[0]["score"] if vector_ctx else None
+        score_list  = [round(c["score"], 3) for c in vector_ctx]
+
+        print(f"[aurora]   total_signals={sql_ctx['total_signals']}  keyword_matches={len(sql_ctx['relevant_signals'])}")
+        print(f"[pgvector] chunks={len(vector_ctx)}  scores={score_list}")
+        print(f"[pgvector] top-1 score={top_score}  {'⚠ LOW — context may be irrelevant' if top_score is not None and top_score < 0.55 else ''}")
+        print(f"[timing]   query={t_query*1000:.0f}ms (SQL+pgvector parallel)")
 
         prompt = build_chat_prompt(question, sql_ctx, vector_ctx)
+
+        t1 = time.perf_counter()
         raw = call_llm(prompt)
+        t_llm = time.perf_counter() - t1
+
         result = parse_json_response(raw)
 
-        # Ensure required keys are present
-        answer = result.get("answer", "")
+        answer     = result.get("answer", "")
         references = result.get("references", [])[:5]
+
+        print(f"[timing]   llm={t_llm*1000:.0f}ms  total={( t_query + t_llm)*1000:.0f}ms")
+        print(f"[refs]     {len(references)} reference(s) returned")
+        print(f"{'='*60}\n")
 
         return {
             "statusCode": 200,
@@ -366,7 +380,7 @@ def lambda_handler(event=None, context=None):
         }
 
     except Exception as exc:
-        print(f"Error: {exc}")
+        print(f"[error] {exc}")
         return error_response(500, str(exc))
     finally:
         conn.close()
