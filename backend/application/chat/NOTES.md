@@ -40,7 +40,7 @@ Hai trường hợp cần xử lý:
 
 Cần pass `vector_top_score` vào `build_chat_prompt`.
 
-### ③ Query insight_embeddings
+### ~~③ Query insight_embeddings~~ ✓ done
 
 `query_pgvector` hiện chỉ query `signal_embeddings`. Cần thêm query song song trên `insight_embeddings` JOIN `insights` để có narrative context từ batch pipeline. Merge cả hai vào prompt.
 
