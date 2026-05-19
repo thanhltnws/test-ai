@@ -150,6 +150,7 @@ def _get_conn():
                 password=creds["password"],
             )
         else:
+            # only local
             db_url = os.environ.get("DATABASE_URL")
             if not db_url:
                 raise RuntimeError("Set DB_SECRET_ARN (AWS) or DATABASE_URL (local dev)")

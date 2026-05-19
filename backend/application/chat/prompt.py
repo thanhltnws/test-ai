@@ -1,81 +1,71 @@
-import json
+_SYSTEM = (
+    "You are an AI analyst for an internal B2B sales and customer insights platform. "
+    "Answer the user's question using ONLY the context provided. "
+    "If the question is in Vietnamese, answer in Vietnamese. "
+    "Do not invent data, statistics, or source references not present in the context. "
+    "If INSIGHTS is marked [NO MATCHING DATA], explicitly state that data is not available "
+    "for the requested period/market."
+)
 
-_CHAT_TEMPLATE = """\
-You are an AI assistant for an internal B2B sales and customer insights platform. \
-Answer the user's question using ONLY the context provided below. \
-Do not invent data, statistics, or source references not present in the context.
+_TEMPLATE = """\
+{system}
 
-=== USER QUESTION ===
+=== INSIGHTS (PRIMARY — pre-computed summaries) ===
+{insight_section}
+
+=== SIGNALS (EVIDENCE — granular raw signals) ===
+{signal_section}
+
+{history_block}=== QUESTION ===
 {question}
 
-=== STRUCTURED CONTEXT (Aurora — aggregates across all signals) ===
-{sql_aggregates}
+Return ONLY valid JSON (no markdown, no explanation):
+{{"answer": "...", "references": [{{"label": "short title", "url": "source_url"}}]}}
 
-=== RELEVANT SIGNALS (Aurora — keyword-matched rows) ===
-{sql_relevant}
-
-=== SIGNAL CHUNKS (pgvector — semantically similar raw signals) ===
-{signal_context}
-
-=== INSIGHT NARRATIVES (pgvector — pre-computed synthesized trends) ===
-{insight_context}
-
-Instructions:
-- Answer the question directly and concisely, grounded in the context above.
-- Prefer INSIGHT NARRATIVES for trend/summary questions; prefer SIGNAL CHUNKS for specific evidence.
-- When citing a specific insight, reference its source_url.
-- If the context does not contain enough information to answer confidently, say so explicitly.
-- Do NOT invent numbers or source URLs.
-
-Return ONLY valid JSON (no markdown, no explanation) with exactly this structure:
-{{
-  "answer": "your answer here",
-  "references": [
-    {{"title": "short descriptive title", "source_url": "exact source_url from context"}}
-  ]
-}}
-
-The references array must contain only source_urls that appear in the context above. \
-Maximum 5 references. Empty array if no specific sources were cited."""
+References: use only source_urls from SIGNALS above. Empty array if no signals cited. Max 5."""
 
 
 def build_chat_prompt(
     question: str,
-    sql_ctx: dict,
-    signal_ctx: list[dict],
     insight_ctx: list[dict],
+    signal_ctx: list[dict],
+    history: list[dict] | None = None,
+    insight_low: bool = False,
 ) -> str:
-    aggregates = {
-        "total_signals": sql_ctx.get("total_signals", 0),
-        "avg_confidence": sql_ctx.get("avg_confidence", 0),
-        "top_pain_points": sql_ctx.get("top_pain_points", []),
-        "top_use_cases": sql_ctx.get("top_use_cases", []),
-        "funnel_distribution": sql_ctx.get("funnel_distribution", []),
-    }
+    if not insight_ctx or insight_low:
+        insight_section = "[NO MATCHING DATA]"
+    else:
+        parts = []
+        for c in insight_ctx:
+            header = f"[{c.get('result_type', '')} | {c.get('period', '')} | market={c.get('market') or 'all'}]"
+            parts.append(f"{header}\n{c['embedding_text']}")
+        insight_section = "\n\n".join(parts)
 
-    relevant = sql_ctx.get("relevant_signals", [])
-    relevant_section = (
-        json.dumps(relevant, indent=2, ensure_ascii=False)
-        if relevant
-        else "(no keyword-matched signals found)"
-    )
+    if signal_ctx:
+        parts = []
+        for c in signal_ctx:
+            url = c.get("source_url") or "n/a"
+            header = (
+                f"[{c.get('source', '')} | {c.get('funnel_stage', '')} | "
+                f"score={c.get('score', '')}] url={url}"
+            )
+            parts.append(f"{header}\n{c['embedding_text']}")
+        signal_section = "\n\n".join(parts)
+    else:
+        signal_section = "(not queried — insights sufficient)"
 
-    signal_section = (
-        json.dumps(signal_ctx, indent=2, ensure_ascii=False)
-        if signal_ctx
-        else "(no relevant signal chunks found)"
-    )
+    history_block = ""
+    if history:
+        lines = ["=== CONVERSATION HISTORY ==="]
+        for turn in history:
+            role = "User" if turn["role"] == "user" else "Assistant"
+            lines.append(f"{role}: {turn['content']}")
+        history_block = "\n".join(lines) + "\n\n"
 
-    insight_section = (
-        json.dumps(insight_ctx, indent=2, ensure_ascii=False)
-        if insight_ctx
-        else "(no insight narratives found)"
-    )
-
-    return _CHAT_TEMPLATE.format(
+    return _TEMPLATE.format(
+        system=_SYSTEM,
+        insight_section=insight_section,
+        signal_section=signal_section,
+        history_block=history_block,
         question=question,
-        sql_aggregates=json.dumps(aggregates, indent=2, ensure_ascii=False),
-        sql_relevant=relevant_section,
-        signal_context=signal_section,
-        insight_context=insight_section,
     )

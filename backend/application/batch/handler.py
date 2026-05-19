@@ -68,6 +68,7 @@ def _get_db_url() -> str:
             f"@{s['host']}:{s.get('port', 5432)}/{s['dbname']}"
         )
     else:
+        # local only
         _db_url_cache = os.environ.get("DATABASE_URL", "")
 
     if not _db_url_cache:
