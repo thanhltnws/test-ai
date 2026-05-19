@@ -119,6 +119,8 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 | Application | InsightsBuilderFn (`ai-insight-hub-insights-builder`) | Batch compute |
 | Application | DashboardApiFn (`ai-insight-hub-dashboard-api`) | REST API — GET /insights |
 | Application | ChatFn (`ai-insight-hub-chat`) | RAG handler — POST /chat |
+| Application | IngestionFn (`ai-insight-hub-ingestion`) | Ingestion Demo UI — mock file list, trigger, preview |
+| Transform | TransformFn HTTP (`ai-insight-hub-transform`) | GET /logs — CloudWatch log stream (Function URL) |
 | Application | Bedrock / Claude | Prompt enrichment, ICP narrative, recommendations, RAG answers |
 | Application | API Gateway | REST API layer |
 | Application | Vercel | Web frontend — React + Vite |

@@ -18,6 +18,7 @@ React 19 + Vite + TypeScript. No state management library — plain `useState`/`
 |---|---|---|
 | `/` | `pages/Dashboard` | Insight overview — funnel, pain points, ICP, recommendations |
 | `/chat` | `pages/Chat` | RAG chatbox with history sidebar |
+| `/ingestion` | `pages/Pipeline` | Ingestion Demo — trigger mock files through the pipeline |
 | `/analysis` | `pages/Analysis` | Static "About" page explaining the system |
 
 ## Design system (CSS variables in `index.css`)
@@ -47,9 +48,11 @@ Defined in `.env` / `.env.local`, all prefixed `VITE_`:
 | `VITE_API_LAMBDA_URL` | Base URL for insights Lambda |
 | `VITE_CHAT_LAMBDA_URL` | Base URL for chat Lambda |
 | `VITE_INSIGHTS_BUILDER_LAMBDA_URL` | Base URL for batch Lambda |
+| `VITE_INGESTION_LAMBDA_URL` | Base URL for ingestion demo Lambda |
 | `VITE_API_INSIGHTS_PATH` | Path suffix for insights endpoint (default `/insights`) |
 | `VITE_CHAT_PATH` | Path suffix for chat endpoint (default `/chat`) |
 | `VITE_INSIGHTS_BUILDER_PATH` | Path suffix for batch endpoint |
+| `VITE_INGESTION_PATH` | Path suffix for ingestion endpoint (default `/ingestion`) |
 | `VITE_AUTH_TOKEN_STORAGE_KEY` | localStorage key for auth token |
 
 When `VITE_DATA_SOURCE=mock`, every API function returns hardcoded `MOCK_*` objects — no network calls.

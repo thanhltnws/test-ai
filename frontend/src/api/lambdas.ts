@@ -5,8 +5,11 @@ import type {
   ChatMessage,
   DashboardFilters,
   DashboardInsights,
+  IngestionFilesResponse,
+  MockFileEntry,
   RecommendationsData,
   SummaryData,
+  TriggerResult,
 } from '../types'
 
 const legacyBase = import.meta.env.VITE_API_URL ?? '/api'
@@ -17,12 +20,15 @@ const authTokenStorageKey = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY ?? 'ai-i
 const apiBase = import.meta.env.VITE_API_LAMBDA_URL ?? legacyBase
 const chatBase = import.meta.env.VITE_CHAT_LAMBDA_URL ?? legacyBase
 const insightsBuilderBase = import.meta.env.VITE_INSIGHTS_BUILDER_LAMBDA_URL ?? legacyBase
+const ingestionBase = import.meta.env.VITE_INGESTION_LAMBDA_URL ?? legacyBase
+const transformBase = import.meta.env.VITE_TRANSFORM_LAMBDA_URL ?? legacyBase
 
 const insightsPath = import.meta.env.VITE_API_INSIGHTS_PATH ?? '/insights'
 const chatPath = import.meta.env.VITE_CHAT_PATH ?? '/chat'
 const insightsBuilderPath = import.meta.env.VITE_INSIGHTS_BUILDER_LAMBDA_URL
   ? (import.meta.env.VITE_INSIGHTS_BUILDER_PATH ?? '')
   : (import.meta.env.VITE_INSIGHTS_BUILDER_PATH ?? '/insights-builder')
+  const ingestionPath = import.meta.env.VITE_INGESTION_PATH ?? '/ingestion'
 
 function joinUrl(base: string, path = ''): string {
   if (!path) return base
@@ -33,6 +39,7 @@ export const lambdaEndpoints = {
   api: joinUrl(apiBase, insightsPath),
   chat: joinUrl(chatBase, chatPath),
   insightsBuilder: joinUrl(insightsBuilderBase, insightsBuilderPath),
+  ingestion: joinUrl(ingestionBase, ingestionPath),
 }
 
 export const isLambdaDataSource = useLambdaData
@@ -189,3 +196,61 @@ export async function sendChat(
     })),
   }
 }
+
+// ── Ingestion demo API ────────────────────────────────────────────────────────
+
+const MOCK_FILES: MockFileEntry[] = [
+  { id: 'redmine_01', source: 'redmine', file: 'mock/redmine_01.json', label: 'Redmine — International Project Tickets', description: 'Support, bug, and feature tickets across international client projects' },
+  { id: 'redmine_02', source: 'redmine', file: 'mock/redmine_02.json', label: 'Redmine — Japan Project Tickets', description: 'Japanese-language project tickets from PayFlow JP, EduNavi JP, KeiRetail JP and others' },
+  { id: 'outlook_email_01', source: 'outlook_email', file: 'mock/outlook_email_01.json', label: 'Outlook Email — International', description: 'Pre-sales, delivery, and commercial emails across international markets' },
+  { id: 'outlook_email_02', source: 'outlook_email', file: 'mock/outlook_email_02.json', label: 'Outlook Email — Vietnam Focus', description: 'Emails covering Vietnam-market deals including VinPay, ShopViet, MedViet' },
+  { id: 'teams_transcript_01', source: 'teams_transcript', file: 'mock/teams_transcript_01.json', label: 'Teams Transcripts — Sales & Delivery', description: 'Meeting transcripts: kick-offs, sprint reviews, escalations, and discovery calls' },
+]
+
+export async function listIngestionFiles(): Promise<IngestionFilesResponse> {
+  if (!useLambdaData) {
+    return { files: MOCK_FILES }
+  }
+  const res = await axios.get<IngestionFilesResponse>(lambdaEndpoints.ingestion)
+  return res.data
+}
+
+export async function triggerIngestionFile(fileId: string): Promise<TriggerResult> {
+  if (!useLambdaData) {
+    await new Promise(r => setTimeout(r, 1800))
+    const entry = MOCK_FILES.find(f => f.id === fileId)
+    return {
+      file_id: fileId,
+      source: entry?.source ?? fileId,
+      mode: 'local',
+      upserted: 0,
+      vectors: 0,
+      record_count: 0,
+      note: 'Mock mode — no data written.',
+    }
+  }
+  const res = await axios.post<TriggerResult>(`${lambdaEndpoints.ingestion}/trigger`, { file_id: fileId })
+  return res.data
+}
+
+export async function fetchTransformLogs(since: string): Promise<{ events: { ts: number; message: string }[] }> {
+  if (!useLambdaData) return { events: [] }
+  const res = await axios.get<{ events: { ts: number; message: string }[] }>(
+    `${transformBase}/logs`,
+    { params: { since } },
+  )
+  return res.data
+}
+
+export async function fetchIngestionPreview(fileId: string): Promise<{ file_id: string; source: string; label: string; records: unknown[] }> {
+  if (!useLambdaData) {
+    const entry = MOCK_FILES.find(f => f.id === fileId)
+    return { file_id: fileId, source: entry?.source ?? fileId, label: entry?.label ?? fileId, records: [] }
+  }
+  const res = await axios.get<{ file_id: string; source: string; label: string; records: unknown[] }>(
+    `${lambdaEndpoints.ingestion}/preview`,
+    { params: { file_id: fileId } },
+  )
+  return res.data
+}
+

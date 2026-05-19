@@ -1,0 +1,251 @@
+[
+  {
+    "id": 5020,
+    "project": "PAYFLOW-JP",
+    "tracker": "Feature",
+    "subject": "二要素認証（TOTP）の実装",
+    "description": "金融庁のセキュリティガイドライン改定により、PayFlow JPの本番環境に2FAが必須となった。Google Authenticatorおよび SMS OTP の両方に対応が必要。",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Huy",
+    "assigned_to": "Tuan",
+    "updated_on": "2026-05-08T10:00:00+09:00",
+    "custom_fields": {"sprint": "Sprint 6", "env": "staging", "client_name": "PayFlow JP"},
+    "journals": [
+      {"user": "Tuan", "notes": "TOTP実装完了。SMSゲートウェイはNTT Docomoを使用予定。テスト中。"},
+      {"user": "Huy", "notes": "PayFlow JP側のQAチームが来週レビュー予定。"}
+    ]
+  },
+  {
+    "id": 5021,
+    "project": "EDINAVI-JP",
+    "tracker": "Bug",
+    "subject": "日本語フォント表示崩れ — Windows 10 Chrome環境",
+    "description": "特定の漢字（CJK拡張B）がWindows 10のChromeブラウザで豆腐（□□□）表示になる。EduNavi JPの学習者の約30%がWindows環境を使用している。",
+    "status": "Resolved",
+    "priority": "High",
+    "author": "Khanh",
+    "assigned_to": "Duc",
+    "updated_on": "2026-05-07T14:30:00+09:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "EduNavi JP"},
+    "journals": [
+      {"user": "Duc", "notes": "Noto Serif CJK JPフォントに変更し、Unicode range指定でサブセット化。修正完了。"},
+      {"user": "Khanh", "notes": "EduNavi JP確認済。クローズ。"}
+    ]
+  },
+  {
+    "id": 5022,
+    "project": "KEIRETAIL-JP",
+    "tracker": "Support",
+    "subject": "ピーク時間帯の決済処理遅延",
+    "description": "夕方18時〜21時の決済完了率が82%まで低下（通常期95%）。KeiRetail JPの推定損失は1日あたり¥2.8M。クレジットカード決済ゲートウェイのタイムアウトが疑われる。",
+    "status": "In Progress",
+    "priority": "Critical",
+    "author": "Huy",
+    "assigned_to": "Long",
+    "updated_on": "2026-05-13T09:00:00+09:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "KeiRetail JP"},
+    "journals": [
+      {"user": "Long", "notes": "接続プールの最大数を50から200に引き上げ。レイテンシ改善中。"},
+      {"user": "Huy", "notes": "KeiRetail JPは週末のセールキャンペーン前に解決を強く要求している。"}
+    ]
+  },
+  {
+    "id": 5023,
+    "project": "MIRA-COMMERCE-JP",
+    "tracker": "Feature",
+    "subject": "カートのセッション維持期間の延長",
+    "description": "現在のカートセッションは30分で失効。Mira Commerce JPのユーザー調査で、比較購買行動により平均セッションが45分であることが判明。離脱率の改善が目的。",
+    "status": "Resolved",
+    "priority": "Normal",
+    "author": "Phuong",
+    "assigned_to": "Quan",
+    "updated_on": "2026-05-09T16:00:00+09:00",
+    "custom_fields": {"sprint": "Sprint 7", "env": "production", "client_name": "Mira Commerce JP"},
+    "journals": [
+      {"user": "Quan", "notes": "セッションTTLを2時間に延長、Redis TTL更新ロジックも修正。本番反映済み。"}
+    ]
+  },
+  {
+    "id": 5024,
+    "project": "PAYFLOW-JP",
+    "tracker": "Support",
+    "subject": "取引履歴エクスポートがタイムアウト",
+    "description": "過去1年分の取引データ（約800万件）のCSVエクスポートが60秒でタイムアウト。PayFlow JPのコンプライアンス担当者が月次レポートを作成できない状況。",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Khanh",
+    "assigned_to": "Hung",
+    "updated_on": "2026-05-12T11:30:00+09:00",
+    "custom_fields": {"sprint": "Sprint 8", "env": "production", "client_name": "PayFlow JP"},
+    "journals": [
+      {"user": "Hung", "notes": "非同期エクスポートジョブに変更し、S3にアップロード後メール通知する方式を提案中。"},
+      {"user": "Khanh", "notes": "PayFlow JPのコンプライアンスチームはメール通知方式を承認。実装を急いでほしい。"}
+    ]
+  },
+  {
+    "id": 5025,
+    "project": "INSURTECH-JP",
+    "tracker": "Feature",
+    "subject": "保険申請書OCR精度の改善",
+    "description": "手書きの保険申請書OCR精度が72%と低く、人手での確認コストが高い。InsurTech JPの目標は95%以上。古い書式への対応も必要。",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Nam",
+    "assigned_to": "Tuan",
+    "updated_on": "2026-05-11T10:00:00+09:00",
+    "custom_fields": {"sprint": "Sprint 5", "env": "staging", "client_name": "InsurTech JP"},
+    "journals": [
+      {"user": "Tuan", "notes": "カスタムモデルのfine-tuning後、精度89%に到達。まだ目標値未達。"},
+      {"user": "Nam", "notes": "InsurTech JPのリードは結果に期待しているが、95%は妥当な目標かについて懸念もある。"}
+    ]
+  },
+  {
+    "id": 5026,
+    "project": "LOGINAVIJP",
+    "tracker": "Bug",
+    "subject": "配送ステータス更新の遅延（最大4時間）",
+    "description": "LogiNavi JPのドライバーアプリからのステータス更新が最大4時間遅延してダッシュボードに反映される。顧客への配送通知が不正確になっている。",
+    "status": "Resolved",
+    "priority": "Urgent",
+    "author": "Phuong",
+    "assigned_to": "Huy",
+    "updated_on": "2026-05-10T15:00:00+09:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "LogiNavi JP"},
+    "journals": [
+      {"user": "Huy", "notes": "WebSocketポーリング間隔を30分から30秒に短縮。レイテンシ95%改善。本番反映済み。"},
+      {"user": "Phuong", "notes": "LogiNavi JP確認済。クローズ。"}
+    ]
+  },
+  {
+    "id": 5027,
+    "project": "MEDIANAVIJP",
+    "tracker": "Feature",
+    "subject": "4K動画ストリーミング対応",
+    "description": "MediaNavi JPのプレミアム会員向けに4Kストリーミングを提供したい。現在のCDN構成ではAPAC向けに十分な帯域幅を確保できていない。",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Khanh",
+    "assigned_to": "Duc",
+    "updated_on": "2026-05-14T09:30:00+09:00",
+    "custom_fields": {"sprint": "Sprint 9", "env": "staging", "client_name": "MediaNavi JP"},
+    "journals": [
+      {"user": "Duc", "notes": "Cloudfront + Lambda@Edge構成でAPAC 4地域のP95レイテンシ1.2秒を達成。"},
+      {"user": "Khanh", "notes": "MediaNavi JPはコスト増加を懸念。ROI分析が必要。"}
+    ]
+  },
+  {
+    "id": 5028,
+    "project": "TECHCORE-JP",
+    "tracker": "Maintenance",
+    "subject": "Delta Lakeのバキューム処理 — ストレージ肥大化対応",
+    "description": "TechCore JPのデータレイクが過去90日でストレージ使用量が300%増加。古いDeltaファイルのVACUUM処理が自動化されておらず、コストが月$8Kを超えている。",
+    "status": "Resolved",
+    "priority": "Normal",
+    "author": "Minh",
+    "assigned_to": "Long",
+    "updated_on": "2026-05-06T17:00:00+09:00",
+    "custom_fields": {"sprint": "Infra Sprint 2", "env": "production", "client_name": "TechCore JP"},
+    "journals": [
+      {"user": "Long", "notes": "週次VACUUM + OPTIMIZE jobをAirflowで自動化。初回実行でストレージ40%削減。"}
+    ]
+  },
+  {
+    "id": 5029,
+    "project": "SMARTFACTORY-JP",
+    "tracker": "Support",
+    "subject": "OPC-UAサーバーとの接続断が頻発",
+    "description": "工場内のOPC-UAサーバーとの接続が1時間に平均3回切断される。SmartFactory JPの生産ラインモニタリングに穴が生じ、品質検査データが欠損している。",
+    "status": "In Progress",
+    "priority": "Critical",
+    "author": "Nam",
+    "assigned_to": "Hung",
+    "updated_on": "2026-05-13T10:30:00+09:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "SmartFactory JP"},
+    "journals": [
+      {"user": "Hung", "notes": "KeepAlive間隔とセッションタイムアウト値を調整中。工場側のPLC設定確認が必要。"},
+      {"user": "Nam", "notes": "SmartFactory JPはIoTプロバイダ側にも調査を依頼している。連携が必要。"}
+    ]
+  },
+  {
+    "id": 5030,
+    "project": "RETAILCHAIN-JP",
+    "tracker": "Feature",
+    "subject": "POSとEC在庫のリアルタイム同期",
+    "description": "RetailChain JPの店舗POSシステムとECサイトの在庫が5分ごとのバッチ同期のため、人気商品の二重売りが発生している。週に平均15件の在庫過剰販売が報告されている。",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Phuong",
+    "assigned_to": "Quan",
+    "updated_on": "2026-05-12T12:00:00+09:00",
+    "custom_fields": {"sprint": "Sprint 8", "env": "staging", "client_name": "RetailChain JP"},
+    "journals": [
+      {"user": "Quan", "notes": "KafkaストリームとDBMSの楽観的ロックで二重販売を防止する設計を提案。承認待ち。"},
+      {"user": "Phuong", "notes": "RetailChain JPは週末商戦前（5/24）の本番反映を強く要求している。"}
+    ]
+  },
+  {
+    "id": 5031,
+    "project": "EDUNAVI-JP",
+    "tracker": "Feature",
+    "subject": "個人学習進捗レポートのPDF生成",
+    "description": "EduNavi JPの保護者向けに月次学習進捗レポートをPDFで自動生成・送信する機能。日本語フォント埋め込みとA4縦レイアウトへの対応が必要。",
+    "status": "New",
+    "priority": "Normal",
+    "author": "Huy",
+    "assigned_to": "Tuan",
+    "updated_on": "2026-05-11T09:00:00+09:00",
+    "custom_fields": {"sprint": "Sprint 10", "env": "development", "client_name": "EduNavi JP"},
+    "journals": []
+  },
+  {
+    "id": 5032,
+    "project": "FINTECHEDGE-JP",
+    "tracker": "Support",
+    "subject": "全銀システムAPIの接続エラー（本番環境）",
+    "description": "FintechEdge JPの全銀システム（Zengin API）への接続が平日夜間バッチ中に断続的にタイムアウト。振込処理の遅延が発生し、法人顧客から苦情が来ている。",
+    "status": "In Progress",
+    "priority": "Critical",
+    "author": "Khanh",
+    "assigned_to": "Huy",
+    "updated_on": "2026-05-14T07:00:00+09:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "FintechEdge JP"},
+    "journals": [
+      {"user": "Huy", "notes": "全銀ネットワーク側のメンテナンス時間帯と重複していた可能性。スケジュール調整を検討中。"},
+      {"user": "Khanh", "notes": "FintechEdge JPは金融機関顧客への説明責任がある。根本原因の文書化が必要。"}
+    ]
+  },
+  {
+    "id": 5033,
+    "project": "HRPLATFORM-JP",
+    "tracker": "Feature",
+    "subject": "マイナンバー連携 — 従業員番号管理",
+    "description": "HR Platform JPはマイナンバー法に基づき従業員のマイナンバーを安全に収集・管理する機能が必要。アクセスログと暗号化ストレージが法的要件。",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Minh",
+    "assigned_to": "Long",
+    "updated_on": "2026-05-10T11:00:00+09:00",
+    "custom_fields": {"sprint": "Sprint 7", "env": "staging", "client_name": "HR Platform JP"},
+    "journals": [
+      {"user": "Long", "notes": "AES-256暗号化と専用アクセスログDBの設計完了。法務確認待ち。"}
+    ]
+  },
+  {
+    "id": 5034,
+    "project": "MIRA-COMMERCE-JP",
+    "tracker": "Bug",
+    "subject": "Safariでの決済確認画面レイアウト崩れ",
+    "description": "iOS SafariでStripe決済確認ページのボタンが画面外に出て押せない。Mira Commerce JPのiOSユーザー（全体の45%）が決済を完了できない状態。",
+    "status": "Resolved",
+    "priority": "Critical",
+    "author": "Phuong",
+    "assigned_to": "Duc",
+    "updated_on": "2026-05-11T18:00:00+09:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "Mira Commerce JP"},
+    "journals": [
+      {"user": "Duc", "notes": "Stripe Elements のCSSオーバーライドが原因。スタイルを修正してデプロイ済み。"},
+      {"user": "Phuong", "notes": "Mira Commerce JP確認済。コンバージョン率が正常に戻った。クローズ。"}
+    ]
+  }
+]

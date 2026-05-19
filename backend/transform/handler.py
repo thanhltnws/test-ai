@@ -563,9 +563,91 @@ def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> lis
     return results
 
 
+# ── HTTP helpers (Function URL — GET /logs) ───────────────────────────────────
+
+_CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+}
+
+_LOGS_CLIENT = None
+_LOG_SKIP_PREFIXES = ("START RequestId", "END RequestId", "REPORT RequestId")
+
+
+def _ok(body: dict, status: int = 200) -> dict:
+    return {
+        "statusCode": status,
+        "headers": {"Content-Type": "application/json", **_CORS_HEADERS},
+        "body": json.dumps(body, default=str),
+    }
+
+
+def _err(message: str, status: int = 400) -> dict:
+    return {
+        "statusCode": status,
+        "headers": {"Content-Type": "application/json", **_CORS_HEADERS},
+        "body": json.dumps({"error": message}),
+    }
+
+
+def _logs_client():
+    global _LOGS_CLIENT
+    if _LOGS_CLIENT is None:
+        _LOGS_CLIENT = boto3.client("logs", region_name=os.environ.get("AWS_REGION", "ap-southeast-1"))
+    return _LOGS_CLIENT
+
+
+def _handle_logs(query: dict) -> dict:
+    log_group = os.environ.get("TRANSFORM_LOG_GROUP", "/aws/lambda/ai-insight-hub-transform")
+    since_str = query.get("since", "").strip()
+
+    if since_str:
+        try:
+            dt = datetime.fromisoformat(since_str.replace("Z", "+00:00"))
+            start_ms = int(dt.timestamp() * 1000)
+        except ValueError:
+            return _err("Invalid since — use ISO 8601")
+    else:
+        start_ms = int((datetime.now(timezone.utc).timestamp() - 300) * 1000)
+
+    try:
+        resp = _logs_client().filter_log_events(
+            logGroupName=log_group,
+            startTime=start_ms,
+            limit=100,
+        )
+        events = []
+        for e in resp.get("events", []):
+            msg = e["message"].strip()
+            if msg and not any(msg.startswith(p) for p in _LOG_SKIP_PREFIXES):
+                events.append({"ts": e["timestamp"], "message": msg})
+        return _ok({"events": events})
+    except Exception as exc:
+        return _err(f"CloudWatch unavailable: {exc}", status=503)
+
+
+def _http_handler(event: dict) -> dict:
+    req = event.get("requestContext", {}).get("http", {})
+    method = req.get("method", "GET").upper()
+    path = req.get("path", "/logs").rstrip("/") or "/logs"
+    query = event.get("queryStringParameters") or {}
+
+    if method == "OPTIONS":
+        return {"statusCode": 200, "headers": _CORS_HEADERS, "body": ""}
+
+    if method == "GET" and path == "/logs":
+        return _handle_logs(query)
+
+    return _err(f"Not found: {method} {path}", status=404)
+
+
 # ── Lambda entry point ────────────────────────────────────────────────────────
 
 def handler(event: dict, context=None) -> dict:
+    if event.get("requestContext", {}).get("http"):
+        return _http_handler(event)
+
     model_id      = os.getenv("BEDROCK_MODEL_ID", DEFAULT_MODEL_ID)
     total_inserted = 0
 

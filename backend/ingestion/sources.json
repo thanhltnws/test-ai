@@ -1,5 +1,0 @@
-[
-  {"name": "calls",  "file": "mock/calls.json"},
-  {"name": "deals",  "file": "mock/deals.json"},
-  {"name": "issues", "file": "mock/issues.json"}
-]
