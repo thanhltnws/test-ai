@@ -1,0 +1,81 @@
+[
+  {
+    "id": 5000,
+    "project": "FINAMO-PAY",
+    "tracker": "Support",
+    "subject": "Yêu cầu thêm audit trail cho transaction log",
+    "description": "Phía Finamo KK yêu cầu bổ sung audit trail đầy đủ cho mọi transaction theo chuẩn FSA. Deadline trước sprint review tuần 3. Khách nói đây là blocker cho UAT sign-off.",
+    "status": "In Progress",
+    "priority": "Urgent",
+    "author": "Khanh",
+    "assigned_to": "Huy",
+    "updated_on": "2026-05-06T10:00:00+07:00",
+    "tags": [
+      "customer-feedback",
+      "compliance"
+    ],
+    "custom_fields": {
+      "sprint": "Sprint 5",
+      "env": "staging",
+      "client_name": "Finamo KK"
+    },
+    "journals": [
+      {
+        "user": "Huy",
+        "notes": "Đã implement, đang chờ review từ security team."
+      },
+      {
+        "user": "Khanh",
+        "notes": "Khách confirm format log phải match với yêu cầu FSA report Q2."
+      }
+    ]
+  },
+  {
+    "id": 5001,
+    "project": "SHOPWAVE-EC",
+    "tracker": "Feature",
+    "subject": "Tích hợp Kakao Pay vào checkout flow",
+    "description": "ShopWave Korea yêu cầu thêm Kakao Pay ngoài Toss Payments đã có. Khách nói 60% user base dùng Kakao Pay theo internal analytics của họ.",
+    "status": "New",
+    "priority": "High",
+    "author": "Linh",
+    "assigned_to": "Minh",
+    "updated_on": "2026-05-09T14:30:00+07:00",
+    "tags": [
+      "customer-feedback",
+      "client-request"
+    ],
+    "custom_fields": {
+      "sprint": "Sprint 2",
+      "env": "dev",
+      "client_name": "ShopWave Korea"
+    },
+    "journals": [
+      {
+        "user": "Linh",
+        "notes": "Scope change so với ban đầu. Cần estimate thêm và confirm với khách về timeline impact."
+      }
+    ]
+  },
+  {
+    "id": 5002,
+    "project": "INFRA",
+    "tracker": "Task",
+    "subject": "Upgrade Node.js 18 → 20 trên CI pipeline",
+    "description": "LTS support cho Node 18 kết thúc tháng 4. Cần upgrade để không bị security warning.",
+    "status": "Closed",
+    "priority": "Normal",
+    "author": "DevOps",
+    "assigned_to": "DevOps",
+    "updated_on": "2026-05-03T09:00:00+07:00",
+    "tags": [
+      "infra"
+    ],
+    "custom_fields": {
+      "sprint": null,
+      "env": "ci",
+      "client_name": null
+    },
+    "journals": []
+  }
+]

@@ -1,0 +1,97 @@
+[
+  {
+    "meetingId": "meeting_13000",
+    "title": "Kick-off - ShopWave Korea E-Commerce Platform",
+    "date": "2026-05-08T08:00:00Z",
+    "duration": 75,
+    "participants": [
+      "Nam (PM)",
+      "Huy (Tech Lead)",
+      "Lee Jinhyuk (ShopWave Korea - PM)",
+      "Park Suji (ShopWave Korea - Lead Dev)"
+    ],
+    "channel": "ShopWave Project",
+    "transcript": [
+      {
+        "time": "00:02:00",
+        "speaker": "Nam (PM)",
+        "text": "Chào mừng buổi kick-off. Hôm nay chúng ta sẽ align về timeline và communication protocol."
+      },
+      {
+        "time": "00:05:00",
+        "speaker": "Lee Jinhyuk (ShopWave Korea - PM)",
+        "text": "우리 측에서 중요한 것은 go-live가 반드시 10월 전에 이루어져야 한다는 점입니다. 그리고 주간 진행 상황 보고를 원합니다."
+      },
+      {
+        "time": "00:08:00",
+        "speaker": "Nam (PM)",
+        "text": "Chúng tôi confirm go-live trước tháng 10. Weekly report sẽ được gửi mỗi thứ Sáu."
+      },
+      {
+        "time": "00:12:00",
+        "speaker": "Park Suji (ShopWave Korea - Lead Dev)",
+        "text": "API documentation từ phía Newwave cần được cung cấp sớm để chúng tôi chuẩn bị integration từ frontend Korea."
+      },
+      {
+        "time": "00:18:00",
+        "speaker": "Huy (Tech Lead)",
+        "text": "API docs sẽ ready sau Sprint 1, khoảng 2 tuần nữa. Chúng tôi dùng OpenAPI 3.0."
+      },
+      {
+        "time": "00:25:00",
+        "speaker": "Lee Jinhyuk (ShopWave Korea - PM)",
+        "text": "한 가지 더 - 카카오페이 통합이 MVP에 포함되어야 합니다. 처음 범위에는 없었지만 비즈니스적으로 필수입니다."
+      },
+      {
+        "time": "00:28:00",
+        "speaker": "Nam (PM)",
+        "text": "Kakao Pay là scope change, chúng tôi sẽ estimate và update timeline. Sẽ có câu trả lời trước cuối tuần."
+      }
+    ]
+  },
+  {
+    "meetingId": "meeting_13001",
+    "title": "Technical Discovery - Finamo KK",
+    "date": "2026-05-09T10:00:00Z",
+    "duration": 60,
+    "participants": [
+      "Huy (Tech Lead)",
+      "An (Backend Dev)",
+      "Tanaka Hiroshi (Finamo KK - CTO)",
+      "Yamamoto Kenji (Finamo KK - Architect)"
+    ],
+    "channel": "Pre-Sales",
+    "transcript": [
+      {
+        "time": "00:03:00",
+        "speaker": "Tanaka Hiroshi (Finamo KK - CTO)",
+        "text": "私たちのシステムはFSA規制に準拠する必要があります。特にトランザクションログと監査証跡が重要です。"
+      },
+      {
+        "time": "00:06:00",
+        "speaker": "Huy (Tech Lead)",
+        "text": "Understood. Chúng tôi có kinh nghiệm với FSA-compliant systems. Cụ thể là audit trail và immutable log storage."
+      },
+      {
+        "time": "00:10:00",
+        "speaker": "Yamamoto Kenji (Finamo KK - Architect)",
+        "text": "現在のコアバンキングシステムとのAPI連携について、詳しく聞かせてください。"
+      },
+      {
+        "time": "00:13:00",
+        "speaker": "An (Backend Dev)",
+        "text": "Chúng tôi đã làm với 2 core banking systems ở JP. REST và batch file integration đều được. Cần xem API spec của hệ thống hiện tại."
+      },
+      {
+        "time": "00:20:00",
+        "speaker": "Tanaka Hiroshi (Finamo KK - CTO)",
+        "text": "ISO 27001 certificationが必要です。それと、データはすべて日本国内のサーバーに保存する必要があります。"
+      },
+      {
+        "time": "00:23:00",
+        "speaker": "Huy (Tech Lead)",
+        "text": "Chúng tôi có ISO 27001. Về data residency JP, có thể deploy trên AWS Tokyo region — không có vấn đề gì."
+      }
+    ]
+  }
+]

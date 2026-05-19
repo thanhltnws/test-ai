@@ -1,0 +1,55 @@
+[
+  {
+    "id": "mail_10000",
+    "subject": "Re: Technical Proposal - Finamo KK Payment Gateway",
+    "from": "sales@newwavesolution.com",
+    "to": [
+      "tanaka@finamo-kk.example.com"
+    ],
+    "ccRecipients": [
+      "delivery@newwavesolution.com"
+    ],
+    "receivedDateTime": "2026-05-06T08:00:00Z",
+    "importance": "high",
+    "body": "Chào anh Tanaka, theo buổi call hôm qua, chúng tôi đã cập nhật proposal với phần security architecture theo chuẩn FSA. Newwave hiện có ISO 27001 certification. Chúng tôi đề xuất bắt đầu bằng một architecture review session để align về compliance requirements trước khi estimate chính thức.",
+    "conversationType": "sales_external",
+    "attachments": [
+      "proposal_v2_finamo.pdf",
+      "security_cert.pdf"
+    ]
+  },
+  {
+    "id": "mail_10001",
+    "subject": "Feedback sau buổi demo - BuildTech AU",
+    "from": "hoa.pham@newwavesolution.com",
+    "to": [
+      "michael.turner@buildtechau.example.com"
+    ],
+    "ccRecipients": [],
+    "receivedDateTime": "2026-05-15T03:00:00Z",
+    "importance": "normal",
+    "body": "Hi Michael, great to connect yesterday. As discussed, our team profile for your cloud-native backend requirements is attached. We can provide 2 senior engineers with AWS CDK experience available from June 1. Regarding Terraform, our team has 3 years of production usage across 8+ enterprise clients.",
+    "conversationType": "sales_external",
+    "attachments": [
+      "team_profiles_buildtech.pdf"
+    ]
+  },
+  {
+    "id": "mail_10002",
+    "subject": "Weekly Status Report - EduSpring Japan LMS",
+    "from": "pm@newwavesolution.com",
+    "to": [
+      "pm@eduspringjapan.example.com"
+    ],
+    "ccRecipients": [
+      "delivery@newwavesolution.com"
+    ],
+    "receivedDateTime": "2026-05-12T02:00:00Z",
+    "importance": "normal",
+    "body": "EduSpringさん、週次レポートをお送りします。Sprint 0のセットアップが完了し、来週からSprint 1を開始します。技術リードのHuyは前プロジェクトからの継続です。何かご不明な点があればご連絡ください。",
+    "conversationType": "delivery_external",
+    "attachments": [
+      "weekly_report_w19.pdf"
+    ]
+  }
+]
