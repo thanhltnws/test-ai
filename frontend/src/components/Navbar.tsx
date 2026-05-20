@@ -1,10 +1,6 @@
-import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { isLambdaDataSource, runBatch } from '../api/lambdas'
 import AccessTokenControl from './AccessTokenControl'
 import Logo from './Logo'
-
-const batchTriggerEnabled = false
 
 const links = [
   { to: '/', label: 'Overview', icon: (
@@ -35,24 +31,6 @@ interface Props {
 }
 
 export default function Navbar({ onOpenWelcome }: Props) {
-  const [batchLoading, setBatchLoading] = useState(false)
-  const [batchMessage, setBatchMessage] = useState<string | null>(null)
-
-  async function handleRunBatch() {
-    if (!batchTriggerEnabled) return
-    setBatchLoading(true)
-    setBatchMessage(null)
-    try {
-      const result = await runBatch()
-      const written = result.written ?? 0
-      const periodStart = result.period_start ? ` for ${result.period_start}` : ''
-      setBatchMessage(`Done${periodStart}. ${written} rows written.`)
-    } catch (err) {
-      setBatchMessage(err instanceof Error ? err.message : 'Batch run failed.')
-    } finally {
-      setBatchLoading(false)
-    }
-  }
 
   return (
     <nav style={{
@@ -104,37 +82,8 @@ export default function Navbar({ onOpenWelcome }: Props) {
 
       <AccessTokenControl />
 
-      {isLambdaDataSource && (
-        <div style={{ padding: '12px 8px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            Batch
-          </div>
-          <button
-            type="button"
-            onClick={handleRunBatch}
-            disabled={!batchTriggerEnabled || batchLoading}
-            style={{
-              width: '100%',
-              background: 'var(--accent)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 8,
-              padding: '8px 10px',
-              fontSize: 12,
-              fontWeight: 600,
-              opacity: !batchTriggerEnabled || batchLoading ? 0.45 : 1,
-              cursor: batchTriggerEnabled && !batchLoading ? 'pointer' : 'not-allowed',
-            }}
-          >
-            {batchLoading ? 'Running...' : 'Run Batch'}
-          </button>
-          <div style={{ fontSize: 11, color: batchMessage?.includes('failed') ? '#dc2626' : 'var(--text-muted)', lineHeight: 1.4 }}>
-            {batchMessage ?? 'Manual batch trigger temporarily disabled.'}
-          </div>
-        </div>
-      )}
 
-      {/* Footer */}
+{/* Footer */}
       <div style={{ marginTop: 'auto', padding: '12px 8px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 8 }}>
         <button
           type="button"

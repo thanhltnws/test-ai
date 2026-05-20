@@ -218,6 +218,12 @@ def main() -> None:
 
     print(f"\nDone — {total_written} rows written to insights.")
 
+    if pending:
+        _out = Path(__file__).parent / "data" / "insights_seed.json"
+        with open(_out, "w", encoding="utf-8") as _f:
+            json.dump(pending, _f, ensure_ascii=False, indent=2, default=lambda o: str(o))
+        print(f"Saved {len(pending)} rows → {_out.name}")
+
     # ── embed + insert insight_embeddings ─────────────────────────────────────
     if not pending:
         return

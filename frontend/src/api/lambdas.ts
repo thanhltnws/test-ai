@@ -72,9 +72,9 @@ const MOCK_SUMMARY: SummaryData = {
   period_end: '2026-05-31',
   market: null,
   funnel_distribution: [
-    { stage: 'consideration', count: 11 },
-    { stage: 'won', count: 7 },
-    { stage: 'lost', count: 2 },
+    { stage: 'consideration', count: 11, pct: 55.0 },
+    { stage: 'won', count: 7, pct: 35.0 },
+    { stage: 'lost', count: 2, pct: 10.0 },
   ],
   funnel_summary: 'The funnel is heavily weighted toward consideration, indicating strong pipeline generation but significant conversion friction.',
   icp_narrative: 'Core ICP is mid-market companies (50-200 employees) in education and software sectors pursuing small-to-medium engagements. They are internationally based and prioritize structured onboarding and career outcomes.',
@@ -84,11 +84,11 @@ const MOCK_SUMMARY: SummaryData = {
     { label: 'Async job failures', count: 1, insight: 'Technical instability in job processing pipelines disrupts customer workflows and erodes trust.' },
   ],
   icp_summary: [
-    { sector: 'education', company_size: '1-10', deal_size: 'small', region: 'International', count: 5 },
-    { sector: 'software', company_size: '200-1000', deal_size: 'medium', region: 'International', count: 3 },
-    { sector: 'healthcare', company_size: '1000+', deal_size: 'large', region: 'International', count: 2 },
-    { sector: 'software', company_size: '200-1000', deal_size: 'large', region: 'International', count: 2 },
-    { sector: 'manufacturing', company_size: '50-200', deal_size: 'medium', region: 'International', count: 1 },
+    { sector: 'education',     client_type: 'corporate', tech_maturity: 'semi-tech', deal_size: 'small',  market: 'international', count: 5 },
+    { sector: 'software',      client_type: 'startup',   tech_maturity: 'technical', deal_size: 'medium', market: 'international', count: 3 },
+    { sector: 'healthcare',    client_type: 'corporate', tech_maturity: 'non-tech',  deal_size: 'large',  market: 'vietnam',       count: 2 },
+    { sector: 'software',      client_type: 'corporate', tech_maturity: 'technical', deal_size: 'large',  market: 'japan',         count: 2 },
+    { sector: 'manufacturing', client_type: 'corporate', tech_maturity: 'non-tech',  deal_size: 'medium', market: 'vietnam',       count: 1 },
   ],
 }
 
@@ -134,6 +134,7 @@ function toRecommendations(raw: BeInsightResponse): RecommendationsData {
   return {
     sales: raw.recommendations?.sales ?? [],
     marketing: raw.recommendations?.marketing ?? [],
+    summary: raw.recommendations?.summary ?? undefined,
     recommendations: [],
     computed_at: raw.computed_at ?? undefined,
   }

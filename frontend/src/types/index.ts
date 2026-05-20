@@ -11,7 +11,7 @@ export interface BeInsightResponse {
   }
   icp_narrative: {
     narrative: string
-    top_segments: { sector: string; company_size: string; deal_size: string; region: string; count: number }[]
+    top_segments: { sector: string; client_type: string; tech_maturity: string; deal_size: string; market: string; count: number }[]
   }
   pain_points_summary: {
     summary: string
@@ -26,13 +26,14 @@ export interface BeInsightResponse {
 
 export interface ICP {
   sector: string
-  company_size: string
+  client_type: string
+  tech_maturity: string
   deal_size: string
-  region: string
+  market: string
 }
 
 export interface SummaryData {
-  funnel_distribution: { stage: string; count: number }[]
+  funnel_distribution: { stage: string; count: number; pct: number }[]
   funnel_summary: string
   top_pain_points: { label: string; count: number; insight: string }[]
   icp_summary: (ICP & { count: number })[]
@@ -47,6 +48,7 @@ export interface RecommendationsData {
   recommendations: string[]
   sales: string[]
   marketing: string[]
+  summary?: string
   computed_at?: string
 }
 
