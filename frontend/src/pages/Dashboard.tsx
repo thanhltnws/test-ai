@@ -49,12 +49,13 @@ function getPeriodLabel(period: PeriodType, isoDate: string): string {
 
 function getPeriodOptions(period: PeriodType): { value: string; label: string }[] {
   const now = new Date()
-  const count = period === 'quarterly' ? 8 : period === 'yearly' ? 5 : 12
+  const count = period === 'quarterly' ? 8 : period === 'yearly' ? 5 : period === 'weekly' ? 16 : 12
   const options: { value: string; label: string }[] = []
   for (let i = 0; i < count; i++) {
     const d = new Date(now)
     if (period === 'monthly') d.setMonth(d.getMonth() - i)
     else if (period === 'quarterly') d.setMonth(d.getMonth() - i * 3)
+    else if (period === 'weekly') d.setDate(d.getDate() - i * 7)
     else d.setFullYear(d.getFullYear() - i)
     const anchor = getPeriodStart(period, toISODate(d))
     if (!options.find(o => o.value === anchor))
