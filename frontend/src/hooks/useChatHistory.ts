@@ -27,12 +27,12 @@ export function useChatHistory() {
   const [sessions, setSessions] = useState<ChatSession[]>(loadSessions)
 
   // Creates a new session and returns its id
-  const createSession = useCallback((messages: ChatMessage[]): string => {
+  const createSession = useCallback((messages: ChatMessage[], id?: string): string => {
     const firstUser = messages.find(m => m.role === 'user')
     const raw = firstUser?.content ?? 'Untitled'
     const title = raw.length > 60 ? raw.slice(0, 60) + '…' : raw
     const session: ChatSession = {
-      id: crypto.randomUUID(),
+      id: id ?? crypto.randomUUID(),
       title,
       messages,
       createdAt: new Date().toISOString(),

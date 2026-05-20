@@ -54,8 +54,11 @@ export default function Chat() {
     setInput('')
     setLoading(true)
 
+    const sessionId = activeSessionId ?? crypto.randomUUID()
+    if (!activeSessionId) setActiveSessionId(sessionId)
+
     try {
-      const res = await sendChat(question, messages.slice(-6))
+      const res = await sendChat(question, sessionId)
       const assistantMsg: ChatMessage = {
         role: 'assistant',
         content: res.answer,
@@ -67,8 +70,7 @@ export default function Chat() {
       if (activeSessionId) {
         updateSession(activeSessionId, finalMessages)
       } else {
-        const newId = createSession(finalMessages)
-        setActiveSessionId(newId)
+        createSession(finalMessages, sessionId)
       }
     } catch (err) {
       const errorMsg: ChatMessage = {

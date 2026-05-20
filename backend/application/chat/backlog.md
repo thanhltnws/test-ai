@@ -1,14 +1,10 @@
 # Chat Lambda — Implementation Notes
 
-> Xem `chat_rag_strategy.md` cho full strategy + trạng thái implement. File này chỉ giữ backlog chưa xong.
+> Xem `strategy.md` cho full strategy + trạng thái implement. File này chỉ giữ backlog chưa xong.
 
 ---
 
 ## P1 — Tiếp theo
-
-### History (lớn nhất)
-
-Hiện tại `_sessions` in-memory dict, mất khi Lambda cold start. Cần thiết kế lại: persistence (Redis / DynamoDB), TTL, và cơ chế rolling summary khi window vượt N turns. Xem thêm ⑬ Rolling summary và Redis persistence ở P3.
 
 ### insight_low dual-role (chưa bàn xong)
 
@@ -65,11 +61,11 @@ Log per request — không liên quan conversation history:
 
 ### ⑬ Rolling summary
 
-Sliding window N=6 hiện cắt bỏ turns cũ — mất context nếu conversation dài. Thay bằng: khi số turns vượt N, tóm tắt turns cũ thành 1 summary turn (Haiku call nhỏ), prepend vào window.
+Không cần cho demo. `_SESSION_WINDOW = 12` đủ giữ toàn bộ cuộc hội thoại demo (initial + 5 follow-ups = 12 turns) — overflow không xảy ra. Xem xét lại nếu mở rộng conversation limit.
 
 ### Redis persistence
 
-In-memory `_sessions` dict mất sạch khi Lambda cold start, không sync giữa nhiều instance. Giải pháp: thay bằng Redis (ElastiCache) với TTL 30 phút. Đụng infra — defer sau demo.
+In-memory `_sessions` dict mất sạch khi Lambda cold start, không sync giữa nhiều instance. Chấp nhận cho demo (1 instance warm, vài user). Giải pháp nếu scale: Redis (ElastiCache) với TTL 30 phút.
 
 ---
 
