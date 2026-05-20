@@ -175,7 +175,7 @@ export async function runBatch(): Promise<BatchRunResponse> {
 
 export async function sendChat(
   question: string,
-  history: ChatMessage[],
+  sessionId: string | null,
 ): Promise<{ answer: string; references: ChatMessage['references'] }> {
   if (!useLambdaData) {
     return {
@@ -187,7 +187,7 @@ export async function sendChat(
     }
   }
 
-  const res = await axios.post(lambdaEndpoints.chat, { question, history }, { headers: requireAuthHeaders() })
+  const res = await axios.post(lambdaEndpoints.chat, { question, session_id: sessionId }, { headers: requireAuthHeaders() })
   const raw = res.data
   return {
     answer: raw.answer ?? '',

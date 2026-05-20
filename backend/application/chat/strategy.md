@@ -21,8 +21,10 @@ Batch pipeline đã làm công việc aggregation + summarization trên toàn b�
 
 ### [1] Session history lookup
 
-`session_id → _get_history` — trả về sliding window **N=6 turns** gần nhất từ in-memory dict `_sessions`.  
+`session_id → _get_history` — trả về sliding window **N=12 turns** (6 exchanges = initial + 5 follow-ups) từ in-memory dict `_sessions`.  
 Không có session_id → `history = []`, bỏ qua rewrite.
+
+`session_id` do FE generate bằng `crypto.randomUUID()` **trước khi gửi request đầu tiên** — đảm bảo turn 1 được lưu vào `_sessions` ngay từ đầu.
 
 ### [2] Question rewrite
 

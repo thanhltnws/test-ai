@@ -34,7 +34,7 @@ _MAX_QUESTION_CHARS = 2000
 _db_url_cache: str | None = None
 
 _sessions: dict[str, list[dict]] = {}
-_SESSION_WINDOW = 6
+_SESSION_WINDOW = 12
 
 
 # ── session history ────────────────────────────────────────────────────────────
