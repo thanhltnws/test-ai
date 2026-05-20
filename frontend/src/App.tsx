@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
@@ -7,10 +8,12 @@ import Pipeline from './pages/Pipeline'
 import WelcomeModal from './components/WelcomeModal'
 
 export default function App() {
+  const [welcomeOpen, setWelcomeOpen] = useState(true)
+
   return (
     <BrowserRouter>
-      <WelcomeModal />
-      <Navbar />
+      <WelcomeModal open={welcomeOpen} onClose={() => setWelcomeOpen(false)} />
+      <Navbar onOpenWelcome={() => setWelcomeOpen(true)} />
       <div style={{ flex: 1, overflowY: 'auto', minWidth: 0 }}>
         <Routes>
           <Route path="/" element={<Dashboard />} />

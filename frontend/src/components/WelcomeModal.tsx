@@ -1,37 +1,20 @@
-import { useState } from 'react'
-
 const SCOPE_ITEMS = [
   {
     num: '01',
-    title: 'AI làm gì trong hệ thống này?',
+    title: 'AI đóng vai trò gì trong hệ thống?',
     content: [
-      'AI đóng vai trò phân tích và tổng hợp — đọc hiểu toàn bộ dữ liệu khách hàng, trích xuất insight có giá trị và đưa ra khuyến nghị hành động cụ thể cho Sales và Marketing. Đây là phần mà con người mất nhiều giờ để làm thủ công.',
-      <>Tuy nhiên, <strong>AI không tự động thu thập dữ liệu thay bạn</strong>. Đây là điều quan trọng cần hiểu đúng ngay từ đầu: những cuộc gọi với khách hàng, email trao đổi, hay ghi chú sau buổi demo — AI chỉ phân tích được khi đội ngũ đã ghi nhận vào hệ thống. <strong>Dữ liệu càng đầy đủ, insight càng chính xác.</strong></>,
-    ],
-  },
-  {
-    num: '02',
-    title: 'Điều gì khiến hệ thống này khác?',
-    bullets: [
-      {
-        label: 'Tìm đúng vấn đề, không chỉ tìm từ khóa',
-        text: 'AI đọc hiểu nội dung từng cuộc hội thoại và phân loại thông tin — đây là pain point, đây là lý do từ chối, đây là loại khách hàng nào. Nhờ đó kết quả luôn phù hợp với ngữ cảnh kinh doanh, không chỉ khớp từ khóa.',
-      },
-      {
-        label: 'Trả lời được cả câu hỏi số lẫn câu hỏi mở',
-        text: 'Dù bạn hỏi "có bao nhiêu deal đang ở giai đoạn Consideration?" hay "khách hàng hay lo ngại điều gì nhất?", hệ thống đều xử lý được — không giới hạn ở một kiểu câu hỏi duy nhất.',
-      },
-      {
-        label: 'Bao gồm cả phản hồi sau khi ký hợp đồng',
-        text: 'CRM chỉ lưu những gì khách hàng nói trong lúc được thuyết phục. Nhưng sau khi ký, họ mới nói thật. Đội Vận hành là người duy nhất nghe được phản hồi đó — hệ thống ghi nhận và đưa vào cùng bức tranh tổng thể.',
-      },
+      <>AI ở đây là <strong>bộ phân tích</strong>, không phải bộ thu thập. Khi dữ liệu đã được tập trung về một chỗ, AI đọc hiểu nội dung, trích xuất pain point, objection, use case và ICP signal — rồi đưa ra khuyến nghị cụ thể cho Sales và Marketing.</>,
+      <><strong>AI không tự kéo dữ liệu từ các platform bạn đang dùng.</strong> Việc thu thập dữ liệu được giả định là khả thi thông qua các cơ chế như polling, crawl hoặc data sources chủ động push dữ liệu vào hệ thống.</>,
     ],
   },
 ]
 
-export default function WelcomeModal() {
-  const [open, setOpen] = useState(true)
+interface Props {
+  open: boolean
+  onClose: () => void
+}
 
+export default function WelcomeModal({ open, onClose }: Props) {
   if (!open) return null
 
   return (
@@ -45,7 +28,7 @@ export default function WelcomeModal() {
       justifyContent: 'center',
       padding: 24,
     }}
-      onClick={e => { if (e.target === e.currentTarget) setOpen(false) }}
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div style={{
         background: 'var(--surface)',
@@ -74,11 +57,11 @@ export default function WelcomeModal() {
                 Chào mừng bạn
               </h2>
               <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: 480 }}>
-                Hệ thống tổng hợp customer insight từ nhiều nguồn — CRM, email, ops note — để hỗ trợ ra quyết định cho Sales và Marketing. Trước khi bắt đầu, hãy đọc qua phạm vi và kỳ vọng dưới đây.
+                Hệ thống thu thập insight từ CRM note, email, Teams transcript, Jira/Redmine note — dùng AI extract pain point, objection, use case, ICP signal — rồi surface qua dashboard và RAG chatbox để hỗ trợ Sales và Marketing ra quyết định. Trước khi bắt đầu, hãy đọc qua phạm vi và kỳ vọng dưới đây.
               </p>
             </div>
             <button
-              onClick={() => setOpen(false)}
+              onClick={onClose}
               style={{
                 flexShrink: 0,
                 width: 32,
@@ -101,8 +84,13 @@ export default function WelcomeModal() {
 
         {/* Scrollable body */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 32px' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>
-            Phạm vi &amp; kỳ vọng
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              Phạm vi &amp; kỳ vọng
+            </div>
+            <div style={{ fontSize: 11, color: '#cbd5e1' }}>
+              docs/scope.md
+            </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {SCOPE_ITEMS.map(item => (
@@ -129,26 +117,11 @@ export default function WelcomeModal() {
                     <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', marginBottom: 10 }}>
                       {item.title}
                     </div>
-                    {item.content && item.content.map((p, i) => (
-                      <p key={i} style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text)', marginBottom: i < item.content!.length - 1 ? 8 : 0 }}>
+                    {item.content.map((p, i) => (
+                      <p key={i} style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text)', marginBottom: i < item.content.length - 1 ? 8 : 0 }}>
                         {p}
                       </p>
                     ))}
-                    {item.bullets && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {item.bullets.map(b => (
-                          <div key={b.label} style={{
-                            background: 'var(--surface)',
-                            border: '1px solid var(--border)',
-                            borderRadius: 8,
-                            padding: '10px 14px',
-                          }}>
-                            <div style={{ fontWeight: 600, fontSize: 12, color: 'var(--accent)', marginBottom: 4 }}>{b.label}</div>
-                            <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text)' }}>{b.text}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -165,7 +138,7 @@ export default function WelcomeModal() {
           justifyContent: 'flex-end',
         }}>
           <button
-            onClick={() => setOpen(false)}
+            onClick={onClose}
             style={{
               background: 'var(--accent)',
               color: '#fff',

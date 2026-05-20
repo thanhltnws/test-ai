@@ -30,7 +30,11 @@ const links = [
   )},
 ]
 
-export default function Navbar() {
+interface Props {
+  onOpenWelcome: () => void
+}
+
+export default function Navbar({ onOpenWelcome }: Props) {
   const [batchLoading, setBatchLoading] = useState(false)
   const [batchMessage, setBatchMessage] = useState<string | null>(null)
 
@@ -131,8 +135,31 @@ export default function Navbar() {
       )}
 
       {/* Footer */}
-      <div style={{ marginTop: 'auto', padding: '12px 8px', borderTop: '1px solid var(--border)' }}>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Internal Demo · v0.1</div>
+      <div style={{ marginTop: 'auto', padding: '12px 8px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <button
+          type="button"
+          onClick={onOpenWelcome}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '9px 12px',
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: 500,
+            background: 'transparent',
+            color: 'var(--text-muted)',
+            border: 'none',
+            cursor: 'pointer',
+            width: '100%',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Phạm vi &amp; kỳ vọng
+        </button>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: '0 4px' }}>Internal Demo · v0.1</div>
       </div>
     </nav>
   )
