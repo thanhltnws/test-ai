@@ -49,12 +49,13 @@ function getPeriodLabel(period: PeriodType, isoDate: string): string {
 
 function getPeriodOptions(period: PeriodType): { value: string; label: string }[] {
   const now = new Date()
-  const count = period === 'quarterly' ? 8 : period === 'yearly' ? 5 : 12
+  const count = period === 'quarterly' ? 8 : period === 'yearly' ? 5 : period === 'weekly' ? 16 : 12
   const options: { value: string; label: string }[] = []
   for (let i = 0; i < count; i++) {
     const d = new Date(now)
     if (period === 'monthly') d.setMonth(d.getMonth() - i)
     else if (period === 'quarterly') d.setMonth(d.getMonth() - i * 3)
+    else if (period === 'weekly') d.setDate(d.getDate() - i * 7)
     else d.setFullYear(d.getFullYear() - i)
     const anchor = getPeriodStart(period, toISODate(d))
     if (!options.find(o => o.value === anchor))
@@ -63,9 +64,21 @@ function getPeriodOptions(period: PeriodType): { value: string; label: string }[
   return options
 }
 
-const inputStyle: React.CSSProperties = {
-  background: 'var(--surface)', border: '1px solid var(--border)',
-  borderRadius: 7, padding: '7px 10px', fontSize: 13, color: 'var(--text)', outline: 'none',
+const selectStyle: React.CSSProperties = {
+  background: 'transparent',
+  border: 'none',
+  borderRadius: 0,
+  padding: '6px 20px 6px 4px',
+  fontSize: 13,
+  fontWeight: 500,
+  color: 'var(--text)',
+  outline: 'none',
+  cursor: 'pointer',
+  appearance: 'none',
+  WebkitAppearance: 'none',
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 3l3 4 3-4' stroke='%2364748b' strokeWidth='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 2px center',
 }
 
 const card: React.CSSProperties = {
@@ -134,17 +147,40 @@ export default function Dashboard() {
           Dựa trên <strong style={{ color: 'var(--text)' }}>{totalSignals}</strong> signals
           {data.market && <> · <span style={{ textTransform: 'capitalize' }}>{data.market}</span></>}
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
-          <select value={draftPeriod} onChange={e => { const p = e.target.value as PeriodType; setDraftPeriod(p); setDraftAnchor(getPeriodStart(p, toISODate(new Date()))) }} style={inputStyle}>
-            {PERIODS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
-          </select>
-          <select value={draftAnchor} onChange={e => setDraftAnchor(e.target.value)} style={{ ...inputStyle, minWidth: 140 }}>
-            {getPeriodOptions(draftPeriod).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-          <select value={draftMarket} onChange={e => setDraftMarket(e.target.value)} style={inputStyle}>
-            {MARKETS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-          </select>
-          <button onClick={() => { setPeriod(draftPeriod); setPeriodAnchor(draftAnchor); setMarket(draftMarket) }} style={{ background: 'var(--accent)', color: '#fff', padding: '7px 18px', borderRadius: 7, fontSize: 13, fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
+
+          {/* Period group */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '2px 10px', boxShadow: 'var(--shadow)' }}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ color: 'var(--text-muted)', flexShrink: 0, marginRight: 6 }}>
+              <rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+              <path d="M5 1v2M11 1v2M1 6h14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            <select value={draftPeriod} onChange={e => { const p = e.target.value as PeriodType; setDraftPeriod(p); setDraftAnchor(getPeriodStart(p, toISODate(new Date()))) }} style={selectStyle}>
+              {PERIODS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </select>
+            <div style={{ width: 1, height: 16, background: 'var(--border)', margin: '0 8px' }} />
+            <select value={draftAnchor} onChange={e => setDraftAnchor(e.target.value)} style={{ ...selectStyle, minWidth: 120 }}>
+              {getPeriodOptions(draftPeriod).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+
+          {/* Market */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '2px 10px', boxShadow: 'var(--shadow)' }}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ color: 'var(--text-muted)', flexShrink: 0, marginRight: 6 }}>
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.4"/>
+              <ellipse cx="8" cy="8" rx="2.8" ry="6.5" stroke="currentColor" strokeWidth="1.4"/>
+              <path d="M1.5 8h13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            <select value={draftMarket} onChange={e => setDraftMarket(e.target.value)} style={selectStyle}>
+              {MARKETS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+            </select>
+          </div>
+
+          {/* Apply */}
+          <button onClick={() => { setPeriod(draftPeriod); setPeriodAnchor(draftAnchor); setMarket(draftMarket) }} style={{ background: 'var(--accent)', color: '#fff', padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, boxShadow: 'var(--shadow)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+            </svg>
             Apply
           </button>
         </div>

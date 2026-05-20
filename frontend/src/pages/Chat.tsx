@@ -185,7 +185,7 @@ export default function Chat() {
                   <div style={{
                     maxWidth: '80%',
                     padding: '12px 16px',
-                    borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                    borderRadius: 12,
                     background: msg.role === 'user' ? 'var(--accent)' : 'var(--surface)',
                     border: msg.role === 'assistant' ? '1px solid var(--border)' : 'none',
                     fontSize: 14,
@@ -306,7 +306,7 @@ export default function Chat() {
           width: sidebarOpen ? 272 : 0,
           minWidth: sidebarOpen ? 272 : 0,
           borderLeft: sidebarOpen ? '1px solid var(--border)' : 'none',
-          background: 'var(--surface)',
+          background: 'var(--surface2)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -328,29 +328,37 @@ export default function Chat() {
                 sessions.map(session => (
                   <div
                     key={session.id}
+                    className="history-item"
                     onClick={() => restoreSession(session.id)}
                     style={{
-                      padding: '8px 10px',
-                      borderRadius: 8,
-                      marginBottom: 2,
+                      padding: '10px 12px',
+                      borderRadius: 10,
+                      marginBottom: 6,
                       cursor: 'pointer',
-                      background: activeSessionId === session.id ? 'var(--accent-bg)' : 'transparent',
-                      border: activeSessionId === session.id ? '1px solid #bfdbfe' : '1px solid transparent',
+                      background: activeSessionId === session.id ? 'var(--accent-bg)' : 'var(--surface)',
+                      border: activeSessionId === session.id ? '1px solid #bfdbfe' : '1px solid var(--border)',
                       display: 'flex',
                       alignItems: 'flex-start',
-                      justifyContent: 'space-between',
-                      gap: 4,
+                      gap: 8,
+                      boxShadow: 'var(--shadow)',
                     }}
                     onMouseOver={e => {
-                      if (activeSessionId !== session.id)
-                        (e.currentTarget as HTMLDivElement).style.background = 'var(--surface2)'
+                      if (activeSessionId !== session.id) {
+                        (e.currentTarget as HTMLDivElement).style.background = 'var(--accent-bg)'
+                        const btn = e.currentTarget.querySelector('.delete-btn') as HTMLElement
+                        if (btn) btn.style.opacity = '1'
+                      }
                     }}
                     onMouseOut={e => {
-                      if (activeSessionId !== session.id)
-                        (e.currentTarget as HTMLDivElement).style.background = 'transparent'
+                      if (activeSessionId !== session.id) {
+                        (e.currentTarget as HTMLDivElement).style.background = 'var(--surface)'
+                        const btn = e.currentTarget.querySelector('.delete-btn') as HTMLElement
+                        if (btn) btn.style.opacity = '0'
+                      }
                     }}
                   >
-                    <div style={{ minWidth: 0 }}>
+                    <span style={{ fontSize: 13, flexShrink: 0, marginTop: 1 }}>💬</span>
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{
                         fontSize: 12,
                         color: activeSessionId === session.id ? 'var(--accent)' : 'var(--text)',
@@ -368,6 +376,7 @@ export default function Chat() {
                       </div>
                     </div>
                     <button
+                      className="delete-btn"
                       onClick={e => {
                         e.stopPropagation()
                         deleteSession(session.id)
@@ -380,6 +389,8 @@ export default function Chat() {
                         padding: '0 3px',
                         borderRadius: 4,
                         lineHeight: 1,
+                        opacity: activeSessionId === session.id ? 1 : 0,
+                        transition: 'opacity 0.15s',
                       }}
                       title="Delete"
                     >
@@ -394,7 +405,7 @@ export default function Chat() {
           {/* Related Insights — bottom half */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-              <span style={{ fontSize: 14 }}>📎</span>
+              <span style={{ fontSize: 14 }}>📌</span>
               <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Related Insights</span>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
