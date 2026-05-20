@@ -264,7 +264,7 @@ def _embed_queries(texts: list[str]) -> list[list[float]]:
     return _embed_bedrock(texts)
 
 
-def query_pgvector(conn, period_start: date, period_end: date) -> list[dict]:
+def query_pgvector(conn, period_start: date, period_end: date, market: str | None = None) -> list[dict]:
     try:
         query_vectors = _embed_queries(_VECTOR_QUERIES)
     except Exception as exc:
@@ -274,10 +274,12 @@ def query_pgvector(conn, period_start: date, period_end: date) -> list[dict]:
     seen_ids: set[str] = set()
     chunks: list[dict] = []
     cur = conn.cursor()
+    market_filter = "AND i.market = %s" if market else ""
+    market_params = (market,) if market else ()
     try:
         for query_text, vector in zip(_VECTOR_QUERIES, query_vectors):
             cur.execute(
-                """
+                f"""
                 SELECT
                     e.signal_id,
                     i.source,
@@ -288,10 +290,11 @@ def query_pgvector(conn, period_start: date, period_end: date) -> list[dict]:
                 FROM signal_embeddings e
                 JOIN signals i ON i.id = e.signal_id
                 WHERE COALESCE(i.record_date, i.extracted_at::date) BETWEEN %s AND %s
+                {market_filter}
                 ORDER BY e.embedding <=> %s::vector
                 LIMIT %s
                 """,
-                (str(vector), period_start, period_end, str(vector), _VECTOR_TOP_K_PER_QUERY),
+                (str(vector), period_start, period_end, *market_params, str(vector), _VECTOR_TOP_K_PER_QUERY),
             )
             for row in cur.fetchall():
                 uid = str(row[0])
@@ -513,7 +516,7 @@ def handler(event=None, context=None):
                     summary.setdefault(granularity, {})[mkt_label] = {"written": 0, "skipped": "no data"}
                     continue
 
-                vector_ctx = query_pgvector(conn, period_start, period_end)
+                vector_ctx = query_pgvector(conn, period_start, period_end, market=market)
                 print(f"  semantic={len(vector_ctx)}", end="  ")
 
                 prompt  = build_batch_prompt(sql_ctx, vector_ctx, granularity, period_start, period_end, market=market)

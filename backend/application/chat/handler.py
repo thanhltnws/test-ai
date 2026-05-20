@@ -296,7 +296,7 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict, to
             period_start_val = intent.get("period_start")
             ps = date.fromisoformat(period_start_val) if period_start_val else _default_period_start(intent["period"], date.today())
             pe = _default_period_end(intent["period"], ps)
-        where_clauses.append("s.record_date >= %s AND s.record_date <= %s")
+        where_clauses.append("COALESCE(s.record_date, s.extracted_at::date) >= %s AND COALESCE(s.record_date, s.extracted_at::date) <= %s")
         where_params.extend([ps, pe])
 
         where = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
