@@ -20,7 +20,7 @@ _TEMPLATE = """\
 {question}
 
 Return ONLY valid JSON (no markdown, no explanation):
-{{"answer": "...", "references": [{{"label": "short title", "url": "source_url"}}]}}
+{{"answer": "...", "references": [{{"title": "short title", "source_url": "source_url"}}]}}
 
 References: use only source_urls from SIGNALS above. Empty array if no signals cited. Max 5."""
 
@@ -30,15 +30,14 @@ def build_chat_prompt(
     insight_ctx: list[dict],
     signal_ctx: list[dict],
     history: list[dict] | None = None,
-    insight_low: bool = False,
 ) -> str:
-    if not insight_ctx or insight_low:
+    if not insight_ctx:
         insight_section = "[NO MATCHING DATA]"
     else:
         parts = []
         for c in insight_ctx:
             header = f"[{c.get('result_type', '')} | {c.get('period', '')} | market={c.get('market') or 'all'}]"
-            parts.append(f"{header}\n{c['embedding_text']}")
+            parts.append(f"{header}\n{c['embedding_text'] or '(summary not available)'}")
         insight_section = "\n\n".join(parts)
 
     if signal_ctx:
@@ -49,10 +48,10 @@ def build_chat_prompt(
                 f"[{c.get('source', '')} | {c.get('funnel_stage', '')} | "
                 f"score={c.get('score', '')}] url={url}"
             )
-            parts.append(f"{header}\n{c['embedding_text']}")
+            parts.append(f"{header}\n{c['embedding_text'] or ''}")
         signal_section = "\n\n".join(parts)
     else:
-        signal_section = "(not queried — insights sufficient)"
+        signal_section = "(no matching signals found)"
 
     history_block = ""
     if history:

@@ -6,10 +6,6 @@
 
 ## P1 — Tiếp theo
 
-### insight_low dual-role (chưa bàn xong)
-
-`insight_low=True` hiện đảm nhiệm hai vai trò: (1) trigger Phase 2 signal fetch, (2) inject `[NO MATCHING DATA]` vào prompt. Vai trò (2) sai với `mode=semantic` — cần tách. Đã revert fix, pending design discussion.
-
 ### Tham số LLM — review
 
 Chưa tuning `top_k`, `top_p`, `temperature` cho intent model (Haiku) và answer model (Sonnet). Cần xem xét trade-off coherence vs. creativity theo từng vai trò.
@@ -17,10 +13,6 @@ Chưa tuning `top_k`, `top_p`, `temperature` cho intent model (Haiku) và answer
 ### So sánh kỹ thuật đã apply vs. docs
 
 Đối chiếu với `docs/rag_optimization.md` và `docs/chat_optimization.md` — xem còn kỹ thuật nào chưa apply hoặc apply sai.
-
-### Phase 2 — signals + signal_embeddings
-
-Cùng cơ chế structured-first / semantic fallback như Phase 1. Hiện Phase 2 chỉ có `query_signal_embeddings` (semantic only). Nếu intent rõ period/market → có thể query thẳng `signals` trước.
 
 ---
 

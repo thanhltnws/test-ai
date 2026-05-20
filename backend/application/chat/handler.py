@@ -275,7 +275,7 @@ def rewrite_question(question: str, history: list[dict]) -> str:
 
 # ── db queries ─────────────────────────────────────────────────────────────────
 
-def query_signal_embeddings(conn, question_vector: list[float], intent: dict) -> list[dict]:
+def query_signal_embeddings(conn, question_vector: list[float], intent: dict, top_k: int = _VECTOR_TOP_K) -> list[dict]:
     cur = conn.cursor()
     try:
         where_clauses = []
@@ -289,12 +289,15 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict) ->
         if intent.get("funnel_stage"):
             where_clauses.append("s.funnel_stage = %s")
             where_params.append(intent["funnel_stage"])
-        if not intent.get("use_latest"):
+        if intent.get("use_latest"):
+            ps = date.today().replace(day=1)
+            pe = date.today()
+        else:
             period_start_val = intent.get("period_start")
             ps = date.fromisoformat(period_start_val) if period_start_val else _default_period_start(intent["period"], date.today())
             pe = _default_period_end(intent["period"], ps)
-            where_clauses.append("s.record_date >= %s AND s.record_date <= %s")
-            where_params.extend([ps, pe])
+        where_clauses.append("s.record_date >= %s AND s.record_date <= %s")
+        where_params.extend([ps, pe])
 
         where = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
         cur.execute(
@@ -312,7 +315,7 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict) ->
             ORDER BY e.embedding <=> %s::vector
             LIMIT %s
             """,
-            (str(question_vector), *where_params, str(question_vector), _VECTOR_TOP_K),
+            (str(question_vector), *where_params, str(question_vector), top_k),
         )
         return [
             {
@@ -341,7 +344,10 @@ def query_insights_structured(conn, intent: dict) -> list[dict]:
         where_params = []
 
         if intent.get("use_latest"):
-            where_clauses.append("i.computed_at = (SELECT MAX(computed_at) FROM insights)")
+            ps = date.today().replace(day=1)
+            pe = date.today()
+            where_clauses.append("i.period_start <= %s AND i.period_end >= %s")
+            where_params.extend([pe, ps])
         else:
             period_start_val = intent.get("period_start")
             anchor = date.fromisoformat(period_start_val) if period_start_val else _default_period_start(intent["period"], date.today())
@@ -385,7 +391,6 @@ def query_insights_structured(conn, intent: dict) -> list[dict]:
                 "score": 1.0,
             }
             for r in cur.fetchall()
-            if r[4]
         ]
     except Exception as exc:
         print(f"insights structured query skipped: {exc}")
@@ -401,7 +406,10 @@ def query_insight_embeddings(conn, question_vector: list[float], intent: dict) -
         where_params = []
 
         if intent.get("use_latest"):
-            where_clauses.append("i.computed_at = (SELECT MAX(computed_at) FROM insights)")
+            ps = date.today().replace(day=1)
+            pe = date.today()
+            where_clauses.append("i.period_start <= %s AND i.period_end >= %s")
+            where_params.extend([pe, ps])
         else:
             period_start_val = intent.get("period_start")
             if period_start_val:
@@ -595,6 +603,7 @@ def lambda_handler(event=None, context=None):
         if intent_has_period:
             insight_ctx = query_insights_structured(conn, intent)
             if not insight_ctx:
+                print("[phase1]       structured returned 0 rows — insights may exist but embeddings missing, falling back to semantic")
                 insight_ctx = query_insight_embeddings(conn, question_vector, intent)
                 retrieval_mode = "semantic-fallback"
         else:
@@ -608,18 +617,16 @@ def lambda_handler(event=None, context=None):
         insight_low = top_insight_score < 0.5
         print(f"[insight_low]  {insight_low}  (top_score={top_insight_score})")
 
-        # phase 2: signal vector search — only if insight is insufficient or citations needed
-        signal_ctx: list[dict] = []
-        if intent.get("needs_citations") or insight_low:
-            trigger = "needs_citations=True" if intent.get("needs_citations") else f"insight_low=True (top_score={top_insight_score})"
-            print(f"[trigger]      {trigger} → querying signal_embeddings")
-            t2 = time.perf_counter()
-            signal_ctx = query_signal_embeddings(conn, question_vector, intent)
-            t_phase2 = time.perf_counter() - t2
-            print(f"[vec/signal]   chunks={len(signal_ctx)}  scores={[c['score'] for c in signal_ctx]}")
-            print(f"[timing]       phase2 (signal_vec)={t_phase2*1000:.0f}ms")
+        # phase 2: signal vector search — always run for references; full top_k only when insight is weak
+        signal_top_k = _VECTOR_TOP_K if (insight_low or intent.get("needs_citations")) else 3
+        print(f"[phase2]       querying signal_embeddings (top_k={signal_top_k})")
+        t2 = time.perf_counter()
+        signal_ctx = query_signal_embeddings(conn, question_vector, intent, top_k=signal_top_k)
+        t_phase2 = time.perf_counter() - t2
+        print(f"[vec/signal]   chunks={len(signal_ctx)}  scores={[c['score'] for c in signal_ctx]}")
+        print(f"[timing]       phase2 (signal_vec)={t_phase2*1000:.0f}ms")
 
-        prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history, insight_low)
+        prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history)
 
         # LLM answer generation
         print(f"[llm/answer]   calling {answer_model} …")
@@ -627,7 +634,10 @@ def lambda_handler(event=None, context=None):
         raw = call_llm(prompt)
         t_llm = time.perf_counter() - t3
 
-        result = parse_json_response(raw)
+        try:
+            result = parse_json_response(raw)
+        except (json.JSONDecodeError, ValueError):
+            result = {"answer": raw, "references": []}
 
         answer     = result.get("answer", "")
         references = result.get("references", [])[:5]
