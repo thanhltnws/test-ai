@@ -3,7 +3,7 @@
 Internal demo. Aggregates customer insights from CRM, email, call transcripts, and ops notes into a unified store, then surfaces them through a dashboard and a natural-language chatbox.
 
 ```text
-Data Sources → Ingestion (Lambda + S3) → Transform (Lambda + Bedrock) → Aurora + pgvector → Dashboard / Chatbox
+Data Sources → Ingestion (Lambda + S3) → Transform (Lambda + Bedrock) → Aurora + pgvector → Dashboard / Chatbox.
 ```
 
 ---
