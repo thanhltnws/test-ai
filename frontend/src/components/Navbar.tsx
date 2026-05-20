@@ -14,11 +14,11 @@ const links = [
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
     </svg>
   )},
-  { to: '/ingestion', label: 'Ingestion', icon: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-    </svg>
-  )},
+  // { to: '/ingestion', label: 'Ingestion', icon: (
+  //   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  //     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  //   </svg>
+  // )},
   { to: '/analysis', label: 'About', icon: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -108,7 +108,11 @@ export default function Navbar({ onOpenWelcome }: Props) {
           </svg>
           Phạm vi &amp; kỳ vọng
         </button>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: '0 4px' }}>Internal Demo · v0.1</div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', padding: '0 4px', lineHeight: 1.6 }}>
+          Internal Demo · v0.1
+          <br />
+          Mock data · 27 signals · May 2026
+        </div>
       </div>
     </nav>
   )

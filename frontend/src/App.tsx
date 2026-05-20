@@ -8,11 +8,13 @@ import Pipeline from './pages/Pipeline'
 import WelcomeModal from './components/WelcomeModal'
 
 export default function App() {
-  const [welcomeOpen, setWelcomeOpen] = useState(true)
+  const [welcomeOpen, setWelcomeOpen] = useState(() => {
+    return !localStorage.getItem('welcome-seen')
+  })
 
   return (
     <BrowserRouter>
-      <WelcomeModal open={welcomeOpen} onClose={() => setWelcomeOpen(false)} />
+      <WelcomeModal open={welcomeOpen} onClose={() => { localStorage.setItem('welcome-seen', '1'); setWelcomeOpen(false) }} />
       <Navbar onOpenWelcome={() => setWelcomeOpen(true)} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
         <Routes>
