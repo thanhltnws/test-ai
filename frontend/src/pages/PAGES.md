@@ -60,7 +60,7 @@ RAG chatbox with persistent session history stored in `localStorage`.
 | `input` | Controlled textarea value |
 | `loading` | Shows "Đang xử lý..." bubble while waiting for API |
 | `activeSessionId` | ID of the session being edited (null = new chat) |
-| `sidebarOpen` | Toggles right panel (history + related insights) |
+| `sidebarOpen` | Toggles right panel (history + related signals) |
 
 ### Send flow
 
@@ -80,7 +80,7 @@ History limit: last 6 messages sent as context to avoid token bloat. See `messag
 
 Split into two halves:
 - **Top — History**: lists all `ChatSession[]` from `useChatHistory`. Click to restore, × to delete.
-- **Bottom — Related Insights**: shows `references` from the last assistant message (title + URL). Empty state shown otherwise.
+- **Bottom — Related Signals**: shows `references` from the last assistant message (title + URL). Empty state shown otherwise.
 
 ### Suggested questions
 

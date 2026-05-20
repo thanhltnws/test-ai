@@ -5,9 +5,11 @@ import { useChatHistory } from '../hooks/useChatHistory'
 import type { ChatMessage, Reference } from '../types'
 
 const SUGGESTED = [
-  'Khách hàng hay gặp vấn đề gì nhất?',
-  'Phân khúc ICP nào đang có tỷ lệ win cao nhất?',
-  'Deal đang ở giai đoạn Consideration có điểm chung gì?',
+  'Gần đây objection nào xuất hiện nhiều nhất?',
+  'Fintech sector đang gặp vấn đề gì tháng này?',
+  'Retail market đang cần hỗ trợ gì tháng này?',
+  'Khách ở consideration stage đang quan tâm điều gì tháng này?',
+  'Thị trường Korea đang gặp pain point gì nổi bật nhất tháng này?',
 ]
 
 function formatDate(iso: string) {
@@ -301,7 +303,7 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* Right panel: History (top) + Related Insights (bottom) */}
+        {/* Right panel: History (top) + Related Signals (bottom) */}
         <div style={{
           width: sidebarOpen ? 272 : 0,
           minWidth: sidebarOpen ? 272 : 0,
@@ -402,11 +404,11 @@ export default function Chat() {
             </div>
           </div>
 
-          {/* Related Insights — bottom half */}
+          {/* Related Signals — bottom half */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
               <span style={{ fontSize: 14 }}>📌</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Related Insights</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Related Signals</span>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
               {lastRefs.length === 0 ? (

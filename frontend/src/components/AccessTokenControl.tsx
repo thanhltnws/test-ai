@@ -13,7 +13,10 @@ export default function AccessTokenControl() {
   return (
     <div style={{ marginTop: 16, padding: '12px 8px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 8 }}>
       <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-        Live Access
+        Auth Token
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+        Basic auth for Chat feature
       </div>
       <input
         type="password"
@@ -22,7 +25,7 @@ export default function AccessTokenControl() {
           setDraftToken(e.target.value)
           setStatus('Unsaved')
         }}
-        placeholder="Access token"
+        placeholder="Auth token"
         style={{
           width: '100%',
           boxSizing: 'border-box',
