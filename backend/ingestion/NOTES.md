@@ -4,6 +4,50 @@
 
 ---
 
+## Implementation Mock Ingestion (Demo)
+
+Handler (`handler.py`) đóng vai **Ingestion UI Lambda** — không crawl source thật mà phục vụ màn hình Pipeline của frontend.
+
+### File structure
+
+```
+backend/ingestion/
+  mock_sources.json          ← catalog: id, source, file, label, description, record_count
+  mock/
+    redmine_01.json           ← 20 records — International project tickets
+    redmine_02.json           ← 15 records — Japan project tickets
+    outlook_email_01.json     ← 20 records — International emails
+    outlook_email_02.json     ← 15 records — Vietnam-focus emails
+    teams_transcript_01.json  ← 20 records — Sales & Delivery call transcripts
+```
+
+Catalog hiện tại: `mock_sources.json` — mỗi entry có `id`, `source`, `file`, `label`, `description`, `record_count`.
+
+### Endpoints
+
+| Method | Path                       | Mô tả                                                        |
+|--------|----------------------------|--------------------------------------------------------------|
+| GET    | `/ingestion` (hoặc `/ingestion/files`) | List tất cả mock files với metadata          |
+| GET    | `/ingestion/preview`       | Trả toàn bộ records của một file (`?file_id=...`)            |
+| POST   | `/ingestion/trigger`       | Trigger pipeline với một mock file (`{"file_id": "..."}`)    |
+
+CloudWatch logs của Transform Lambda được serve bởi **Transform Lambda Function URL** (`VITE_TRANSFORM_LAMBDA_URL`) — `GET /logs`. Xem `backend/transform/handler.py`.
+
+### Flow (AWS)
+
+```
+POST /ingestion/trigger  {"file_id": "redmine_01"}
+  → đọc mock/redmine_01.json
+  → upload lên S3: raw/redmine/2026-05-19/120000_redmine_01.json
+  → S3 ObjectCreated event → Transform Lambda (async)
+
+GET <VITE_TRANSFORM_LAMBDA_URL>/logs?since=2026-05-19T12:00:00Z
+  → CloudWatch filter_log_events trên /aws/lambda/ai-insight-hub-transform
+  → trả events (bỏ START/END/REPORT lines)
+```
+
+---
+
 ## Nguyên tắc chung (áp dụng cho mọi cách)
 
 Mỗi source nên có filter condition rõ ràng xác định *record nào đáng extract signal*, không crawl mọi thứ.

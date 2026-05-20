@@ -92,6 +92,48 @@ Assistant messages are rendered with `react-markdown`. Custom components overrid
 
 ---
 
+## Pipeline (`Pipeline.tsx`)
+
+Ingestion Demo screen at `/ingestion`. Lets the user manually trigger the pipeline end-to-end using pre-built mock files.
+
+### State
+
+| State | Type | Purpose |
+|---|---|---|
+| `files` | `MockFileEntry[]` | Loaded from `listIngestionFiles()` on mount |
+| `statuses` | `Record<string, TriggerStatus>` | Per-file trigger state (`idle/triggering/done/error`) |
+| `log` | `ActivityLogEntry[]` | Activity log lines shown in the right panel |
+| `flowStage` | `FlowStage` | Drives the animated flow diagram |
+| `previewEntry` | `MockFileEntry \| null` | Opens `JsonPreviewModal` when set |
+
+### Components
+
+- **`FlowDiagram`** — animated 5-node pipeline diagram (Mock File → Ingestion → S3 → Transform → Aurora → Dashboard). Node color and arrow animation driven by `FlowStage` enum.
+- **`FileRow`** — one row per mock file: colored source badge, record count, description, Preview (👁) button, Trigger button.
+- **`JsonPreviewModal`** — full-screen overlay showing syntax-highlighted JSON. Fetches via `fetchIngestionPreview()`. In mock mode shows a "requires lambda" message instead.
+- **`LogLine`** — single activity log entry with timestamp, level color, and optional detail block.
+
+### Trigger flow (lambda mode)
+
+```
+handleTrigger(entry)
+  → setFlowStage('ingestion') → delay 400ms
+  → setFlowStage('s3') → delay 400ms
+  → triggerIngestionFile(entry.id)   ← POST /ingestion/trigger
+  → setFlowStage('transform')
+  → startLogPolling(triggerTime)     ← polls GET /ingestion/logs every 5 s (max 30 attempts / 90 s)
+      → OK … → setFlowStage('aurora') → 'done' → 'idle'
+      → ERROR / SKIP → stop polling
+```
+
+In mock mode, `handleTrigger` skips the flow diagram and calls `triggerIngestionFile` directly (which returns a stub after 1.8 s).
+
+### Source constants
+
+`SOURCE_COLORS` and `SOURCE_LABELS` map source keys (`redmine`, `outlook_email`, `teams_transcript`, `hubspot`, `twenty_crm`, `sharepoint`) to display colors and human-readable labels.
+
+---
+
 ## Analysis (`Analysis.tsx`)
 
 Static informational page. No API calls, no state.

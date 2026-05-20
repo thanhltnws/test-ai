@@ -18,6 +18,7 @@ lambdaEndpoints = {
   api:             joinUrl(VITE_API_LAMBDA_URL, VITE_API_INSIGHTS_PATH),      // GET insights
   chat:            joinUrl(VITE_CHAT_LAMBDA_URL, VITE_CHAT_PATH),             // POST chat
   insightsBuilder: joinUrl(VITE_INSIGHTS_BUILDER_LAMBDA_URL, VITE_INSIGHTS_BUILDER_PATH), // POST batch
+  ingestion:       joinUrl(VITE_INGESTION_LAMBDA_URL, VITE_INGESTION_PATH),   // ingestion demo
 }
 ```
 
@@ -33,7 +34,7 @@ setAuthToken(token: string): void  // writes or removes from localStorage
 requireAuthHeaders()            // throws if no token; returns { Authorization: 'Bearer <token>' }
 ```
 
-`requireAuthHeaders()` is called for mutating endpoints (`runBatch`, `sendChat`). The insights fetch (`fetchDashboardInsights`) does NOT require auth — it is a public GET.
+`requireAuthHeaders()` is called for mutating endpoints (`runBatch`, `sendChat`). Ingestion endpoints and `fetchDashboardInsights` do NOT require auth.
 
 ## Exported functions
 
@@ -87,5 +88,47 @@ raw.recommendations.marketing     → recommendations.marketing
 `MOCK_SUMMARY` — 5 ICP segments, 3 pain points with insights, funnel with 3 stages, narrative text.
 `MOCK_RECOMMENDATIONS` — 3 sales items, 3 marketing items.
 `MOCK_DASHBOARD_INSIGHTS` — combines both above.
+`MOCK_FILES` — 5 `MockFileEntry` objects mirroring `mock_sources.json` (redmine ×2, outlook_email ×2, teams_transcript ×1).
 
 The mock chat answer is a multiline Vietnamese string with inline markdown, code block, and 2 references — used to test the chat rendering in mock mode.
+
+---
+
+## Ingestion demo functions
+
+### `listIngestionFiles()`
+
+```typescript
+listIngestionFiles(): Promise<IngestionFilesResponse>
+```
+
+- Mock: returns `{ files: MOCK_FILES }` — no network call
+- Lambda: `GET lambdaEndpoints.ingestion`
+
+### `triggerIngestionFile(fileId)`
+
+```typescript
+triggerIngestionFile(fileId: string): Promise<TriggerResult>
+```
+
+- Mock: 1.8 s delay → returns stub `{ mode: 'local', upserted: 0, vectors: 0, note: 'Mock mode...' }`
+- Lambda: `POST lambdaEndpoints.ingestion/trigger` with `{ file_id: fileId }`
+
+### `fetchTransformLogs(since)`
+
+```typescript
+fetchTransformLogs(since: string): Promise<{ events: { ts: number; message: string }[] }>
+```
+
+- Mock: returns `{ events: [] }`
+- Lambda: `GET VITE_TRANSFORM_LAMBDA_URL/logs?since=<ISO8601>` — polls every 5 s from `Pipeline.tsx`
+- Calls Transform Lambda directly (not Ingestion Lambda) — Transform Lambda reads its own CloudWatch log group
+
+### `fetchIngestionPreview(fileId)`
+
+```typescript
+fetchIngestionPreview(fileId: string): Promise<{ file_id: string; source: string; label: string; records: unknown[] }>
+```
+
+- Mock: returns stub with `records: []` (preview modal shows a "requires lambda" message)
+- Lambda: `GET lambdaEndpoints.ingestion/preview?file_id=<id>`

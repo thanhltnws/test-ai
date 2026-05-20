@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
 import Analysis from './pages/Analysis'
+import Pipeline from './pages/Pipeline'
 import WelcomeModal from './components/WelcomeModal'
 
 export default function App() {
@@ -10,11 +11,14 @@ export default function App() {
     <BrowserRouter>
       <WelcomeModal />
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/analysis" element={<Analysis />} />
-      </Routes>
+      <div style={{ flex: 1, overflowY: 'auto', minWidth: 0 }}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/analysis" element={<Analysis />} />
+          <Route path="/ingestion" element={<Pipeline />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   )
 }

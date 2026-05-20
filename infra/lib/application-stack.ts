@@ -248,17 +248,19 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 256,
       environment: {
         S3_BUCKET: rawBucket.bucketName,
+        DB_SECRET_ARN: cluster.secret!.secretArn,
       },
       description: 'Ingestion: read sources.json → write raw JSON to S3 raw/',
     });
 
     rawBucket.grantPut(ingestionFn);
+    cluster.secret!.grantRead(ingestionFn);
 
     const ingestionUrl = ingestionFn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
         allowedOrigins: ['*'],
-        allowedMethods: [lambda.HttpMethod.POST],
+        allowedMethods: [lambda.HttpMethod.GET, lambda.HttpMethod.POST],
         allowedHeaders: ['Content-Type'],
       },
     });
@@ -318,6 +320,7 @@ export class ApplicationStack extends cdk.Stack {
         DB_SECRET_ARN: cluster.secret!.secretArn,
         BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
         BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
+        TRANSFORM_LOG_GROUP: '/aws/lambda/ai-insight-hub-transform',
       },
       description: 'Transform: S3 ObjectCreated raw/ → normalize → Bedrock extract → Aurora signals + pgvector',
     });
@@ -344,6 +347,22 @@ export class ApplicationStack extends cdk.Stack {
       new s3n.LambdaDestination(transformFn),
       { prefix: 'raw/' },
     );
+
+    // Transform Lambda reads its own CloudWatch logs via GET /logs Function URL
+    transformFn.addToRolePolicy(new iam.PolicyStatement({
+      sid: 'TransformReadOwnLogs',
+      actions: ['logs:FilterLogEvents'],
+      resources: [`arn:aws:logs:${this.region}:${this.account}:log-group:/aws/lambda/ai-insight-hub-transform:*`],
+    }));
+
+    const transformUrl = transformFn.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedOrigins: ['*'],
+        allowedMethods: [lambda.HttpMethod.GET],
+        allowedHeaders: ['Content-Type'],
+      },
+    });
 
     // ── Insights Builder Lambda ────────────────────────────────────────────────
     // Lambda is NOT in a VPC — has full internet access for Bedrock.
@@ -570,6 +589,11 @@ export class ApplicationStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'ChatFunctionUrl', {
       value: chatUrl.url,
       description: 'POST /chat — { question } → { answer, references }',
+    });
+
+    new cdk.CfnOutput(this, 'TransformFunctionUrl', {
+      value: transformUrl.url,
+      description: 'GET /logs — Transform Lambda CloudWatch log stream',
     });
 
     new cdk.CfnOutput(this, 'IngestionFunctionUrl', {

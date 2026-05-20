@@ -1,0 +1,282 @@
+[
+  {
+    "meetingId": "meeting_13000",
+    "title": "Kick-off — TechCore JP Data Platform",
+    "date": "2026-05-20T10:00:00Z",
+    "duration": 62,
+    "participants": ["Nam (PM)", "Hung (Data Engineer)", "Tanaka Kenji (Client PM)", "Yamamoto Hiroshi (Client Tech Lead)"],
+    "channel": "Project Delivery",
+    "transcript": [
+      {"time": "00:02:00", "speaker": "Tanaka Kenji (Client PM)", "text": "We expect daily written progress reports — not just Slack updates. Our previous vendor had no documentation and we lost track of progress."},
+      {"time": "00:08:30", "speaker": "Yamamoto Hiroshi (Client Tech Lead)", "text": "The existing Spark cluster is on EMR 6.2 and we cannot upgrade during the project. All new pipelines must be compatible."},
+      {"time": "00:15:00", "speaker": "Hung (Data Engineer)", "text": "Understood. We'll target EMR 6.2 compatible Spark 3.1 APIs throughout."},
+      {"time": "00:22:00", "speaker": "Tanaka Kenji (Client PM)", "text": "Security is critical — all data must stay in ap-northeast-1 (Tokyo). No cross-region replication."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13001",
+    "title": "Architecture Review — VinPay VN Payment Integration",
+    "date": "2026-05-09T08:00:00Z",
+    "duration": 55,
+    "participants": ["Phuong (Tech Lead)", "Tuan (BE Engineer)", "Nguyen Van An (Client CTO)", "Tran Thi Lan (Client Tech Lead)"],
+    "channel": "Project Delivery",
+    "transcript": [
+      {"time": "00:03:00", "speaker": "Nguyen Van An (Client CTO)", "text": "Chúng tôi cần đảm bảo hệ thống xử lý được 10,000 giao dịch/phút vào giờ cao điểm. Đây là yêu cầu không thương lượng."},
+      {"time": "00:10:00", "speaker": "Tran Thi Lan (Client Tech Lead)", "text": "API của NAPAS có SLA 99.5% — khi họ downtime thì payment flow của chúng tôi phải gracefully fallback sang VNPAY. Vendor trước không xử lý được điều này."},
+      {"time": "00:18:00", "speaker": "Phuong (Tech Lead)", "text": "Chúng tôi sẽ thiết kế circuit breaker với fallback queue. Nếu NAPAS down, transaction được queue và retry tự động khi restore."},
+      {"time": "00:35:00", "speaker": "Nguyen Van An (Client CTO)", "text": "Tốt. Nhưng cần lưu ý: theo quy định NHNN, transaction data không được lưu quá 5 giây trên bộ nhớ trước khi flush xuống storage."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13002",
+    "title": "Sprint 5 Review — RetailEdge SG E-Commerce Platform",
+    "date": "2026-05-12T03:00:00Z",
+    "duration": 48,
+    "participants": ["Linh (PM)", "Duc (FE Engineer)", "Jason Tan (Client Head of Digital)", "Wei Chen (Client Product Manager)"],
+    "channel": "Project Ops",
+    "transcript": [
+      {"time": "00:05:00", "speaker": "Jason Tan (Client Head of Digital)", "text": "The recommendation engine CTR is up to 3.1% — good progress, but still below the 4% target. We need the ML model to incorporate purchase history, not just browsing."},
+      {"time": "00:12:00", "speaker": "Wei Chen (Client Product Manager)", "text": "Also, the payment gateway timeout issue from last week — that was extremely damaging for us. We lost $12K in one afternoon. Can we get a post-mortem document?"},
+      {"time": "00:20:00", "speaker": "Linh (PM)", "text": "The post-mortem is ready. Root cause was connection pool exhaustion. We've added circuit breaker and the staging tests show 99.7% success rate under peak load."},
+      {"time": "00:38:00", "speaker": "Jason Tan (Client Head of Digital)", "text": "Good. We also need to discuss the mobile checkout UX — 68% of our orders come from mobile but conversion is 40% lower than desktop. This needs to be the next sprint focus."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13003",
+    "title": "Discovery Call — MediCore KR Hospital Integration",
+    "date": "2026-05-06T02:30:00Z",
+    "duration": 51,
+    "participants": ["Nam (BA)", "Lee Sanghoon (Client IT Director)", "Kim Juhyun (Client Dev Manager)"],
+    "channel": "Pre-Sales",
+    "transcript": [
+      {"time": "00:04:00", "speaker": "Lee Sanghoon (Client IT Director)", "text": "이 프로젝트의 핵심은 HIS와 EMR 시스템 간의 실시간 환자 데이터 동기화입니다. 현재는 수동으로 하는데 하루 3건 정도 오류가 발생합니다."},
+      {"time": "00:11:00", "speaker": "Kim Juhyun (Client Dev Manager)", "text": "또한 의료법 제23조에 따라 환자 데이터는 국내 서버에만 저장해야 합니다. 해외 클라우드 서비스 사용이 불가합니다."},
+      {"time": "00:22:00", "speaker": "Nam (BA)", "text": "Understood. We will design the solution using domestic cloud providers. Can you share the existing HIS and EMR API documentation?"},
+      {"time": "00:38:00", "speaker": "Lee Sanghoon (Client IT Director)", "text": "문서가 불완전합니다. 이전 SI업체도 같은 문제로 고생했습니다. 개발 기간 중 저희 팀과 긴밀히 협업해야 할 것 같습니다."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13004",
+    "title": "UAT Sign-off Meeting — ShopViet Multi-Vendor Platform",
+    "date": "2026-05-14T05:00:00Z",
+    "duration": 39,
+    "participants": ["Phuong (PM)", "Hoa (QA Lead)", "Le Van Minh (Client CEO)", "Nguyen Thi Hoa (Client Product Lead)"],
+    "channel": "Project Delivery",
+    "transcript": [
+      {"time": "00:03:00", "speaker": "Le Van Minh (Client CEO)", "text": "Vendor management module có một bug nhỏ — khi vendor upload ảnh >5MB hệ thống không báo lỗi rõ ràng. Cần fix trước go-live."},
+      {"time": "00:10:00", "speaker": "Nguyen Thi Hoa (Client Product Lead)", "text": "Ngoài ra, tôi muốn xác nhận lại: code ownership hoàn toàn về phía ShopViet sau khi bàn giao, kể cả database schema và deployment scripts."},
+      {"time": "00:18:00", "speaker": "Phuong (PM)", "text": "Đúng — tất cả source code, scripts, và documentation đều được bàn giao. Không có IP nào giữ lại."},
+      {"time": "00:28:00", "speaker": "Le Van Minh (Client CEO)", "text": "Tốt. Chúng tôi đã bị vendor cũ giữ source code khi kết thúc hợp đồng — đó là lý do chúng tôi rất coi trọng điều này."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13005",
+    "title": "Technical Deep Dive — PayFlow JP ISMS Certification",
+    "date": "2026-05-05T03:00:00Z",
+    "duration": 71,
+    "participants": ["Trung (Solution Architect)", "Khanh (PM)", "Yamada Takeshi (Client Security Lead)", "Ito Ryota (Client CTO)"],
+    "channel": "Pre-Sales",
+    "transcript": [
+      {"time": "00:06:00", "speaker": "Yamada Takeshi (Client Security Lead)", "text": "ISO 27001認証が必須です。認証書の写しと、直近の内部監査報告書を提供できますか？"},
+      {"time": "00:14:00", "speaker": "Ito Ryota (Client CTO)", "text": "また、開発環境のソースコード管理ポリシーも確認したいです。以前のベンダーは本番データを開発環境に使用していたことが判明しました。"},
+      {"time": "00:28:00", "speaker": "Trung (Solution Architect)", "text": "We strictly separate production data from non-production environments. All dev/staging environments use fully anonymized or synthetic data."},
+      {"time": "00:45:00", "speaker": "Yamada Takeshi (Client Security Lead)", "text": "ペネトレーションテストは年1回実施していますか？報告書をNDAの下で共有してもらえますか？"}
+    ]
+  },
+  {
+    "meetingId": "meeting_13006",
+    "title": "Contract Negotiation — InsurVN Data Residency",
+    "date": "2026-05-13T05:00:00Z",
+    "duration": 44,
+    "participants": ["Sales (Account Manager)", "Legal (Counsel)", "Pham Duc Anh (Client VPTech)", "Hoang Thi Mai (Client Legal)"],
+    "channel": "Commercial",
+    "transcript": [
+      {"time": "00:05:00", "speaker": "Pham Duc Anh (Client VPTech)", "text": "Câu hỏi cuối cùng về data residency: server phải đặt ở đâu? AWS ap-southeast-1 là Singapore — không đáp ứng được yêu cầu của chúng tôi."},
+      {"time": "00:12:00", "speaker": "Hoang Thi Mai (Client Legal)", "text": "Cục Quản lý Giám sát Bảo hiểm yêu cầu rõ ràng: dữ liệu bảo hiểm phải ở Việt Nam. Đây là nghĩa vụ pháp lý, không phải tùy chọn."},
+      {"time": "00:22:00", "speaker": "Sales (Account Manager)", "text": "We are exploring partnership with Viettel IDC and FPT Telecom data centers for VN-based hosting. Can you give us 2 weeks to confirm feasibility?"},
+      {"time": "00:35:00", "speaker": "Pham Duc Anh (Client VPTech)", "text": "2 tuần được. Nhưng nếu không khả thi về mặt kỹ thuật hoặc chi phí, chúng tôi sẽ phải xem xét lại toàn bộ hợp đồng."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13007",
+    "title": "Sprint Planning — MedViet Patient App",
+    "date": "2026-05-07T04:30:00Z",
+    "duration": 58,
+    "participants": ["Minh (PM)", "Huy (Tech Lead)", "Nguyen Bao Tran (Client Product Manager)", "Le Van Khanh (Client CTO)"],
+    "channel": "Project Delivery",
+    "transcript": [
+      {"time": "00:08:00", "speaker": "Le Van Khanh (Client CTO)", "text": "Tính năng đăng nhập cần hỗ trợ thẻ BHYT để tự động điền thông tin. API của Cục Quản lý Khám chữa bệnh có sẵn nhưng không ổn định — đôi khi timeout 30 giây."},
+      {"time": "00:15:00", "speaker": "Nguyen Bao Tran (Client Product Manager)", "text": "Cũng cần lưu ý: 40% bệnh nhân của chúng tôi là người cao tuổi. UX cần cực kỳ đơn giản — chữ to, icon rõ ràng, giảm thiểu số bước."},
+      {"time": "00:30:00", "speaker": "Huy (Tech Lead)", "text": "Understood. We'll design with WCAG 2.1 AA accessibility standards and a minimum font size of 18px for all patient-facing screens."},
+      {"time": "00:48:00", "speaker": "Le Van Khanh (Client CTO)", "text": "Security question: khi bác sĩ truy cập hồ sơ bệnh nhân, hành động đó có được log lại đầy đủ không? Đây là yêu cầu của Bộ Y tế."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13008",
+    "title": "Escalation Call — AnalyticsAI IN Spark OOM",
+    "date": "2026-05-11T05:00:00Z",
+    "duration": 35,
+    "participants": ["Delivery Manager", "Hung (Data Engineer)", "Arjun Patel (Client Engineering Director)", "Priya Ramesh (Client Data Lead)"],
+    "channel": "Support",
+    "transcript": [
+      {"time": "00:02:00", "speaker": "Arjun Patel (Client Engineering Director)", "text": "This is unacceptable. We have 3 enterprise clients waiting for their monthly reports and we can't process the data. Every hour of delay costs us client trust."},
+      {"time": "00:08:00", "speaker": "Hung (Data Engineer)", "text": "We've identified the root cause — 40% of data belongs to one customer due to a partition skew issue. We need to repartition on a salted key. ETA for the fix is 4 hours."},
+      {"time": "00:15:00", "speaker": "Priya Ramesh (Client Data Lead)", "text": "4 hours is okay for today, but this should not happen again. We need a permanent fix and a monitoring alert before this threshold is hit."},
+      {"time": "00:28:00", "speaker": "Arjun Patel (Client Engineering Director)", "text": "Also, I want a formal SLA review next week. If this kind of issue recurs, we'll need to re-evaluate the engagement."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13009",
+    "title": "Pre-Sales Call — EduKorea AI Learning Platform",
+    "date": "2026-05-07T02:00:00Z",
+    "duration": 46,
+    "participants": ["Nam (BA)", "Khanh (Solution Architect)", "Yoon Soyeon (Client CPO)", "Park Minsu (Client Tech Lead)"],
+    "channel": "Pre-Sales",
+    "transcript": [
+      {"time": "00:05:00", "speaker": "Yoon Soyeon (Client CPO)", "text": "AI 학습 경로 추천 엔진의 정확도가 최소 85%는 돼야 합니다. 교육부 인증을 받으려면 이 기준을 충족해야 하거든요."},
+      {"time": "00:14:00", "speaker": "Park Minsu (Client Tech Lead)", "text": "학생 데이터는 개인정보보호법에 따라 국내에만 저장해야 합니다. AWS 서울 리전 사용은 괜찮습니다."},
+      {"time": "00:25:00", "speaker": "Nam (BA)", "text": "Can you share the curriculum data structure? For the recommendation engine to work well, we need at minimum 6 months of student interaction history."},
+      {"time": "00:38:00", "speaker": "Yoon Soyeon (Client CPO)", "text": "네, 공유해 드릴게요. 그런데 모델 설명 가능성도 중요합니다. 학부모와 교사가 왜 특정 학습 경로가 추천됐는지 이해할 수 있어야 해요."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13010",
+    "title": "Commercial Review — RetailChain JP SLA Terms",
+    "date": "2026-05-13T04:00:00Z",
+    "duration": 52,
+    "participants": ["Sales (Account Executive)", "Legal (Counsel)", "Ito Kenji (Client Procurement)", "Nakamura Sato (Client Legal)"],
+    "channel": "Commercial",
+    "transcript": [
+      {"time": "00:06:00", "speaker": "Ito Kenji (Client Procurement)", "text": "SLA 99.9%は必須条件です。これを下回った場合のペナルティは月額契約費の2%/時間を要求しています。"},
+      {"time": "00:15:00", "speaker": "Nakamura Sato (Client Legal)", "text": "前回のベンダーで¥15Mの損失が出たため、このペナルティ条項は譲れません。リスクの共有が必要です。"},
+      {"time": "00:28:00", "speaker": "Sales (Account Executive)", "text": "We can accept the 99.9% SLA but the penalty rate of 2%/hour is too high. We propose a cap at 10% of monthly contract value total, with a 15-minute grace period per incident."},
+      {"time": "00:42:00", "speaker": "Ito Kenji (Client Procurement)", "text": "キャップには同意できますが、グレースピリオドは5分を主張します。確認して回答します。"}
+    ]
+  },
+  {
+    "meetingId": "meeting_13011",
+    "title": "Technical Discovery — FinKorea KR Banking API",
+    "date": "2026-05-09T02:30:00Z",
+    "duration": 49,
+    "participants": ["Khanh (Solution Architect)", "Minh (PM)", "Shin Woojin (Client CEO)", "Kim Gyehyun (Client CTO)"],
+    "channel": "Pre-Sales",
+    "transcript": [
+      {"time": "00:04:00", "speaker": "Shin Woojin (Client CEO)", "text": "한국 KEB하나, 신한, 국민은행 API 연동 경험이 있으신가요? Open Banking Korea 플랫폼 작업도 포함됩니다."},
+      {"time": "00:13:00", "speaker": "Kim Gyehyun (Client CTO)", "text": "금융보안원 인증도 필요할 수 있어요. 이 부분 도움받을 수 있을까요?"},
+      {"time": "00:25:00", "speaker": "Khanh (Solution Architect)", "text": "We have experience with Open Banking Korea API and can guide through the FSRDC certification process. Our security team has worked on similar fintech compliance requirements."},
+      {"time": "00:38:00", "speaker": "Shin Woojin (Client CEO)", "text": "좋습니다. 한 가지 더 — 한국에 로컬 팀이 있으신가요? 급한 이슈 발생 시 같은 시간대 커뮤니케이션이 중요해서요."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13012",
+    "title": "Incident Post-Mortem — FinTrack MY Fraud Detection",
+    "date": "2026-05-13T04:00:00Z",
+    "duration": 41,
+    "participants": ["Delivery Manager", "Long (Backend Engineer)", "Ahmad Zulkifli (Client CTO)", "Siti Rahayu (Client Head of Risk)"],
+    "channel": "Support",
+    "transcript": [
+      {"time": "00:03:00", "speaker": "Ahmad Zulkifli (Client CTO)", "text": "12 transactions slipped through fraud detection because of the Kafka consumer lag. Our board meeting is tomorrow and I need a clear explanation of root cause and prevention."},
+      {"time": "00:10:00", "speaker": "Long (Backend Engineer)", "text": "Root cause: consumer group rebalancing triggered by a new consumer joining took 8 minutes — during which no messages were consumed. We've implemented sticky partition assignment to prevent this."},
+      {"time": "00:22:00", "speaker": "Siti Rahayu (Client Head of Risk)", "text": "We need an automated alert when consumer lag exceeds 100 messages. This cannot happen silently again. What is your monitoring coverage currently?"},
+      {"time": "00:35:00", "speaker": "Ahmad Zulkifli (Client CTO)", "text": "And we need a formal commitment that this class of issue will not recur. I'll need to present this to my board with guarantees."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13013",
+    "title": "Onboarding Review — DataDriven UK ML Team",
+    "date": "2026-05-12T09:00:00Z",
+    "duration": 38,
+    "participants": ["Phuong (PM)", "Tuan (ML Engineer)", "Oliver Thompson (Client CDO)", "Emma Clarke (Client Data Science Lead)"],
+    "channel": "Project Delivery",
+    "transcript": [
+      {"time": "00:04:00", "speaker": "Oliver Thompson (Client CDO)", "text": "Two things are non-negotiable: all data processing must be in EU jurisdiction, and we need GDPR data subject request workflows built in from day one, not retrofitted."},
+      {"time": "00:14:00", "speaker": "Emma Clarke (Client Data Science Lead)", "text": "Also, our recommendation engine must be explainable — we get regulatory scrutiny on automated decisions affecting users. Black box models are not acceptable."},
+      {"time": "00:25:00", "speaker": "Tuan (ML Engineer)", "text": "We'll use SHAP values for feature importance and build an explanation layer into the API response. This is standard in our ML delivery process."},
+      {"time": "00:32:00", "speaker": "Oliver Thompson (Client CDO)", "text": "Good. One more thing — our legal team reviewed GDPR and requires a Data Processing Agreement signed before any data is shared with our team. Can you expedite this?"}
+    ]
+  },
+  {
+    "meetingId": "meeting_13014",
+    "title": "Budget Review — LogiCorp TH WMS Phase 2",
+    "date": "2026-05-09T07:00:00Z",
+    "duration": 34,
+    "participants": ["Sales (Account Manager)", "Minh (PM)", "Somchai Wattanaporn (Client IT Director)", "Napat Srisuk (Client Finance Director)"],
+    "channel": "Commercial",
+    "transcript": [
+      {"time": "00:05:00", "speaker": "Napat Srisuk (Client Finance Director)", "text": "Our FY2026 budget for technology was cut by 20%. We still want the full WMS integration but need to spread payments over 8 months instead of 5."},
+      {"time": "00:12:00", "speaker": "Somchai Wattanaporn (Client IT Director)", "text": "The integration with the 3 legacy warehouse systems is the critical path. If we must descope, barcode scanner support can wait for Phase 3."},
+      {"time": "00:22:00", "speaker": "Sales (Account Manager)", "text": "We can accommodate phased billing. However, a 8-month timeline will require scope to be clearly prioritized. Can we agree on Phase 2 MVP scope before the next meeting?"},
+      {"time": "00:29:00", "speaker": "Somchai Wattanaporn (Client IT Director)", "text": "Yes. Priority is: real-time WMS sync, inventory accuracy reporting, and SAP integration. Barcode and mobile app can be Phase 3."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13015",
+    "title": "Sprint 8 Review — HRCloud PH Payroll",
+    "date": "2026-05-13T03:00:00Z",
+    "duration": 42,
+    "participants": ["Minh (PM)", "Hoa (FE Engineer)", "Maria Santos (Client CEO)", "Carlo Reyes (Client Head of Finance)"],
+    "channel": "Project Delivery",
+    "transcript": [
+      {"time": "00:06:00", "speaker": "Carlo Reyes (Client Head of Finance)", "text": "The BIR Form 2316 issue is causing us serious problems. Two of our enterprise clients have already submitted incorrect forms. We need this fixed and a correction process for already-submitted forms."},
+      {"time": "00:15:00", "speaker": "Maria Santos (Client CEO)", "text": "Also, can you explain what happened? How did the tax bracket logic get deployed incorrectly? We need to understand the QA gap."},
+      {"time": "00:25:00", "speaker": "Hoa (FE Engineer)", "text": "The TRAIN Act 2025 update changed bracket thresholds effective January 2026 but our tax table was not updated. We've added a compliance test suite that validates against BIR published tables on every release."},
+      {"time": "00:38:00", "speaker": "Carlo Reyes (Client Head of Finance)", "text": "Good. We need retroactive correction reports for all affected employees going back to January. This is urgent."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13016",
+    "title": "Security Review — MedSoft US HIPAA Architecture",
+    "date": "2026-05-10T14:00:00Z",
+    "duration": 67,
+    "participants": ["Khanh (Solution Architect)", "Hung (Backend Engineer)", "Eric Johnson (Client Engineering Manager)", "Rachel Kim (Client CISO)"],
+    "channel": "Project Delivery",
+    "transcript": [
+      {"time": "00:07:00", "speaker": "Rachel Kim (Client CISO)", "text": "HIPAA requires that all PHI at rest be encrypted with FIPS 140-2 validated algorithms. KMS with AWS managed keys is acceptable but we prefer CMK with automatic rotation."},
+      {"time": "00:20:00", "speaker": "Eric Johnson (Client Engineering Manager)", "text": "Also, we need a BAA (Business Associate Agreement) signed before any PHI touches our systems. Our legal team has already prepared it."},
+      {"time": "00:35:00", "speaker": "Rachel Kim (Client CISO)", "text": "One more requirement: all API calls accessing PHI must have a user identity logged in CloudTrail. Service-to-service calls must use IAM roles, never long-lived credentials."},
+      {"time": "00:52:00", "speaker": "Khanh (Solution Architect)", "text": "All of these are standard in our HIPAA deployment checklist. We'll also implement VPC endpoints for S3 and DynamoDB to keep PHI off public internet even internally."}
+    ]
+  },
+  {
+    "meetingId": "meeting_13017",
+    "title": "Proposal Presentation — LogiKorea KR Tracking System",
+    "date": "2026-05-07T01:30:00Z",
+    "duration": 53,
+    "participants": ["Nam (BA)", "Phuong (Solution Architect)", "Jung Daewon (Client CIO)", "Kwak Minjun (Client System Architect)"],
+    "channel": "Pre-Sales",
+    "transcript": [
+      {"time": "00:05:00", "speaker": "Jung Daewon (Client CIO)", "text": "레거시 시스템이 3개 있고 각각 다른 DB를 씁니다 (Oracle, MySQL, PostgreSQL). 이 세 시스템의 데이터를 실시간으로 통합해야 합니다."},
+      {"time": "00:15:00", "speaker": "Kwak Minjun (Client System Architect)", "text": "기존 시스템을 수정할 수 없어요. CDC (Change Data Capture) 방식으로만 접근해야 합니다."},
+      {"time": "00:28:00", "speaker": "Phuong (Solution Architect)", "text": "We recommend Debezium for CDC on all three databases with Kafka as the integration backbone. This approach requires zero changes to existing systems."},
+      {"time": "00:42:00", "speaker": "Jung Daewon (Client CIO)", "text": "이전 벤더는 CDC를 모른다고 했고 결국 배치 방식으로 제안했는데 우리 요건에 맞지 않았습니다. Debezium 경험이 있는 엔지니어 CV를 보내주시겠어요?"}
+    ]
+  },
+  {
+    "meetingId": "meeting_13018",
+    "title": "Churn Risk — EduTech VN Post-Mortem",
+    "date": "2026-05-10T04:30:00Z",
+    "duration": 29,
+    "participants": ["Delivery Manager", "Minh (PM)", "Tran Van Hieu (Client CTO)"],
+    "channel": "Account Management",
+    "transcript": [
+      {"time": "00:02:00", "speaker": "Tran Van Hieu (Client CTO)", "text": "Chúng tôi đã quyết định không gia hạn. Latency 800ms cho live coding là không chấp nhận được — sinh viên phàn nàn liên tục."},
+      {"time": "00:08:00", "speaker": "Delivery Manager", "text": "We understand. To be clear about root cause: the latency is primarily due to container cold start in our current architecture. We were working on edge deployment but didn't complete it in time."},
+      {"time": "00:16:00", "speaker": "Tran Van Hieu (Client CTO)", "text": "Vendor mới của chúng tôi có infrastructure với POP tại Hà Nội và TP.HCM. Latency của họ là 120ms. Đây là sự khác biệt quá lớn."},
+      {"time": "00:23:00", "speaker": "Delivery Manager", "text": "Understood. We appreciate your transparency. Is there anything we could have done differently that would have changed the outcome?"}
+    ]
+  },
+  {
+    "meetingId": "meeting_13019",
+    "title": "Competitive Demo — FintechCo ID OJK Compliance",
+    "date": "2026-05-08T04:00:00Z",
+    "duration": 57,
+    "participants": ["Nam (Solution Architect)", "Sales (AE)", "Rizal Hakim (Client Product Director)", "Budi Pranoto (Client CTO)"],
+    "channel": "Pre-Sales",
+    "transcript": [
+      {"time": "00:06:00", "speaker": "Rizal Hakim (Client Product Director)", "text": "We are evaluating 3 vendors. Our main selection criteria: OJK P2P lending compliance experience, credit scoring explainability, and track record with Indonesian fintech regulations."},
+      {"time": "00:18:00", "speaker": "Budi Pranoto (Client CTO)", "text": "The OJK sandbox has very strict rate limits — 10 req/min in sandbox. We had a bad experience with a vendor who didn't test properly and caused a sandbox suspension."},
+      {"time": "00:30:00", "speaker": "Nam (Solution Architect)", "text": "We've built 2 OJK P2P-compliant systems before. Our approach: we build the OJK sandbox integration as a separate module with its own rate limiter and circuit breaker, isolated from production flow."},
+      {"time": "00:46:00", "speaker": "Rizal Hakim (Client Product Director)", "text": "Good. One question about credit scoring: we need to document the model's decision factors for each applicant, as required by OJK. How do you approach model explainability for regulators?"}
+    ]
+  }
+]

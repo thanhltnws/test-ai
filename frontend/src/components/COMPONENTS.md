@@ -7,7 +7,7 @@ Left sidebar, always visible. Width: 240px, `position: static` inside the flex r
 ### Sections (top → bottom)
 
 1. **Brand** — `<Logo size={32} />` + "AI Insight Hub / Customer Intelligence"
-2. **Navigation links** — defined in `links[]` array: Overview (`/`), AI Chat (`/chat`), About (`/analysis`). Uses `<NavLink>` with active styling via `var(--accent-bg)` background.
+2. **Navigation links** — defined in `links[]` array: Overview (`/`), AI Chat (`/chat`), Ingestion (`/ingestion`), About (`/analysis`). Uses `<NavLink>` with active styling via `var(--accent-bg)` background.
 3. **`<AccessTokenControl />`** — rendered inline inside nav (only visible when `isLambdaDataSource === true`)
 4. **Batch section** — only visible when `isLambdaDataSource === true`. Calls `runBatch()` on click. Currently disabled via `const batchTriggerEnabled = false`.
 5. **Footer** — "Internal Demo · v0.1"

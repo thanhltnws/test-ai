@@ -81,3 +81,38 @@ export interface DashboardFilters {
   date: string
   market: MarketType | ''
 }
+
+// ── Ingestion demo types ──────────────────────────────────────────────────────
+
+export interface MockFileEntry {
+  id: string
+  source: string
+  file: string
+  label: string
+  description: string
+  record_count?: number
+}
+
+export interface IngestionFilesResponse {
+  files: MockFileEntry[]
+}
+
+export type TriggerStatus = 'idle' | 'triggering' | 'done' | 'error'
+
+export interface TriggerResult {
+  file_id: string
+  source: string
+  mode: 'aws' | 'local'
+  s3_uri?: string
+  upserted?: number
+  vectors?: number
+  record_count?: number
+  note?: string
+}
+
+export interface ActivityLogEntry {
+  ts: string
+  level: 'info' | 'success' | 'error' | 'warning'
+  message: string
+  detail?: string
+}

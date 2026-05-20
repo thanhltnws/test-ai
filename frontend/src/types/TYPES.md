@@ -129,3 +129,62 @@ interface DashboardFilters {
   market: MarketType | ''  // '' = all markets
 }
 ```
+
+---
+
+## Ingestion demo types
+
+### `MockFileEntry`
+
+```typescript
+interface MockFileEntry {
+  id: string           // e.g. 'redmine_01'
+  source: string       // e.g. 'redmine', 'outlook_email', 'teams_transcript'
+  file: string         // relative path, e.g. 'mock/redmine_01.json'
+  label: string        // display name shown in FileRow
+  description: string  // short description shown in FileRow subtitle
+  record_count?: number
+}
+```
+
+### `IngestionFilesResponse`
+
+```typescript
+interface IngestionFilesResponse {
+  files: MockFileEntry[]
+}
+```
+
+### `TriggerStatus`
+
+```typescript
+type TriggerStatus = 'idle' | 'triggering' | 'done' | 'error'
+```
+
+Per-file state for the Trigger button in `Pipeline.tsx`.
+
+### `TriggerResult`
+
+```typescript
+interface TriggerResult {
+  file_id: string
+  source: string
+  mode: 'aws' | 'local'
+  s3_uri?: string        // populated in aws mode
+  upserted?: number      // signals written (local mode)
+  vectors?: number       // embeddings written (local mode)
+  record_count?: number
+  note?: string
+}
+```
+
+### `ActivityLogEntry`
+
+```typescript
+interface ActivityLogEntry {
+  ts: string                              // time string from nowTime(), e.g. '12:34:56'
+  level: 'info' | 'success' | 'error' | 'warning'
+  message: string
+  detail?: string                         // shown as monospace sub-line
+}
+```

@@ -1,0 +1,330 @@
+[
+  {
+    "id": 5000,
+    "project": "DATAPATH-AU",
+    "tracker": "Feature",
+    "subject": "Real-time dashboard for operational metrics",
+    "description": "Client requires live dashboards with <5s refresh. Current system runs batch reports nightly. DataPath AU needs this for their SLA reporting to enterprise customers.",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Minh",
+    "assigned_to": "Tuan",
+    "updated_on": "2026-05-08T10:15:00+07:00",
+    "custom_fields": {"sprint": "Sprint 5", "env": "staging", "client_name": "DataPath AU"},
+    "journals": [
+      {"user": "Tuan", "notes": "Client confirmed WebSocket approach is acceptable. Need to handle reconnection gracefully."},
+      {"user": "Minh", "notes": "Stakeholder pressure from DataPath AU side — they have an enterprise demo next week."}
+    ]
+  },
+  {
+    "id": 5001,
+    "project": "CLOUDOPS-ID",
+    "tracker": "Bug",
+    "subject": "Memory leak in background job processor",
+    "description": "Production deployment crashes every 48–72 hours due to memory exhaustion. Root cause traced to job queue not releasing references. CloudOps ID is losing revenue during each outage.",
+    "status": "Resolved",
+    "priority": "Urgent",
+    "author": "Phuong",
+    "assigned_to": "Huy",
+    "updated_on": "2026-05-10T14:30:00+07:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "CloudOps ID"},
+    "journals": [
+      {"user": "Huy", "notes": "Fixed — was a reference cycle in the event listener. Deployed to prod."},
+      {"user": "Phuong", "notes": "Client confirmed stable for 72h. Closing ticket."}
+    ]
+  },
+  {
+    "id": 5002,
+    "project": "RETAILEDGE-SG",
+    "tracker": "Support",
+    "subject": "Payment gateway timeout during peak hours",
+    "description": "Checkout flow times out during 8–10pm SGT daily. RetailEdge SG is losing approximately $12K/day in abandoned carts. Integration with Stripe is the suspected bottleneck.",
+    "status": "In Progress",
+    "priority": "Critical",
+    "author": "Linh",
+    "assigned_to": "Duc",
+    "updated_on": "2026-05-11T09:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 8", "env": "production", "client_name": "RetailEdge SG"},
+    "journals": [
+      {"user": "Duc", "notes": "Added connection pooling — reducing timeouts by 60% in staging load tests."},
+      {"user": "Linh", "notes": "Client is very unhappy. Need production fix before this weekend."}
+    ]
+  },
+  {
+    "id": 5003,
+    "project": "FINTRACK-MY",
+    "tracker": "Maintenance",
+    "subject": "Upgrade Node.js 16 to 20 LTS",
+    "description": "Internal task. Node.js 16 is EOL. No client-facing impact expected.",
+    "status": "Resolved",
+    "priority": "Normal",
+    "author": "Khanh",
+    "assigned_to": "Long",
+    "updated_on": "2026-05-09T16:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 6", "env": "staging", "client_name": "FinTrack MY"},
+    "journals": [
+      {"user": "Long", "notes": "Upgrade complete. All tests passing."}
+    ]
+  },
+  {
+    "id": 5004,
+    "project": "MEDSOFTUS",
+    "tracker": "Feature",
+    "subject": "HIPAA audit log — user data access tracking",
+    "description": "MedSoft US requires comprehensive audit logs of all PHI access for HIPAA compliance. Current system has no access logging. This is a compliance blocker for their Q3 audit.",
+    "status": "New",
+    "priority": "High",
+    "author": "Nam",
+    "assigned_to": "Hung",
+    "updated_on": "2026-05-12T11:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 9", "env": "development", "client_name": "MedSoft US"},
+    "journals": [
+      {"user": "Nam", "notes": "Client's compliance officer is directly tracking this. Hard deadline: June 30."}
+    ]
+  },
+  {
+    "id": 5005,
+    "project": "EDUPULSE-UK",
+    "tracker": "Feature",
+    "subject": "AI tutor response latency exceeds SLA",
+    "description": "LLM response time averaging 4.2s, against agreed SLA of <2s. EduPulse UK student satisfaction is dropping. Need to optimize prompt pipeline and add response streaming.",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Phuong",
+    "assigned_to": "Tuan",
+    "updated_on": "2026-05-13T08:30:00+07:00",
+    "custom_fields": {"sprint": "Sprint 7", "env": "production", "client_name": "EduPulse UK"},
+    "journals": [
+      {"user": "Tuan", "notes": "Streaming now implemented — P95 latency down to 1.8s. Need client sign-off."},
+      {"user": "Phuong", "notes": "EduPulse UK confirmed improvement. Monitoring for 1 week before closing."}
+    ]
+  },
+  {
+    "id": 5006,
+    "project": "SUPPLYCHAIN-IN",
+    "tracker": "Support",
+    "subject": "API rate limits causing batch import failures",
+    "description": "Third-party inventory API enforces 100 req/min limit. Current import process hits limit and silently drops records. SupplyChain IN discovered inventory discrepancies affecting 500+ SKUs.",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Linh",
+    "assigned_to": "Quan",
+    "updated_on": "2026-05-14T09:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 8", "env": "production", "client_name": "SupplyChain IN"},
+    "journals": [
+      {"user": "Quan", "notes": "Implementing exponential backoff and queue-based throttling."},
+      {"user": "Linh", "notes": "Client is escalating — this is causing financial reporting errors."}
+    ]
+  },
+  {
+    "id": 5007,
+    "project": "HRCLOUD-PH",
+    "tracker": "Feature",
+    "subject": "Multi-currency payroll support",
+    "description": "HRCloud PH needs to process payroll in PHP, USD, and SGD for their multinational clients. Current system only supports PHP. This is blocking expansion to Singapore market.",
+    "status": "In Progress",
+    "priority": "Normal",
+    "author": "Minh",
+    "assigned_to": "Hoa",
+    "updated_on": "2026-05-07T14:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 5", "env": "staging", "client_name": "HRCloud PH"},
+    "journals": [
+      {"user": "Hoa", "notes": "FX rate integration with Wise API in progress."}
+    ]
+  },
+  {
+    "id": 5008,
+    "project": "TECHBRIDGE-SG",
+    "tracker": "Bug",
+    "subject": "Offline sync conflict resolution fails on concurrent edits",
+    "description": "When two users edit the same record offline and both sync, the later sync overwrites all changes silently. TechBridge SG reported 3 data loss incidents affecting field sales team.",
+    "status": "New",
+    "priority": "Critical",
+    "author": "Khanh",
+    "assigned_to": "Duc",
+    "updated_on": "2026-05-13T10:30:00+07:00",
+    "custom_fields": {"sprint": "Sprint 9", "env": "production", "client_name": "TechBridge SG"},
+    "journals": [
+      {"user": "Khanh", "notes": "Client is very concerned about data integrity. This is blocking rollout to 50 more users."}
+    ]
+  },
+  {
+    "id": 5009,
+    "project": "FINTRACKMY",
+    "tracker": "Feature",
+    "subject": "Real-time fraud detection alerts",
+    "description": "FinTrack MY requires real-time fraud alerts with <200ms detection latency. Current rule engine runs every 5 minutes. Integration with their existing BI system required.",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Nam",
+    "assigned_to": "Long",
+    "updated_on": "2026-05-12T09:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 7", "env": "staging", "client_name": "FinTrack MY"},
+    "journals": [
+      {"user": "Long", "notes": "Stream processing pipeline with Kafka in place. P99 latency 145ms in load test."},
+      {"user": "Nam", "notes": "Client audit requirement: all fraud flags must be logged with full audit trail."}
+    ]
+  },
+  {
+    "id": 5010,
+    "project": "ANALYTICSINAI",
+    "tracker": "Support",
+    "subject": "Spark job OOM errors on large dataset partitions",
+    "description": "Analytics pipeline crashes on datasets >500GB with OutOfMemoryError. AnalyticsAI IN is unable to process monthly data roll-ups for their top 3 enterprise clients.",
+    "status": "In Progress",
+    "priority": "Critical",
+    "author": "Phuong",
+    "assigned_to": "Hung",
+    "updated_on": "2026-05-11T12:00:00+07:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "AnalyticsAI IN"},
+    "journals": [
+      {"user": "Hung", "notes": "Investigating partition skew — a single customer has 40% of the total data volume."},
+      {"user": "Phuong", "notes": "AnalyticsAI IN is billing delay risk if not fixed by May 20."}
+    ]
+  },
+  {
+    "id": 5011,
+    "project": "LOGICORP-TH",
+    "tracker": "Feature",
+    "subject": "WMS integration — barcode scanner support",
+    "description": "New WMS requires Zebra barcode scanner integration via Bluetooth. LogiCorp TH warehouse staff need to scan items directly into the system without manual entry.",
+    "status": "New",
+    "priority": "Normal",
+    "author": "Linh",
+    "assigned_to": "Quan",
+    "updated_on": "2026-05-10T11:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 6", "env": "development", "client_name": "LogiCorp TH"},
+    "journals": []
+  },
+  {
+    "id": 5012,
+    "project": "CLOUDOPEID",
+    "tracker": "Maintenance",
+    "subject": "Kubernetes cluster upgrade to 1.32",
+    "description": "Internal infra upgrade. CloudOps ID cluster needs to move from 1.28 (EOL next month). Zero-downtime rolling upgrade required.",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Minh",
+    "assigned_to": "Huy",
+    "updated_on": "2026-05-09T15:00:00+07:00",
+    "custom_fields": {"sprint": "Infra Sprint 3", "env": "production", "client_name": "CloudOps ID"},
+    "journals": [
+      {"user": "Huy", "notes": "Canary upgrade in progress — 3/10 nodes upgraded without issues."}
+    ]
+  },
+  {
+    "id": 5013,
+    "project": "PAYSFALE-TH",
+    "tracker": "Feature",
+    "subject": "PromptPay QR code generation for payroll disbursement",
+    "description": "PayScale TH needs to generate PromptPay QR codes in bulk for salary disbursements. Integration with Bank of Thailand API required for verification.",
+    "status": "In Progress",
+    "priority": "High",
+    "author": "Khanh",
+    "assigned_to": "Tuan",
+    "updated_on": "2026-05-12T10:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 4", "env": "staging", "client_name": "PayScale TH"},
+    "journals": [
+      {"user": "Tuan", "notes": "Bot API sandbox integration working. Moving to staging with real test accounts."},
+      {"user": "Khanh", "notes": "Client wants this ready before Thai public holiday. Deadline: May 22."}
+    ]
+  },
+  {
+    "id": 5014,
+    "project": "DATAPATH-AU",
+    "tracker": "Support",
+    "subject": "SSO integration failing with Azure AD B2C custom domain",
+    "description": "Enterprise client behind custom Azure AD domain can't authenticate. DataPath AU's enterprise sales are blocked — 5 signed customers can't onboard.",
+    "status": "In Progress",
+    "priority": "Critical",
+    "author": "Nam",
+    "assigned_to": "Long",
+    "updated_on": "2026-05-14T07:30:00+07:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "DataPath AU"},
+    "journals": [
+      {"user": "Long", "notes": "Issue traced to redirect_uri mismatch for custom domain. Fix in review."},
+      {"user": "Nam", "notes": "DataPath AU escalating to their CTO — need resolution today."}
+    ]
+  },
+  {
+    "id": 5015,
+    "project": "MEDSOFT-US",
+    "tracker": "Feature",
+    "subject": "Patient data export — FHIR R4 format",
+    "description": "MedSoft US needs to export patient records in FHIR R4 format for interoperability with major EHR systems. Regulatory requirement for CMS final rule compliance by July 1.",
+    "status": "New",
+    "priority": "High",
+    "author": "Phuong",
+    "assigned_to": "Hung",
+    "updated_on": "2026-05-13T11:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 10", "env": "development", "client_name": "MedSoft US"},
+    "journals": [
+      {"user": "Phuong", "notes": "CMS rule has a hard compliance deadline. This cannot slip."}
+    ]
+  },
+  {
+    "id": 5016,
+    "project": "RETAILEDGE-SG",
+    "tracker": "Feature",
+    "subject": "Personalised product recommendations — ML model integration",
+    "description": "RetailEdge SG wants collaborative filtering recommendations on the homepage. Current recommendations are rule-based and have low CTR (1.2% vs 4%+ industry avg).",
+    "status": "In Progress",
+    "priority": "Normal",
+    "author": "Linh",
+    "assigned_to": "Duc",
+    "updated_on": "2026-05-10T13:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 8", "env": "staging", "client_name": "RetailEdge SG"},
+    "journals": [
+      {"user": "Duc", "notes": "A/B test setup complete. Waiting for traffic split approval from client."}
+    ]
+  },
+  {
+    "id": 5017,
+    "project": "SMARTHR-AE",
+    "tracker": "Bug",
+    "subject": "RTL layout breaks on iOS Safari 17",
+    "description": "After iOS 17 update, Arabic RTL forms render incorrectly — input fields stack vertically instead of right-to-left. SmartHR AE users in UAE are reporting it via app store reviews.",
+    "status": "Resolved",
+    "priority": "High",
+    "author": "Khanh",
+    "assigned_to": "Hoa",
+    "updated_on": "2026-05-11T16:00:00+07:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "SmartHR AE"},
+    "journals": [
+      {"user": "Hoa", "notes": "CSS logical properties fix deployed. Verified on iOS 17 Safari. Closed."}
+    ]
+  },
+  {
+    "id": 5018,
+    "project": "HRCLOUD-PH",
+    "tracker": "Support",
+    "subject": "BIR Form 2316 generation — tax computation error",
+    "description": "Tax withholding computation for government employees is calculating incorrectly under the TRAIN Act 2025 update. HRCloud PH clients submitted wrong BIR forms — potential compliance risk.",
+    "status": "In Progress",
+    "priority": "Critical",
+    "author": "Minh",
+    "assigned_to": "Hoa",
+    "updated_on": "2026-05-14T08:00:00+07:00",
+    "custom_fields": {"sprint": "Hotfix", "env": "production", "client_name": "HRCloud PH"},
+    "journals": [
+      {"user": "Hoa", "notes": "Identified incorrect bracket threshold. Fix in staging."},
+      {"user": "Minh", "notes": "Client contacted BIR for deadline extension. Very sensitive issue."}
+    ]
+  },
+  {
+    "id": 5019,
+    "project": "CLOUDKR",
+    "tracker": "Feature",
+    "subject": "Zero-downtime blue-green deployment pipeline",
+    "description": "CloudFirst PH needs automated blue-green deployments with instant rollback capability. Current deployment requires 10-min maintenance window affecting 50K daily users.",
+    "status": "In Progress",
+    "priority": "Normal",
+    "author": "Nam",
+    "assigned_to": "Huy",
+    "updated_on": "2026-05-12T14:00:00+07:00",
+    "custom_fields": {"sprint": "Sprint 6", "env": "staging", "client_name": "CloudFirst PH"},
+    "journals": [
+      {"user": "Huy", "notes": "Terraform module for blue-green ALB target group swap complete. Testing rollback scenario."}
+    ]
+  }
+]
