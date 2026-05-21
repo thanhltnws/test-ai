@@ -15,7 +15,6 @@ import type {
 const legacyBase = import.meta.env.VITE_API_URL ?? '/api'
 const dataSource = import.meta.env.VITE_DATA_SOURCE ?? 'mock'
 const useLambdaData = dataSource === 'lambda'
-const authTokenStorageKey = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY ?? 'ai-insight-hub-auth-token'
 
 const apiBase = import.meta.env.VITE_API_LAMBDA_URL ?? legacyBase
 const chatBase = import.meta.env.VITE_CHAT_LAMBDA_URL ?? legacyBase
@@ -44,27 +43,6 @@ export const lambdaEndpoints = {
 
 export const isLambdaDataSource = useLambdaData
 
-export function getAuthToken(): string {
-  return window.localStorage.getItem(authTokenStorageKey) ?? ''
-}
-
-export function setAuthToken(token: string): void {
-  const value = token.trim()
-  if (value) {
-    window.localStorage.setItem(authTokenStorageKey, value)
-  } else {
-    window.localStorage.removeItem(authTokenStorageKey)
-  }
-}
-
-function requireAuthHeaders(): { Authorization: string } {
-  const token = getAuthToken()
-  if (!token) {
-    throw new Error('Missing access token. Enter it in the sidebar before using live Lambda actions.')
-  }
-
-  return { Authorization: `Bearer ${token}` }
-}
 
 const MOCK_SUMMARY: SummaryData = {
   period: 'monthly',
@@ -169,7 +147,7 @@ export async function runBatch(): Promise<BatchRunResponse> {
     }
   }
 
-  const res = await axios.post<BatchRunResponse>(lambdaEndpoints.insightsBuilder, {}, { headers: requireAuthHeaders() })
+  const res = await axios.post<BatchRunResponse>(lambdaEndpoints.insightsBuilder, {})
   return res.data
 }
 
@@ -187,7 +165,7 @@ export async function sendChat(
     }
   }
 
-  const res = await axios.post(lambdaEndpoints.chat, { question, session_id: sessionId }, { headers: requireAuthHeaders() })
+  const res = await axios.post(lambdaEndpoints.chat, { question, session_id: sessionId })
   const raw = res.data
   return {
     answer: raw.answer ?? '',

@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parents[1]))
-from common.auth import auth_error, cors_headers, error_response, is_options_request, options_response
+from common.auth import cors_headers, error_response, is_options_request, options_response
 from prompt import build_chat_prompt
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
@@ -534,9 +534,7 @@ def lambda_handler(event=None, context=None):
     if is_options_request(event):
         return options_response()
 
-    auth_failure = auth_error(event)
-    if auth_failure:
-        return auth_failure
+
 
     try:
         body = json.loads(event.get("body") or "{}")

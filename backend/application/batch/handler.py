@@ -22,7 +22,7 @@ from urllib.parse import urlparse
 
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parents[1]))
-from common.auth import auth_error, is_options_request, options_response
+from common.auth import is_options_request, options_response
 from prompt import build_batch_prompt
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
@@ -487,9 +487,7 @@ def handler(event=None, context=None):
     if is_options_request(event):
         return options_response()
 
-    auth_failure = auth_error(event, allow_non_http=True)
-    if auth_failure:
-        return auth_failure
+
 
     today = date.today()
     granularities = ["weekly", "monthly", "quarterly", "yearly"]

@@ -1,5 +1,4 @@
 import { NavLink } from 'react-router-dom'
-import AccessTokenControl from './AccessTokenControl'
 import Logo from './Logo'
 
 const links = [
@@ -80,10 +79,8 @@ export default function Navbar({ onOpenWelcome }: Props) {
         </NavLink>
       ))}
 
-      <AccessTokenControl />
 
-
-{/* Footer */}
+      {/* Footer */}
       <div style={{ marginTop: 'auto', padding: '12px 8px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 8 }}>
         <button
           type="button"

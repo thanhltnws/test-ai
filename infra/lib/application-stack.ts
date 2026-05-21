@@ -7,7 +7,6 @@ import {
   aws_rds as rds,
   aws_s3 as s3,
   aws_s3_notifications as s3n,
-  aws_secretsmanager as secretsmanager,
   custom_resources as cr,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -98,34 +97,6 @@ function tryLocalPythonBundle(
 export class ApplicationStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    // ── App auth token (Secrets Manager) ──────────────────────────────────────
-    // Idempotent: creates the secret on a fresh account, silently skips if it
-    // already exists (e.g. retained from a prior stack deletion).
-    // Set APP_AUTH_TOKEN env var at deploy time to control the initial value;
-    // omit it to auto-generate a random token.
-    // To rotate later: aws secretsmanager put-secret-value --secret-id ai-insight-hub/app-auth-token --secret-string <new-value>
-    const secretName = 'ai-insight-hub/app-auth-token';
-    new cr.AwsCustomResource(this, 'AppAuthTokenSecretEnsure', {
-      onCreate: {
-        service: 'SecretsManager',
-        action: 'createSecret',
-        parameters: {
-          Name: secretName,
-          Description: 'Shared auth token for chat and batch Lambda Function URLs',
-          SecretString: process.env.APP_AUTH_TOKEN ?? crypto.randomBytes(24).toString('hex'),
-        },
-        ignoreErrorCodesMatching: 'ResourceExistsException',
-        physicalResourceId: cr.PhysicalResourceId.of(secretName),
-      },
-      policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
-        resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
-      }),
-      installLatestAwsSdk: false,
-    });
-    const appAuthTokenSecret = secretsmanager.Secret.fromSecretNameV2(
-      this, 'AppAuthTokenSecret', secretName
-    );
-
     // ── VPC (public subnets only, no NAT Gateway) ──────────────────────────────
     // Aurora sits here with publiclyAccessible=true.
     // Lambda stays OUTSIDE this VPC → retains default internet access
@@ -417,16 +388,13 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
-        APP_AUTH_TOKEN_SECRET_ARN: appAuthTokenSecret.secretArn,
         BEDROCK_MODEL_ID: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
         BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
       description: 'Insights builder: Aurora signals aggregates + Bedrock → insights table',
     });
 
-    // Grant Lambda read access to the Aurora credentials secret and app auth token
     cluster.secret!.grantRead(insightsBuilderFn);
-    appAuthTokenSecret.grantRead(insightsBuilderFn);
     insightsBuilderFn.node.addDependency(dbInit);
 
     insightsBuilderFn.addToRolePolicy(new iam.PolicyStatement({
@@ -441,7 +409,7 @@ export class ApplicationStack extends cdk.Stack {
       cors: {
         allowedOrigins: ['*'],
         allowedMethods: [lambda.HttpMethod.POST],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Token'],
+        allowedHeaders: ['Content-Type'],
       },
     });
 
@@ -551,7 +519,6 @@ export class ApplicationStack extends cdk.Stack {
       memorySize: 512,
       environment: {
         DB_SECRET_ARN: cluster.secret!.secretArn,
-        APP_AUTH_TOKEN_SECRET_ARN: appAuthTokenSecret.secretArn,
         BEDROCK_MODEL_ID: 'global.anthropic.claude-sonnet-4-6',
         BEDROCK_EMBEDDING_MODEL_ID: 'cohere.embed-multilingual-v3',
       },
@@ -559,7 +526,6 @@ export class ApplicationStack extends cdk.Stack {
     });
 
     cluster.secret!.grantRead(chatFn);
-    appAuthTokenSecret.grantRead(chatFn);
     chatFn.node.addDependency(dbInit);
 
     chatFn.addToRolePolicy(new iam.PolicyStatement({
@@ -573,7 +539,7 @@ export class ApplicationStack extends cdk.Stack {
       cors: {
         allowedOrigins: ['*'],
         allowedMethods: [lambda.HttpMethod.POST],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Token'],
+        allowedHeaders: ['Content-Type'],
       },
     });
 
@@ -622,9 +588,5 @@ export class ApplicationStack extends cdk.Stack {
       description: 'S3 bucket for raw ingestion data',
     });
 
-    new cdk.CfnOutput(this, 'AppAuthTokenSecretArn', {
-      value: appAuthTokenSecret.secretArn,
-      description: 'Secrets Manager ARN for app auth token — retrieve via: aws secretsmanager get-secret-value --secret-id <arn>',
-    });
   }
 }
