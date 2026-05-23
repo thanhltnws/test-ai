@@ -127,20 +127,6 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 
 ---
 
-## Key Design Decisions
-
-Service and tooling choices (Lambda polling vs AppFlow, Lambda ETL vs Glue, pgvector vs Vectorize, Gemini vs Bedrock, Recharts vs QuickSight, fixed SQL vs Text-to-SQL) are documented in [`decisions.md`](decisions.md).
-
-The following decisions are architectural — not yet in decisions.md:
-
-- **`source_url` in `signals` and pgvector metadata** — links back to the originating CRM/Jira/Redmine record when available; optional, NULL for sources without an external URL.
-- **Two-layer idempotency in Transform Lambda** — S3 object tag `processed=true` is the file-level guard: on duplicate S3 events the tag is checked first and the Lambda returns early (Bedrock never called). `ON CONFLICT (source, source_id) DO UPDATE` in Aurora is the record-level guard: re-processing the same file overwrites existing rows with the latest extraction result rather than creating duplicates. The UPSERT semantics are intentional — re-running with an updated prompt or model produces better extractions that should replace the old ones.
-- **Feature 1 enrichment — Aurora only** — InsightsBuilderFn reads raw signals directly from Aurora (single SQL query) and aggregates in Python; pgvector is not used in the batch pipeline. pgvector is used only by Feature 2 (Chat).
-- **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
-- **Embedding model must be consistent between write and query** — the model used to embed `embedding_text` when writing to `signal_embeddings` / `insight_embeddings` must be the same model used to embed the user question at query time in the Chat Lambda. Mixing models produces incorrect cosine similarity with no error or warning. Full rule and checklist in [`docs/chat_optimization.md`](chat_optimization.md).
-
----
-
 ## Known Gaps
 
 - Text-to-SQL hallucination risk — no validation layer yet. Mitigate by prioritizing fixed SQL and logging generated queries.
