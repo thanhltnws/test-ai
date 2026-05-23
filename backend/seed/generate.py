@@ -36,7 +36,7 @@ from google import genai
 from google.genai import types
 from json_repair import repair_json
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "transform"))
 from prompt import build_extract_prompt
 
 

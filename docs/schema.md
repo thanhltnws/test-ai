@@ -98,10 +98,9 @@ CREATE TABLE insights (
 | `period_end`   | DATE        | Last day of window (`= today` when period is still open) |
 | `result_type`  | TEXT        | `pain_points_summary` · `funnel_distribution` · `icp_narrative` · `recommendations` |
 | `market`       | TEXT        | `vietnam` · `japan` · `korea` · `international` · NULL (NULL = aggregate across all markets) |
-| `sector`       | TEXT        | Industry vertical · NULL (NULL = aggregate across all sectors) |
 | `payload`      | JSONB       | LLM-generated result for this `result_type` |
 
-Rows are **append-only** — the batch never updates existing rows, only inserts new ones. Query always selects `MAX(computed_at)` for a given `(period, period_start, market, sector)` combination.
+Rows are **append-only** — the batch never updates existing rows, only inserts new ones. Query always selects `MAX(computed_at)` for a given `(period, period_start, market)` combination.
 
 ---
 
@@ -183,12 +182,11 @@ CREATE TABLE insight_embeddings (
   "period_start": "2026-05-01",
   "period_end":   "2026-05-31",
   "result_type":  "pain_points_summary",
-  "market":       "vietnam",
-  "sector":       "fintech"
+  "market":       "vietnam"
 }
 ```
 
-`market` and `sector` are `null` in metadata when the insight row is an aggregate (all markets / all sectors).
+`market` is `null` in metadata when the insight row is an aggregate (all markets).
 
 ---
 
@@ -233,7 +231,7 @@ User question
   ├─ signal_embeddings  (raw signals, pre-filtered by market/sector/funnel_stage)
   │    └─ JOIN signals   (structured fields: pain_points, source_url, funnel_stage)
   │
-  └─ insight_embeddings (LLM narratives, pre-filtered by period/market/sector/result_type)
+  └─ insight_embeddings (LLM narratives, pre-filtered by period/market/result_type)
        └─ JOIN insights  (period, result_type, payload)
 ```
 

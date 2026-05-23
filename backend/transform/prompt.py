@@ -17,9 +17,9 @@ the regulatory deadline. The price is manageable but the timeline worries us.
 "deal_size":"large","client_type":"corporate","tech_maturity":"semi-tech",\
 "funnel_stage":"negotiation","confidence_score":0.87,"source_id":"seoul-digital-partners",\
 "source_url":"https://example.com/twenty_crm/seoul-digital-partners",\
-"embedding_text":"Seoul Digital Partners, a 320-person fintech firm in South Korea, faces a hard \
-90-day regulatory deadline driving urgency on a legacy core banking integration. At contract stage \
-with deal ~$85K, the prospect flagged timeline risk — not pricing — as the primary concern.",\
+"embedding_text":"Seoul Digital Partners (320-person fintech, Korea) needs legacy core banking \
+integration within 90 days due to a regulatory deadline. Customer stated: 'The price is manageable \
+but the timeline worries us.' Deal at contract stage, ~$85K.",\
 "record_date":"2024-11-20","market":"korea"}
 
 [Example 2 — Support ticket, Japan]
@@ -37,9 +37,8 @@ created_on: 2025-01-08
 "deal_size":"medium","client_type":"corporate","tech_maturity":"semi-tech",\
 "funnel_stage":"consideration","confidence_score":0.52,"source_id":"8821",\
 "source_url":"https://example.com/redmine/8821",\
-"embedding_text":"A Japan-based customer branch is experiencing CSV export failures due to \
-Japanese character encoding conflicts. The open ticket indicates an engaged customer with a \
-specific localization pain point blocking daily operations.",\
+"embedding_text":"CSV export fails on full-width Japanese characters due to Shift-JIS vs UTF-8 \
+mismatch. Affects Osaka branch only. Status: open.",\
 "record_date":"2025-01-08","market":"japan"}
 
 [Example 3 — Prospect email, International]
@@ -58,11 +57,41 @@ receivedDateTime: 2025-02-14
 "deal_size":"large","client_type":"corporate","tech_maturity":"technical",\
 "funnel_stage":"consideration","confidence_score":0.81,"source_id":"globallogistics-re-proposal",\
 "source_url":"https://example.com/outlook_email/globallogistics-re-proposal",\
-"embedding_text":"A large Vietnam-based logistics company is evaluating AI insight platforms \
-but raised two direct objections from the prospect side: strict data residency policy and \
-onboarding twice as long as a competitor's. Deal is live and competitive.",\
+"embedding_text":"Procurement at globallogistics.com: 'We cannot store customer data outside \
+Vietnam per internal policy.' Also: '6-month onboarding seems long; our previous vendor did it \
+in 8 weeks.' Still evaluating two other vendors.",\
 "record_date":"2025-02-14","market":"international"}
 """
+
+_EMBEDDING_TEXT_INSTRUCTION = """\
+  A grounded evidence text for semantic retrieval, not a free-form narrative summary.
+
+  Purpose:
+  - Capture the most retrieval-useful customer/business signal from this record.
+  - Preserve the original meaning and wording as closely as possible.
+  - Reduce noise from raw metadata while avoiding invented synthesis.
+
+  How to write it:
+  - Write 2–6 sentences in clear English.
+  - Prefer customer-stated or record-explicit facts over interpretation.
+  - Reuse important wording from the record when possible, especially for pain points, \
+objections, blockers, requirements, timelines, or compliance constraints.
+  - Include: who the customer/account is · the main problem/requirement/blocker · \
+objection or risk if explicitly present · use case if clearly supported · \
+commercial or delivery stage only if directly evidenced.
+  - Keep useful specifics: named systems, compliance terms, deadlines, required integrations, \
+or quantified constraints when they appear in the record.
+  - Remove low-signal metadata, filler, greetings, internal admin text, and generic wording.
+
+  Hard rules:
+  - Do not invent facts not supported by the record.
+  - Do not add sales narrative or strategic interpretation.
+  - Do not merge multiple weak guesses into one confident sentence.
+  - Do not include field labels, JSON-like formatting, or key-value dumps.
+  - Do not use vendor-side phrasing or opinion unless the record clearly supports it.
+
+  Return "" when the record has no meaningful customer/business signal, is mostly operational \
+noise, or the usable evidence is too weak to form a reliable retrieval text."""
 
 _EXTRACT_TEMPLATE = """\
 You are a B2B customer insight analyst. Extract structured signals from raw records in the \
@@ -138,17 +167,13 @@ A bug report or ops ticket is an indirect signal about customer health — score
 source_id: unique identifier from the record's own fields
 
 source_url: str
-  If a full http/https URL is explicitly present in the record, use it exactly. Otherwise \
-construct a fictional demo URL: https://example.com/{{source}}/{{source_id}} where {{source}} \
-is the source name and {{source_id}} is the value you chose. Always return a full URL — never null.
+  If a full http/https URL is explicitly present in the record, use it exactly. Otherwise: \
+for sources that have external record URLs (CRM deals, issue trackers), construct a fictional \
+demo URL: https://example.com/{{source}}/{{source_id}}. For email, form, or ops note sources, \
+return null when no explicit URL is present in the record.
 
 embedding_text: str
-  2–4 sentence natural-language summary of this record, written to maximise semantic search \
-relevance when embedded. Weave together: who the company is, the core problem they face, \
-their commercial stage, and the most meaningful signals (pain, objection, use case) present \
-in the record. Write in clear, direct English — no bullet points, no field labels. \
-Return "" when the record lacks enough meaningful signal to produce a useful summary \
-(e.g. sparse firmographics only, zero engagement, no pain or use-case signal).
+{embedding_text_instruction}
 
 record_date: string (YYYY-MM-DD)
   The most semantically relevant date in the record — e.g. close_date, engage_date, \
@@ -208,6 +233,7 @@ def build_extract_prompt(
         source=source,
         context_section=context_section,
         few_shot_section=few_shot_section,
+        embedding_text_instruction=_EMBEDDING_TEXT_INSTRUCTION,
         n=len(texts),
         records_block=records_block,
     )

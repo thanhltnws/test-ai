@@ -2,22 +2,7 @@
 
 > Spec mô tả chiến lược AI call trong luồng Transform: từ raw record S3 → structured signals Aurora. Dùng để review thiết kế, onboard người mới, và làm baseline khi quyết định nâng cấp.
 >
-> **Scope:** `backend/transform/handler.py` + `backend/transform/prompt.py`. Seed pipeline (`backend/seed/generate.py`) dùng cùng prompt và cùng batch logic — hai môi trường chạy song song nhưng cùng spec này.
-
----
-
-## Trạng thái hiện tại
-
-Một Bedrock/Gemini call duy nhất mỗi khi Lambda trigger từ S3 ObjectCreated. Call nhận một batch tối đa 40 records (≤ 150 000 chars), extract tất cả fields cùng lúc theo structured JSON schema, sau đó upsert vào Aurora và pgvector.
-
-```
-S3 raw/{source}/{date}/{ts}.json
-    → normalize (dedup, text flatten)
-    → make_batches (≤40 records, ≤150k chars)
-    → _extract_batch (Bedrock Haiku hoặc Gemini Flash)
-    → merge + noise filter (_has_signal)
-    → upsert signals + signal_embeddings (concurrent)
-```
+> **Scope:** `backend/transform/handler.py` + `backend/transform/prompt.py`. Seed pipeline (`backend/seed/generate.py`) dùng cùng prompt và cùng batch logic. Toàn bộ prompt logic nằm trong `prompt.py` — xem chi tiết kỹ thuật và quyết định thiết kế tại `prompt.md`.
 
 ---
 
@@ -33,52 +18,32 @@ S3 raw/{source}/{date}/{ts}.json
 | `tech_maturity` | `TEXT` | LLM | `non-tech` · `semi-tech` · `technical` |
 | `funnel_stage` | `TEXT` | LLM | `awareness` · `consideration` · `negotiation` · `won` · `lost` |
 | `source_id` | `TEXT` | LLM | Unique ID từ chính record — fallback về hash nếu thiếu |
-| `source_url` | `TEXT` | LLM | URL gốc nếu có; nếu không, fictional demo URL dạng `https://example.com/{source}/{source_id}` |
-| `embedding_text` | `TEXT` | LLM | 2–4 câu summary tối ưu cho semantic search |
+| `source_url` | `TEXT` | LLM | URL gốc nếu có; nếu không, fictional demo URL dạng `https://example.com/{source}/{source_id}` cho CRM/issue tracker. NULL cho email, form, ops note. |
+| `embedding_text` | `TEXT` | LLM | Grounded evidence text từ các field chính của record — preserve wording gốc, tối ưu cho semantic retrieval. Xem spec chi tiết tại `prompt.md`. |
 | `record_date` | `DATE` | LLM + fallback | Date ngữ nghĩa nhất trong record; fallback về candidate fields trong raw nếu LLM không trả |
 | `market` | `TEXT` | LLM | `vietnam` · `japan` · `korea` · `international` — target geographic market |
 | `sector` | `TEXT` | LLM | `fintech` · `logistics` · `retail` · `healthcare` · `manufacturing` · `software` · `education` · `ict` · `other` |
 
 ---
 
-## Prompt design
+## Dedup
 
-**File:** `backend/transform/prompt.py` — `_EXTRACT_TEMPLATE`
+`normalize()` dedup records trong cùng một S3 file bằng SHA-1 hash của text content — record có cùng hash bị drop trước khi đưa vào extraction. Xử lý trường hợp source gửi trùng record trong một batch.
 
-Toàn bộ prompt logic nằm trong `prompt.py`, không inline trong `handler.py`. Đây là convention cứng của project.
-
-### Cấu trúc prompt
-
-```
-[Role]          B2B customer insight analyst
-[Context]       Source subfolder name + optional context file content
-[Goal]          Surface genuine customer signals, không hallucinate
-[Field specs]   Mô tả từng field với guidance rõ ràng về cách infer
-[Constraints]   Valid enum values cho mỗi categorical field
-[Output format] {n} objects, JSON array, no markdown
-[Records]       [Record 1] ... [Record N]
-```
-
-### Quyết định thiết kế
-
-**Tại sao batch nhiều records trong một call thay vì call từng cái?**
-Token overhead của prompt (system instruction + field specs) chiếm ~800 tokens cố định. Với 40 records/batch, overhead này được amortize. Call đơn lẻ tốn ~820 tokens mỗi record; batch 40 records tốn ~40 tokens overhead/record.
-
-**Tại sao `funnel_stage` có guidance chi tiết theo record type?**
-Các record type khác nhau (marketing lead, CRM profile, ops ticket) cho signal khác nhau nhưng dễ bị model confuse. Prompt explicit hóa cách đọc signal theo từng type để giảm inconsistency giữa sources.
-
-**Tại sao `objections` chỉ lấy từ voice của prospect?**
-CRM tags, ticket descriptions, và scoring labels phản ánh góc nhìn của vendor, không phải prospect. Lẫn hai nguồn này tạo ra false objections làm sai lệch sales analysis.
-
-**Tại sao `deal_size`, `client_type`, `tech_maturity` là flat column thay vì gom vào `icp` JSONB?**
-Cả ba cần indexed filtering trực tiếp (Dashboard filter, RAG metadata filter). JSONB không thể index theo field con hiệu quả. Flat columns cũng làm CHECK constraint và Pydantic validation đơn giản hơn. `icp` JSONB đã bị loại bỏ hoàn toàn.
-
-**Tại sao `sector` và `market` là top-level column?**
-Cùng lý do — cần indexed filtering. `sector` và `market` được extract thẳng thành column riêng từ đầu, không qua JSONB.
+Dedup cross-batch (cùng record xuất hiện ở nhiều lần chạy khác nhau) được xử lý ở tầng DB bằng `ON CONFLICT (source, source_id) DO UPDATE` — xem **Idempotency**.
 
 ---
 
 ## Batch strategy
+
+```text
+S3 raw/{source}/{date}/{ts}.json
+    → normalize (dedup, text flatten)
+    → make_batches (≤40 records, ≤150k chars)
+    → _extract_batch (Bedrock Haiku hoặc Gemini Flash)
+    → merge + noise filter (_has_signal)
+    → upsert signals + signal_embeddings (concurrent)
+```
 
 | Parameter | Giá trị | Lý do |
 |---|---|---|
@@ -125,15 +90,9 @@ Sau mỗi batch extraction, handler chạy một lượt retry có chọn lọc 
 
 ## Provider switching
 
-| Môi trường | Extraction model | Embedding model |
-|---|---|---|
-| Local dev | Gemini Flash Lite (free tier) | Gemini `gemini-embedding-001` (1024 dims) |
-| AWS | Bedrock Haiku (via `instructor`) | Bedrock Cohere `embed-multilingual-v3` |
+| Môi trường | Extraction model                 | Embedding model                           |
+|------------|----------------------------------|-------------------------------------------|
+| Local dev  | Gemini Flash Lite (free tier)    | Gemini `gemini-embedding-001` (1024 dims) |
+| AWS        | Bedrock Haiku (via `instructor`) | Bedrock Cohere `embed-multilingual-v3`    |
 
 Switch điều kiện: `DB_SECRET_ARN` có giá trị → Bedrock path. Không có → Gemini path. Không có code path riêng cho logic extraction — chỉ khác ở client và response parsing.
-
----
-
-## Concurrent write
-
-Aurora INSERT và embedding API call chạy song song bằng `ThreadPoolExecutor(max_workers=2)`. `_embed_rows` không access DB nên an toàn khi dùng chung global connection. Sau khi cả hai future hoàn thành, `_insert_embeddings` dùng `id_map` (từ `RETURNING id`) để map pre-assigned UUID sang actual DB id — đảm bảo FK đúng trên cả insert path lẫn conflict-update path.
