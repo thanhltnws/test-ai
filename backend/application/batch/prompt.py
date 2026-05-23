@@ -3,16 +3,22 @@ from datetime import date
 
 _BATCH_TEMPLATE = """\
 You are an AI analyst for a B2B software outsourcing company.
-Below is aggregated customer insight data for the {granularity} period \
+Below is customer signal data for the {granularity} period \
 ({period_start} to {period_end}){market_context}.
 
-=== STRUCTURED DATA (SQL aggregates from Aurora) ===
-{sql_context}
+=== AGGREGATE STATS ===
+Total signals: {total_signals}
 
-=== SEMANTIC CONTEXT (top matching chunks from pgvector semantic search) ===
-{vector_context}
+Funnel distribution:
+{funnel_lines}
 
-Analyze the combined data above and return ONLY valid JSON (no markdown, no explanation) \
+ICP breakdown (top 10 segments):
+{icp_lines}
+
+=== RAW SIGNALS ({total_signals} records) ===
+{signals_json}
+
+Analyze the data above and return ONLY valid JSON (no markdown, no explanation) \
 with exactly these 4 keys:
 
 {{
@@ -20,7 +26,7 @@ with exactly these 4 keys:
     "top_items": [
       {{"item": "...", "count": N, "insight": "một câu diễn giải bằng tiếng Việt"}}
     ],
-    "summary": "2-3 câu tóm tắt tiếng Việt về các vấn đề lặp lại, dựa trên cả SQL counts và semantic patterns"
+    "summary": "2-3 câu tóm tắt tiếng Việt về các vấn đề lặp lại"
   }},
   "funnel_distribution": {{
     "stages": [{{"stage": "...", "count": N, "pct": 0.0}}],
@@ -41,32 +47,46 @@ with exactly these 4 keys:
 
 Rules:
 - All text fields (item, insight, summary, narrative, recommendations) must be written in Vietnamese
-- pain_points_summary.top_items: group semantically similar pain points from SQL data into canonical themes (e.g. "Phức tạp compliance", "Áp lực timeline"), sum their counts, return top 8-10 sorted by count desc
-- funnel_distribution.stages: preserve exact counts and pct from SQL input
-- icp_narrative.top_segments: top 5 segments by count from SQL input; use exact values from icp_breakdown
-- recommendations: 3-5 items each, grounded in both SQL aggregates and semantic context
+- pain_points_summary.top_items: identify recurring themes across signals; \
+count = number of signals (not array items) that mention the theme; return top 8-10 sorted by count desc
+- funnel_distribution.stages: preserve exact counts and pct from AGGREGATE STATS above
+- icp_narrative.top_segments: top 5 segments by count from ICP breakdown above; use exact values
+- recommendations: 3-5 items each, grounded in the signals
 - Do NOT invent data not present in the input"""
 
 
 def build_batch_prompt(
     sql_context: dict,
-    vector_context: list[dict],
     granularity: str,
     period_start: date,
     period_end: date,
     market: str | None = None,
 ) -> str:
     market_context = f", {market} market" if market else ""
-    vector_section = (
-        json.dumps(vector_context, indent=2, ensure_ascii=False)
-        if vector_context
-        else "(no vector data available - pgvector returned no semantic chunks)"
+
+    funnel_lines = "\n".join(
+        f"  {s['stage']}: {s['count']} ({s['pct']}%)"
+        for s in sql_context.get("funnel_distribution", [])
+    ) or "  (no data)"
+
+    icp_lines = "\n".join(
+        f"  {s['sector']}/{s['market']} {s['client_type']} {s['tech_maturity']} {s['deal_size']}: {s['count']}"
+        for s in sql_context.get("icp_breakdown", [])
+    ) or "  (no data)"
+
+    signals_json = json.dumps(
+        sql_context.get("signals", []),
+        ensure_ascii=False,
+        separators=(",", ":"),
     )
+
     return _BATCH_TEMPLATE.format(
         granularity=granularity,
         period_start=period_start,
         period_end=period_end,
         market_context=market_context,
-        sql_context=json.dumps(sql_context, indent=2, ensure_ascii=False),
-        vector_context=vector_section,
+        total_signals=sql_context["summary"]["total_signals"],
+        funnel_lines=funnel_lines,
+        icp_lines=icp_lines,
+        signals_json=signals_json,
     )

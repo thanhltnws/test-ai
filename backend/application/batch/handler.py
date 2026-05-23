@@ -9,10 +9,11 @@ appends new rows to the insights table (append-only, never overrides).
 Local run:
     python backend/application/batch/handler.py
 """
-import calendar
 import json
 import os
 import sys
+import time
+from collections import Counter
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -29,6 +30,7 @@ GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 COHERE_MAX_CHARS = 2048
 
 MARKETS = [None, "vietnam", "japan", "korea", "international"]
+# MARKETS = ["vietnam"]
 
 RESULT_TYPES = [
     "pain_points_summary",
@@ -40,14 +42,14 @@ RESULT_TYPES = [
 # Cached across Lambda invocations within the same container
 _db_url_cache: str | None = None
 
-_VECTOR_QUERIES = [
-    "customer pain points and challenges",
-    "sales objections and friction",
-    "product use cases and applications",
-]
+# _VECTOR_QUERIES = [
+#     "customer pain points and challenges",
+#     "sales objections and friction",
+#     "product use cases and applications",
+# ]
 
-# TODO: need test
-_VECTOR_TOP_K_PER_QUERY = 10
+# # TODO: need test
+# _VECTOR_TOP_K_PER_QUERY = 10
 
 
 # ── db ────────────────────────────────────────────────────────────────────────
@@ -127,100 +129,74 @@ def query_aurora(
     period_end: date,
     market: str | None = None,
 ) -> dict:
-    ctx: dict = {}
+    date_filter = "COALESCE(record_date, extracted_at::date) BETWEEN %s AND %s"
+    mkt_filter  = "AND market = %s" if market else ""
+    params      = (period_start, period_end) + ((market,) if market else ())
+
     cur = conn.cursor()
     try:
-        # COALESCE: use record_date when available, fall back to extracted_at date
-        date_filter = "COALESCE(record_date, extracted_at::date) BETWEEN %s AND %s"
-        mkt_filter  = "AND market = %s" if market else ""
-        dp  = (period_start, period_end)
-        mp  = (market,) if market else ()
-
-        cur.execute(
-            f"SELECT COUNT(*) FROM signals WHERE {date_filter} {mkt_filter}",
-            dp + mp,
-        )
-        row = cur.fetchone()
-        ctx["summary"] = {"total_signals": row[0]}
-
         cur.execute(
             f"""
-            SELECT pain_point, COUNT(*) AS cnt
-            FROM signals, unnest(pain_points) AS pain_point
-            WHERE pain_point <> '' AND {date_filter} {mkt_filter}
-            GROUP BY pain_point
-            ORDER BY cnt DESC
-            """,
-            dp + mp,
-        )
-        ctx["top_pain_points"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
-
-        cur.execute(
-            f"""
-            SELECT objection, COUNT(*) AS cnt
-            FROM signals, unnest(objections) AS objection
-            WHERE objection <> '' AND {date_filter} {mkt_filter}
-            GROUP BY objection
-            ORDER BY cnt DESC
-            """,
-            dp + mp,
-        )
-        ctx["top_objections"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
-
-        cur.execute(
-            f"""
-            SELECT use_case, COUNT(*) AS cnt
-            FROM signals, unnest(use_cases) AS use_case
-            WHERE use_case <> '' AND {date_filter} {mkt_filter}
-            GROUP BY use_case
-            ORDER BY cnt DESC
-            """,
-            dp + mp,
-        )
-        ctx["top_use_cases"] = [{"item": r[0], "count": r[1]} for r in cur.fetchall()]
-
-        cur.execute(
-            f"""
-            SELECT funnel_stage, COUNT(*) AS cnt
+            SELECT source, pain_points, objections, use_cases,
+                   deal_size, client_type, tech_maturity, market, sector, funnel_stage
             FROM signals
-            WHERE funnel_stage IS NOT NULL AND {date_filter} {mkt_filter}
-            GROUP BY funnel_stage
-            ORDER BY cnt DESC
+            WHERE {date_filter} {mkt_filter}
             """,
-            dp + mp,
+            params,
         )
         rows = cur.fetchall()
-        total = sum(r[1] for r in rows)
-        ctx["funnel_distribution"] = [
-            {
-                "stage": r[0],
-                "count": r[1],
-                "pct": round(r[1] / total * 100, 1) if total else 0,
-            }
-            for r in rows
-        ]
-
-        cur.execute(
-            f"""
-            SELECT deal_size, client_type, tech_maturity, sector, market, COUNT(*) AS cnt
-            FROM signals
-            WHERE deal_size IS NOT NULL AND {date_filter} {mkt_filter}
-            GROUP BY deal_size, client_type, tech_maturity, sector, market
-            ORDER BY cnt DESC
-            """,
-            dp + mp,
-        )
-        ctx["icp_breakdown"] = [
-            {"deal_size": r[0], "client_type": r[1], "tech_maturity": r[2], "sector": r[3], "market": r[4], "count": r[5]}
-            for r in cur.fetchall()
-        ]
-
-        return ctx
     finally:
         cur.close()
 
+    signals = [
+        {
+            "source":        r[0],
+            "pain_points":   list(r[1] or []),
+            "objections":    list(r[2] or []),
+            "use_cases":     list(r[3] or []),
+            "deal_size":     r[4],
+            "client_type":   r[5],
+            "tech_maturity": r[6],
+            **({} if market else {"market": r[7]}),
+            "sector":        r[8],
+            "funnel_stage":  r[9],
+        }
+        for r in rows
+    ]
 
-# ── pgvector queries ───────────────────────────────────────────────────────────
+    funnel = Counter(s["funnel_stage"] for s in signals if s["funnel_stage"])
+    total  = sum(funnel.values())
+
+    if market:
+        # market is fixed for this slice — exclude it from the tuple to avoid a constant dimension
+        icp = Counter(
+            (s["deal_size"], s["client_type"], s["tech_maturity"], s["sector"])
+            for s in signals
+        )
+        icp_breakdown = [
+            {"deal_size": k[0], "client_type": k[1], "tech_maturity": k[2], "sector": k[3], "count": v}
+            for k, v in icp.most_common(10)
+        ]
+    else:
+        icp = Counter(
+            (s["deal_size"], s["client_type"], s["tech_maturity"], s["sector"], s["market"])
+            for s in signals
+        )
+        icp_breakdown = [
+            {"deal_size": k[0], "client_type": k[1], "tech_maturity": k[2], "sector": k[3], "market": k[4], "count": v}
+            for k, v in icp.most_common(10)
+        ]
+
+    return {
+        "summary": {"total_signals": len(signals)},
+        "funnel_distribution": [
+            {"stage": k, "count": v, "pct": round(v / total * 100, 1)}
+            for k, v in funnel.most_common()
+        ],
+        "icp_breakdown": icp_breakdown,
+        "signals": signals,
+    }
+
 
 def _embed_gemini(texts: list[str]) -> list[list[float]]:
     from google import genai
@@ -233,7 +209,7 @@ def _embed_gemini(texts: list[str]) -> list[list[float]]:
             model="gemini-embedding-001",
             contents=text,
             config=types.EmbedContentConfig(
-                task_type="RETRIEVAL_QUERY",
+                task_type="RETRIEVAL_DOCUMENT",
                 output_dimensionality=1024,
             ),
         )
@@ -252,71 +228,72 @@ def _embed_bedrock(texts: list[str]) -> list[list[float]]:
             modelId=model_id,
             contentType="application/json",
             accept="application/json",
-            body=json.dumps({"texts": [text[:COHERE_MAX_CHARS]], "input_type": "search_query", "embedding_types": ["float"]}),
+            body=json.dumps({"texts": [text[:COHERE_MAX_CHARS]], "input_type": "search_document", "embedding_types": ["float"]}),
         )
         embeddings.append(json.loads(resp["body"].read())["embeddings"]["float"][0])
     return embeddings
 
 
-def _embed_queries(texts: list[str]) -> list[list[float]]:
+def _embed_documents(texts: list[str]) -> list[list[float]]:
     if _llm_provider() == "gemini":
         return _embed_gemini(texts)
     return _embed_bedrock(texts)
 
 
-def query_pgvector(conn, period_start: date, period_end: date, market: str | None = None) -> list[dict]:
-    try:
-        query_vectors = _embed_queries(_VECTOR_QUERIES)
-    except Exception as exc:
-        print(f"pgvector embedding skipped: {exc}")
-        return []
+# Removed — batch now sends all raw signals directly; pgvector not needed.
+# def query_pgvector(conn, period_start: date, period_end: date, market: str | None = None) -> list[dict]:
+#     try:
+#         query_vectors = _embed_queries(_VECTOR_QUERIES)
+#     except Exception as exc:
+#         print(f"pgvector embedding skipped: {exc}")
+#         return []
 
-    seen_ids: set[str] = set()
-    chunks: list[dict] = []
-    cur = conn.cursor()
-    market_filter = "AND i.market = %s" if market else ""
-    market_params = (market,) if market else ()
-    try:
-        for query_text, vector in zip(_VECTOR_QUERIES, query_vectors):
-            cur.execute(
-                f"""
-                SELECT
-                    e.signal_id,
-                    i.source,
-                    i.source_url,
-                    i.funnel_stage,
-                    e.embedding_text,
-                    1 - (e.embedding <=> %s::vector) AS score
-                FROM signal_embeddings e
-                JOIN signals i ON i.id = e.signal_id
-                WHERE COALESCE(i.record_date, i.extracted_at::date) BETWEEN %s AND %s
-                {market_filter}
-                ORDER BY e.embedding <=> %s::vector
-                LIMIT %s
-                """,
-                (str(vector), period_start, period_end, *market_params, str(vector), _VECTOR_TOP_K_PER_QUERY),
-            )
-            for row in cur.fetchall():
-                uid = str(row[0])
-                if uid in seen_ids:
-                    continue
-                seen_ids.add(uid)
-                chunks.append({
-                    "query": query_text,
-                    "score": round(float(row[5]), 3),
-                    "source": row[1],
-                    "source_url": row[2],
-                    "funnel_stage": row[3],
-                    "embedding_text": row[4],
-                })
-    except Exception as exc:
-        print(f"pgvector query skipped: {exc}")
-        return []
-    finally:
-        cur.close()
+#     seen_ids: set[str] = set()
+#     chunks: list[dict] = []
+#     cur = conn.cursor()
+#     market_filter = "AND i.market = %s" if market else ""
+#     market_params = (market,) if market else ()
+#     try:
+#         for query_text, vector in zip(_VECTOR_QUERIES, query_vectors):
+#             cur.execute(
+#                 f"""
+#                 SELECT
+#                     e.signal_id,
+#                     i.source,
+#                     i.source_url,
+#                     i.funnel_stage,
+#                     e.embedding_text,
+#                     1 - (e.embedding <=> %s::vector) AS score
+#                 FROM signal_embeddings e
+#                 JOIN signals i ON i.id = e.signal_id
+#                 WHERE COALESCE(i.record_date, i.extracted_at::date) BETWEEN %s AND %s
+#                 {market_filter}
+#                 ORDER BY e.embedding <=> %s::vector
+#                 LIMIT %s
+#                 """,
+#                 (str(vector), period_start, period_end, *market_params, str(vector), _VECTOR_TOP_K_PER_QUERY),
+#             )
+#             for row in cur.fetchall():
+#                 uid = str(row[0])
+#                 if uid in seen_ids:
+#                     continue
+#                 seen_ids.add(uid)
+#                 chunks.append({
+#                     "query": query_text,
+#                     "score": round(float(row[5]), 3),
+#                     "source": row[1],
+#                     "source_url": row[2],
+#                     "funnel_stage": row[3],
+#                     "embedding_text": row[4],
+#                 })
+#     except Exception as exc:
+#         print(f"pgvector query skipped: {exc}")
+#         return []
+#     finally:
+#         cur.close()
 
-    chunks.sort(key=lambda x: x["score"], reverse=True)
-    return chunks
+#     chunks.sort(key=lambda x: x["score"], reverse=True)
+#     return chunks
 
 
 # ── llm calls ──────────────────────────────────────────────────────────────────
@@ -449,7 +426,7 @@ def write_insight_embeddings(
     if not to_embed:
         return 0
 
-    vectors = _embed_queries([r[1] for r in to_embed])
+    vectors = _embed_documents([r[1] for r in to_embed])
 
     cur = conn.cursor()
     try:
@@ -490,7 +467,7 @@ def handler(event=None, context=None):
 
 
     today = date.today()
-    granularities = ["weekly", "monthly", "quarterly", "yearly"]
+    granularities = ["weekly", "monthly"]
 
     conn = _pg_connect()
     summary = {}
@@ -514,15 +491,19 @@ def handler(event=None, context=None):
                     summary.setdefault(granularity, {})[mkt_label] = {"written": 0, "skipped": "no data"}
                     continue
 
-                vector_ctx = query_pgvector(conn, period_start, period_end, market=market)
-                print(f"  semantic={len(vector_ctx)}", end="  ")
+                # vector_ctx = query_pgvector(conn, period_start, period_end, market=market)
+                # prompt  = build_batch_prompt(sql_ctx, vector_ctx, granularity, period_start, period_end, market=market)
+                prompt  = build_batch_prompt(sql_ctx, granularity, period_start, period_end, market=market)
+                print(f"  prompt={len(prompt):,}chars (~{len(prompt)//4:,}tok)", end="")
 
-                prompt  = build_batch_prompt(sql_ctx, vector_ctx, granularity, period_start, period_end, market=market)
-                raw     = call_llm(prompt)
+                t0  = time.time()
+                raw = call_llm(prompt)
+                print(f"  llm={time.time()-t0:.1f}s  resp={len(raw):,}chars", end="")
+
                 results = parse_json_response(raw)
                 written_rows = write_insights(conn, results, granularity, period_start, period_end, market=market)
                 embedded    = write_insight_embeddings(conn, written_rows, granularity, period_start, period_end, market)
-                print(f"wrote {len(written_rows)} rows  embedded={embedded}")
+                print(f"  wrote={len(written_rows)}  embedded={embedded}")
                 summary.setdefault(granularity, {})[mkt_label] = {"written": len(written_rows), "period_start": str(period_start)}
 
     finally:

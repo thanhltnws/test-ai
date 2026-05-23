@@ -60,7 +60,7 @@ Processes unstructured text (CRM note, email, Teams transcript, Jira/Redmine not
 
 **Output B — Vector embedding → Aurora pgvector (`signal_embeddings`)**
 
-`embedding_text` (AI-generated NL summary) is embedded and stored in `signal_embeddings` with `source_url` in metadata. Enables semantic search at the Application layer.
+`embedding_text` (grounded evidence text — preserves original customer wording, optimised for semantic retrieval) is embedded and stored in `signal_embeddings` with `source_url` in metadata. Enables semantic search at the Application layer.
 
 ---
 
@@ -75,9 +75,9 @@ EventBridge triggers `InsightsBuilderFn` (`ai-insight-hub-insights-builder`) dai
 ```
 EventBridge scheduler
   → InsightsBuilderFn (ai-insight-hub-insights-builder)
-      → SQL query Aurora signals           (structured aggregates)
-      → pgvector semantic search           (pattern context)
-      → single prompt with both contexts
+      → single SQL query: raw signals in period    (source, pain_points, objections, use_cases, icp fields)
+      → Python Counter: funnel + ICP distributions
+      → single prompt: aggregate stats + all raw signals
       → Bedrock / Claude  →  single JSON with 4 keys:
             pain_points_summary · funnel_distribution
             icp_narrative · recommendations
@@ -135,7 +135,7 @@ The following decisions are architectural — not yet in decisions.md:
 
 - **`source_url` in `signals` and pgvector metadata** — links back to the originating CRM/Jira/Redmine record when available; optional, NULL for sources without an external URL.
 - **Two-layer idempotency in Transform Lambda** — S3 object tag `processed=true` is the file-level guard: on duplicate S3 events the tag is checked first and the Lambda returns early (Bedrock never called). `ON CONFLICT (source, source_id) DO UPDATE` in Aurora is the record-level guard: re-processing the same file overwrites existing rows with the latest extraction result rather than creating duplicates. The UPSERT semantics are intentional — re-running with an updated prompt or model produces better extractions that should replace the old ones.
-- **Dual prompt enrichment** — both Feature 1 and Feature 2 enrich the Bedrock prompt with context from Aurora (structured) and pgvector (semantic) before generating output.
+- **Feature 1 enrichment — Aurora only** — InsightsBuilderFn reads raw signals directly from Aurora (single SQL query) and aggregates in Python; pgvector is not used in the batch pipeline. pgvector is used only by Feature 2 (Chat).
 - **Feature 1 and Feature 2 are fully decoupled** — Dashboard reads pre-computed data (fast, stable). Chatbox runs real-time RAG (flexible, ad-hoc).
 - **Embedding model must be consistent between write and query** — the model used to embed `embedding_text` when writing to `signal_embeddings` / `insight_embeddings` must be the same model used to embed the user question at query time in the Chat Lambda. Mixing models produces incorrect cosine similarity with no error or warning. Full rule and checklist in [`docs/chat_optimization.md`](chat_optimization.md).
 

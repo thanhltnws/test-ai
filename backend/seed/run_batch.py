@@ -11,7 +11,8 @@ Usage:
 """
 import json
 import sys
-from datetime import date, timedelta
+import time
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -27,9 +28,10 @@ sys.path.insert(0, str(Path(__file__).parents[1] / "application"))
 
 from handler import (  # noqa: E402
     MARKETS,
+    RESULT_TYPES,
     _pg_connect,
     query_aurora,
-    query_pgvector,
+    # query_pgvector,
     call_llm,
     parse_json_response,
     write_insights,
@@ -74,26 +76,26 @@ def _monthly_periods(data_start: date, data_end: date) -> list[tuple[date, date]
     return periods
 
 
-def _quarterly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
-    quarters = []
-    for year in range(data_start.year, data_end.year + 1):
-        for q_start, q_end in [
-            (date(year, 1, 1), date(year, 3, 31)),
-            (date(year, 4, 1), date(year, 6, 30)),
-            (date(year, 7, 1), date(year, 9, 30)),
-            (date(year, 10, 1), date(year, 12, 31)),
-        ]:
-            if q_start <= data_end and q_end >= data_start:
-                quarters.append((max(q_start, data_start), min(q_end, data_end)))
-    return quarters
+# def _quarterly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
+#     quarters = []
+#     for year in range(data_start.year, data_end.year + 1):
+#         for q_start, q_end in [
+#             (date(year, 1, 1), date(year, 3, 31)),
+#             (date(year, 4, 1), date(year, 6, 30)),
+#             (date(year, 7, 1), date(year, 9, 30)),
+#             (date(year, 10, 1), date(year, 12, 31)),
+#         ]:
+#             if q_start <= data_end and q_end >= data_start:
+#                 quarters.append((max(q_start, data_start), min(q_end, data_end)))
+#     return quarters
 
 
-def _yearly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
-    return [
-        (date(year, 1, 1), min(date(year, 12, 31), data_end))
-        for year in range(data_start.year, data_end.year + 1)
-        if date(year, 12, 31) >= data_start
-    ]
+# def _yearly_periods(data_start: date, data_end: date) -> list[tuple[date, date]]:
+#     return [
+#         (date(year, 1, 1), min(date(year, 12, 31), data_end))
+#         for year in range(data_start.year, data_end.year + 1)
+#         if date(year, 12, 31) >= data_start
+#     ]
 
 EMBED_BATCH_SIZE = 96
 
@@ -140,7 +142,7 @@ def _insert_insight_embeddings(conn, rows: list[tuple[str, str, str, dict]]) -> 
 
 # ── main ──────────────────────────────────────────────────────────────────────
 
-def main() -> None:
+def main(dry_run: bool = False) -> None:
     conn = _pg_connect()
     data_start, data_end = _get_data_range(conn)
     conn.close()
@@ -148,8 +150,8 @@ def main() -> None:
     granularities: dict[str, list[tuple[date, date]]] = {
         "weekly":    _weekly_periods(data_start, data_end),
         "monthly":   _monthly_periods(data_start, data_end),
-        "quarterly": _quarterly_periods(data_start, data_end),
-        "yearly":    _yearly_periods(data_start, data_end),
+        # "quarterly": _quarterly_periods(data_start, data_end),
+        # "yearly":    _yearly_periods(data_start, data_end),
     }
 
     provider = os.environ.get("LLM_PROVIDER", "bedrock").strip().lower()
@@ -157,6 +159,8 @@ def main() -> None:
         model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite-preview")
     else:
         model = os.environ.get("BEDROCK_MODEL_ID", "global.anthropic.claude-haiku-4-5-20251001-v1:0")
+    if dry_run:
+        print("[DRY RUN] LLM will run but no DB writes — output to JSON file only")
     print(f"Provider: {provider}  Model: {model}")
     print(f"Data range from DB: {data_start} → {data_end}")
     total_periods = sum(len(v) for v in granularities.values())
@@ -180,16 +184,17 @@ def main() -> None:
                 for p_start, p_end in periods:
                     label = f"[{granularity}/{mkt_label}] {p_start} → {p_end}"
 
-                    cur = conn.cursor()
-                    cur.execute(
-                        "SELECT COUNT(*) FROM insights WHERE period=%s AND period_start=%s AND market IS NOT DISTINCT FROM %s",
-                        (granularity, p_start, market),
-                    )
-                    already_done = cur.fetchone()[0] > 0
-                    cur.close()
-                    if already_done:
-                        print(f"{label}  — skip (already computed)")
-                        continue
+                    if not dry_run:
+                        cur = conn.cursor()
+                        cur.execute(
+                            "SELECT COUNT(*) FROM insights WHERE period=%s AND period_start=%s AND market IS NOT DISTINCT FROM %s",
+                            (granularity, p_start, market),
+                        )
+                        already_done = cur.fetchone()[0] > 0
+                        cur.close()
+                        if already_done:
+                            print(f"{label}  — skip (already computed)")
+                            continue
 
                     sql_ctx = query_aurora(conn, p_start, p_end, market=market)
                     total   = sql_ctx["summary"]["total_signals"]
@@ -199,19 +204,29 @@ def main() -> None:
                         print("  — skip (no data)")
                         continue
 
-                    vector_ctx = query_pgvector(conn, p_start, p_end)
-                    print(f"  semantic={len(vector_ctx)}", end="  ")
+                    # vector_ctx = query_pgvector(conn, p_start, p_end)
+                    # prompt  = build_batch_prompt(sql_ctx, vector_ctx, granularity, p_start, p_end, market=market)
+                    prompt  = build_batch_prompt(sql_ctx, granularity, p_start, p_end, market=market)
+                    print(f"  prompt={len(prompt):,}chars (~{len(prompt)//4:,}tok)", end="")
 
-                    prompt  = build_batch_prompt(sql_ctx, vector_ctx, granularity, p_start, p_end, market=market)
-                    raw     = call_llm(prompt)
+                    t0  = time.time()
+                    raw = call_llm(prompt)
+                    print(f"  llm={time.time()-t0:.1f}s  resp={len(raw):,}chars", end="")
+
                     results = parse_json_response(raw)
-                    written_rows = write_insights(conn, results, granularity, p_start, p_end, market=market)
-                    total_written += len(written_rows)
-                    print(f"wrote {len(written_rows)} rows")
-
-                    for row in written_rows:
-                        row.update({"granularity": granularity, "p_start": p_start, "p_end": p_end, "market": market})
-                        pending.append(row)
+                    if dry_run:
+                        for rt in RESULT_TYPES:
+                            if rt in results:
+                                pending.append({"id": None, "result_type": rt, "payload": results[rt],
+                                                "granularity": granularity, "p_start": p_start, "p_end": p_end, "market": market})
+                        print(f"  collected={sum(1 for rt in RESULT_TYPES if rt in results)}")
+                    else:
+                        written_rows = write_insights(conn, results, granularity, p_start, p_end, market=market)
+                        total_written += len(written_rows)
+                        print(f"  wrote={len(written_rows)}")
+                        for row in written_rows:
+                            row.update({"granularity": granularity, "p_start": p_start, "p_end": p_end, "market": market})
+                            pending.append(row)
 
     finally:
         conn.close()
@@ -219,13 +234,14 @@ def main() -> None:
     print(f"\nDone — {total_written} rows written to insights.")
 
     if pending:
-        _out = Path(__file__).parent / "data" / "insights_seed.json"
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        _out = Path(__file__).parent / "data" / f"insights_{timestamp}.json"
         with open(_out, "w", encoding="utf-8") as _f:
             json.dump(pending, _f, ensure_ascii=False, indent=2, default=lambda o: str(o))
         print(f"Saved {len(pending)} rows → {_out.name}")
 
     # ── embed + insert insight_embeddings ─────────────────────────────────────
-    if not pending:
+    if dry_run or not pending:
         return
 
     to_embed = []
@@ -320,9 +336,10 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--embed-only", action="store_true", help="Only embed existing insight rows, skip LLM batch")
+    parser.add_argument("--dry-run", action="store_true", help="Run LLM but skip all DB writes — output to insights_{timestamp}.json only")
     args = parser.parse_args()
 
     if args.embed_only:
         embed_only()
     else:
-        main()
+        main(dry_run=args.dry_run)
