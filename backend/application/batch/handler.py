@@ -394,12 +394,17 @@ def _derive_embedding_text(result_type: str, payload: dict) -> str:
             parts.append(f"{item.get('item', '')} {item.get('insight', '')}".strip())
         return " ".join(p for p in parts if p).strip()
     if result_type == "funnel_distribution":
-        return payload.get("summary", "")
+        parts = [payload.get("summary", "")]
+        for stage in payload.get("stages", []):
+            parts.append(
+                f"{stage.get('stage', '')} {stage.get('count', '')} signals {stage.get('pct', '')}%".strip()
+            )
+        return " ".join(p for p in parts if p).strip()
     if result_type == "icp_narrative":
         parts = [payload.get("narrative", "")]
         for seg in payload.get("top_segments", []):
             parts.append(
-                f"{seg.get('sector','')} {seg.get('market','')} {seg.get('client_type','')} {seg.get('deal_size','')}".strip()
+                f"{seg.get('sector','')} {seg.get('market','')} {seg.get('client_type','')} {seg.get('tech_maturity','')} {seg.get('deal_size','')}".strip()
             )
         return " ".join(p for p in parts if p).strip()
     if result_type == "recommendations":

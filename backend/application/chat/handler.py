@@ -517,12 +517,13 @@ def call_llm(prompt_text: str) -> str:
 # ── response parsing ───────────────────────────────────────────────────────────
 
 def parse_json_response(text: str) -> dict:
+    from json_repair import repair_json
     text = text.strip()
     if text.startswith("```"):
         text = text.split("```", 2)[1]
         if text.startswith("json"):
             text = text[4:]
-    return json.loads(text.strip())
+    return json.loads(repair_json(text.strip()))
 
 
 # ── lambda handler ─────────────────────────────────────────────────────────────
@@ -624,7 +625,7 @@ def lambda_handler(event=None, context=None):
         print(f"[vec/signal]   chunks={len(signal_ctx)}  scores={[c['score'] for c in signal_ctx]}")
         print(f"[timing]       phase2 (signal_vec)={t_phase2*1000:.0f}ms")
 
-        prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history)
+        prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history, insight_low=insight_low)
 
         # LLM answer generation
         print(f"[llm/answer]   calling {answer_model} …")

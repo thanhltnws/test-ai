@@ -2,3 +2,4 @@ pg8000
 python-dotenv
 google-genai
 boto3
+json-repair
