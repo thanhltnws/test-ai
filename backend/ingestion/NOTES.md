@@ -1,54 +1,24 @@
 # Ingestion — Design Notes
 
-> Ghi chú về các cách ingest data vào pipeline và trade-off của từng cách.
+> Ghi chú về các cách ingest data vào pipeline.
 
 ---
 
-## Implementation Mock Ingestion (Demo)
+## Tình trạng handler hiện tại
 
-Handler (`handler.py`) đóng vai **Ingestion UI Lambda** — không crawl source thật mà phục vụ màn hình Pipeline của frontend.
+`handler.py` hiện tại **đã bị thay thế bởi demo UI code** — không còn là ingestion Lambda thật. Nó phục vụ màn hình Pipeline của frontend (list mock files, preview records, trigger từng file).
 
-### File structure
+Code ingestion thật được lưu lại ở `handler_real.py`:
 
-```
-backend/ingestion/
-  mock_sources.json          ← catalog: id, source, file, label, description, record_count
-  mock/
-    redmine_01.json           ← 20 records — International project tickets
-    redmine_02.json           ← 15 records — Japan project tickets
-    outlook_email_01.json     ← 20 records — International emails
-    outlook_email_02.json     ← 15 records — Vietnam-focus emails
-    teams_transcript_01.json  ← 20 records — Sales & Delivery call transcripts
-```
+- Trigger bởi EventBridge schedule
+- Xác định nguồn cần crawl và cách crawl phù hợp với từng source (poll API, webhook, đọc file) → upload raw records lên S3
+- `handler_real.py` hiện tại chỉ là skeleton đơn giản nhất: xác định data sources tại sources.json, đọc mock file → upload S3. Ingestion thật với từng source sẽ cần nhiều logic phức tạp hơn
 
-Catalog hiện tại: `mock_sources.json` — mỗi entry có `id`, `source`, `file`, `label`, `description`, `record_count`.
-
-### Endpoints
-
-| Method | Path                       | Mô tả                                                        |
-|--------|----------------------------|--------------------------------------------------------------|
-| GET    | `/ingestion` (hoặc `/ingestion/files`) | List tất cả mock files với metadata          |
-| GET    | `/ingestion/preview`       | Trả toàn bộ records của một file (`?file_id=...`)            |
-| POST   | `/ingestion/trigger`       | Trigger pipeline với một mock file (`{"file_id": "..."}`)    |
-
-CloudWatch logs của Transform Lambda được serve bởi **Transform Lambda Function URL** (`VITE_TRANSFORM_LAMBDA_URL`) — `GET /logs`. Xem `backend/transform/handler.py`.
-
-### Flow (AWS)
-
-```
-POST /ingestion/trigger  {"file_id": "redmine_01"}
-  → đọc mock/redmine_01.json
-  → upload lên S3: raw/redmine/2026-05-19/120000_redmine_01.json
-  → S3 ObjectCreated event → Transform Lambda (async)
-
-GET <VITE_TRANSFORM_LAMBDA_URL>/logs?since=2026-05-19T12:00:00Z
-  → CloudWatch filter_log_events trên /aws/lambda/ai-insight-hub-transform
-  → trả events (bỏ START/END/REPORT lines)
-```
+Hướng xử lý dài hạn: tách demo UI thành `ingestion_demo` Lambda riêng, đưa `handler_real.py` trở thành `handler.py`. Xem thêm `MOCK.md`.
 
 ---
 
-## Nguyên tắc chung (áp dụng cho mọi cách)
+## Nguyên tắc chung
 
 Mỗi source nên có filter condition rõ ràng xác định *record nào đáng extract signal*, không crawl mọi thứ.
 

@@ -26,58 +26,10 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import urlparse
 
 _HERE = Path(__file__).resolve().parent
 _MOCK_BASE_DIR = _HERE
 _MOCK_SOURCES_PATH = _MOCK_BASE_DIR / "mock_sources.json"
-
-# ── DB helpers ────────────────────────────────────────────────────────────────
-
-_DB_CONN = None
-
-
-def _get_conn():
-    global _DB_CONN
-    if _DB_CONN is not None:
-        try:
-            cur = _DB_CONN.cursor()
-            cur.execute("SELECT 1")
-            cur.close()
-            return _DB_CONN
-        except Exception:
-            _DB_CONN = None
-
-    import pg8000.dbapi
-
-    secret_arn = os.environ.get("DB_SECRET_ARN")
-    if secret_arn:
-        import boto3
-        sm = boto3.client("secretsmanager")
-        secret_str = sm.get_secret_value(SecretId=secret_arn)["SecretString"]
-        creds = json.loads(secret_str)
-        _DB_CONN = pg8000.dbapi.connect(
-            host=creds["host"],
-            port=creds.get("port", 5432),
-            database=creds.get("dbname", "ai_insight_hub"),
-            user=creds["username"],
-            password=creds["password"],
-        )
-    else:
-        db_url = os.environ.get("DATABASE_URL")
-        if not db_url:
-            raise RuntimeError("Set DB_SECRET_ARN (AWS) or DATABASE_URL (local dev)")
-        u = urlparse(db_url)
-        _DB_CONN = pg8000.dbapi.connect(
-            host=u.hostname,
-            port=u.port or 5432,
-            database=u.path.lstrip("/"),
-            user=u.username,
-            password=u.password,
-        )
-    _DB_CONN.autocommit = False
-    return _DB_CONN
-
 
 # ── Mock file helpers ─────────────────────────────────────────────────────────
 
