@@ -402,13 +402,18 @@ export class ApplicationStack extends cdk.Stack {
       actions: ['bedrock:InvokeModel'],
       resources: ['*'],
     }));
+    insightsBuilderFn.addToRolePolicy(new iam.PolicyStatement({
+      sid: 'ReadOwnLogs',
+      actions: ['logs:DescribeLogStreams', 'logs:GetLogEvents'],
+      resources: [`arn:aws:logs:${this.region}:${this.account}:log-group:/aws/lambda/ai-insight-hub-insights-builder:*`],
+    }));
 
     // ── Lambda Function URL ────────────────────────────────────────────────────
     const insightsBuilderUrl = insightsBuilderFn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
         allowedOrigins: ['*'],
-        allowedMethods: [lambda.HttpMethod.POST],
+        allowedMethods: [lambda.HttpMethod.GET, lambda.HttpMethod.POST],
         allowedHeaders: ['Content-Type'],
       },
     });

@@ -16,7 +16,7 @@ export default function App() {
     <BrowserRouter>
       <WelcomeModal open={welcomeOpen} onClose={() => { localStorage.setItem('welcome-seen', '1'); setWelcomeOpen(false) }} />
       <Navbar onOpenWelcome={() => setWelcomeOpen(true)} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', minWidth: 0 }}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/chat" element={<Chat />} />

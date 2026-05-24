@@ -1,13 +1,5 @@
 [
   {
-    "id": "redmine_01",
-    "source": "redmine",
-    "file": "mock/redmine_01.json",
-    "label": "Redmine — International Project Tickets",
-    "description": "Support, bug, and feature tickets across international client projects",
-    "record_count": 20
-  },
-  {
     "id": "redmine_02",
     "source": "redmine",
     "file": "mock/redmine_02.json",
@@ -16,27 +8,11 @@
     "record_count": 15
   },
   {
-    "id": "outlook_email_01",
-    "source": "outlook_email",
-    "file": "mock/outlook_email_01.json",
-    "label": "Outlook Email — International",
-    "description": "Pre-sales, delivery, and commercial emails across AU, SG, JP, MY, UK, AE, IN markets",
-    "record_count": 20
-  },
-  {
     "id": "outlook_email_02",
     "source": "outlook_email",
     "file": "mock/outlook_email_02.json",
     "label": "Outlook Email — Vietnam Focus",
     "description": "Emails covering Vietnam-market deals including VinPay, ShopViet, MedViet, InsurVN",
     "record_count": 15
-  },
-  {
-    "id": "teams_transcript_01",
-    "source": "teams_transcript",
-    "file": "mock/teams_transcript_01.json",
-    "label": "Teams Transcripts — Sales & Delivery Calls",
-    "description": "Meeting transcripts: kick-offs, sprint reviews, escalations, and pre-sales discovery calls",
-    "record_count": 20
   }
 ]

@@ -557,12 +557,10 @@ def extract_and_merge(normalized: list[dict], source: str, model_id: str) -> lis
 
 
 # ── HTTP helpers (Function URL — GET /logs) ───────────────────────────────────
+# CORS is handled by the Lambda Function URL config (CDK). Do NOT add
+# Access-Control-* headers here — duplicates cause browsers to reject the response.
 
-_CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-}
+_HEADERS = {"Content-Type": "application/json"}
 
 _LOGS_CLIENT = None
 _LOG_SKIP_PREFIXES = ("START RequestId", "END RequestId", "REPORT RequestId")
@@ -571,7 +569,7 @@ _LOG_SKIP_PREFIXES = ("START RequestId", "END RequestId", "REPORT RequestId")
 def _ok(body: dict, status: int = 200) -> dict:
     return {
         "statusCode": status,
-        "headers": {"Content-Type": "application/json", **_CORS_HEADERS},
+        "headers": _HEADERS,
         "body": json.dumps(body, default=str),
     }
 
@@ -579,7 +577,7 @@ def _ok(body: dict, status: int = 200) -> dict:
 def _err(message: str, status: int = 400) -> dict:
     return {
         "statusCode": status,
-        "headers": {"Content-Type": "application/json", **_CORS_HEADERS},
+        "headers": _HEADERS,
         "body": json.dumps({"error": message}),
     }
 
@@ -627,7 +625,7 @@ def _http_handler(event: dict) -> dict:
     query = event.get("queryStringParameters") or {}
 
     if method == "OPTIONS":
-        return {"statusCode": 200, "headers": _CORS_HEADERS, "body": ""}
+        return {"statusCode": 204, "headers": _HEADERS, "body": ""}
 
     if method == "GET" and path == "/logs":
         return _handle_logs(query)

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
+  fetchBatchRunLogs,
   fetchIngestionPreview,
   fetchTransformLogs,
   isLambdaDataSource,
   listIngestionFiles,
+  triggerBatch,
   triggerIngestionFile,
 } from '../api/lambdas'
 import type {
@@ -110,6 +112,35 @@ function FlowDiagram({ stage }: { stage: FlowStage }) {
       <FlowNode icon="🗄️" label="Aurora DB" sublabel="+ pgvector" active={s('aurora')} done={after('aurora')} />
       <Arrow active={s('done')} done={s('done')} />
       <FlowNode icon="📊" label="Dashboard" sublabel="/ Chat" active={s('done')} done={s('done')} />
+    </div>
+  )
+}
+
+// ── Batch Flow Diagram ────────────────────────────────────────────────────────
+
+type BatchFlowStage = 'idle' | 'querying' | 'llm' | 'writing' | 'done'
+
+function BatchFlowDiagram({ stage }: { stage: BatchFlowStage }) {
+  const after = (s: BatchFlowStage) => {
+    const order: BatchFlowStage[] = ['idle', 'querying', 'llm', 'writing', 'done']
+    return order.indexOf(stage) > order.indexOf(s)
+  }
+  const at = (s: BatchFlowStage) => stage === s
+  return (
+    <div style={{
+      background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16,
+      padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 0,
+      overflowX: 'auto', flexWrap: 'nowrap',
+    }}>
+      <FlowNode icon="🗄️" label="Aurora DB" sublabel="signals" active={at('querying')} done={after('querying')} />
+      <Arrow active={at('querying')} done={after('querying')} />
+      <FlowNode icon="⚙️" label="Insights Builder" sublabel="Lambda" active={at('querying') || at('llm') || at('writing')} done={at('done')} />
+      <Arrow active={at('llm')} done={after('llm')} />
+      <FlowNode icon="🤖" label="LLM" sublabel="Bedrock" active={at('llm')} done={after('llm')} />
+      <Arrow active={at('writing')} done={after('writing')} />
+      <FlowNode icon="📋" label="insights" sublabel="table" active={at('writing')} done={after('writing')} />
+      <Arrow active={at('done')} done={at('done')} />
+      <FlowNode icon="📊" label="Dashboard" sublabel="/ Chat" active={at('done')} done={at('done')} />
     </div>
   )
 }
@@ -315,22 +346,23 @@ function FileRow({ entry, status, onTrigger, onPreview }: FileRowProps) {
 // ── Activity log ──────────────────────────────────────────────────────────────
 
 function LogLine({ entry }: { entry: ActivityLogEntry }) {
-  const colorMap = { info: '#94a3b8', success: '#4ade80', error: '#f87171', warning: '#fbbf24' }
-  const prefixMap = { info: '·', success: '·', error: '✗', warning: '⚠' }
+  const colorMap = { info: '#94a3b8', success: '#34d399', error: '#f87171', warning: '#fbbf24' }
+  const textColorMap = { info: '#e2e8f0', success: '#d1fae5', error: '#fecaca', warning: '#fef3c7' }
+  const prefixMap = { info: '›', success: '✓', error: '✗', warning: '⚠' }
   return (
     <div style={{ fontSize: 12, lineHeight: 1.6 }}>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <span style={{ flexShrink: 0, color: '#64748b', fontFamily: 'monospace' }}>{entry.ts}</span>
-        <span style={{ flexShrink: 0, color: colorMap[entry.level], fontWeight: 600 }}>{prefixMap[entry.level]}</span>
-        <span style={{ color: entry.level === 'info' ? '#cbd5e1' : colorMap[entry.level] }}>{entry.message}</span>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+        <span style={{ flexShrink: 0, color: '#6b7280', fontFamily: 'monospace', fontSize: 11, paddingTop: 1 }}>{entry.ts}</span>
+        <span style={{ flexShrink: 0, color: colorMap[entry.level], fontWeight: 700, fontSize: 13, lineHeight: '1.4' }}>{prefixMap[entry.level]}</span>
+        <span style={{ color: textColorMap[entry.level], wordBreak: 'break-word' }}>{entry.message}</span>
       </div>
       {entry.detail && (
         <div style={{
-          marginTop: 2, marginLeft: 80,
-          color: '#475569', fontFamily: 'monospace', fontSize: 10,
+          marginTop: 3, marginLeft: 84,
+          color: '#9ca3af', fontFamily: 'monospace', fontSize: 10,
           wordBreak: 'break-all', lineHeight: 1.5,
-          background: 'rgba(255,255,255,0.03)', borderRadius: 4,
-          padding: '2px 6px',
+          background: 'rgba(255,255,255,0.04)', borderRadius: 4,
+          padding: '3px 7px', borderLeft: '2px solid rgba(255,255,255,0.08)',
         }}>
           {entry.detail}
         </div>
@@ -348,6 +380,9 @@ export default function Pipeline() {
   const [flowStage, setFlowStage] = useState<FlowStage>('idle')
   const [loading, setLoading] = useState(true)
   const [previewEntry, setPreviewEntry] = useState<MockFileEntry | null>(null)
+  const [batchRunning, setBatchRunning] = useState(false)
+  const [batchDone, setBatchDone] = useState(false)
+  const [batchStage, setBatchStage] = useState<BatchFlowStage>('idle')
   const logScrollRef = useRef<HTMLDivElement>(null)
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const seenLogTsRef = useRef<Set<number>>(new Set())
@@ -412,6 +447,83 @@ export default function Pipeline() {
     }, 5000)
   }
 
+  function startBatchLogPolling(since: string) {
+    if (pollTimerRef.current) clearInterval(pollTimerRef.current)
+    seenLogTsRef.current = new Set()
+    let attempts = 0
+    let emptyStreak = 0
+
+    pollTimerRef.current = setInterval(async () => {
+      attempts++
+      if (attempts > 60) {
+        clearInterval(pollTimerRef.current!)
+        addLog('warning', 'Batch log polling timed out (5 min).')
+        setBatchRunning(false)
+        return
+      }
+      try {
+        const { events } = await fetchBatchRunLogs(since)
+        let hasNew = false
+        for (const e of events) {
+          if (seenLogTsRef.current.has(e.ts)) continue
+          seenLogTsRef.current.add(e.ts)
+          hasNew = true
+          const msg = e.message.trim()
+          if (!msg) continue
+          if (msg.includes('wrote=') || msg.includes('embedded=')) {
+            setBatchStage('writing')
+            addLog('success', msg)
+          } else if (msg.includes('prompt=') || msg.includes('llm=')) {
+            setBatchStage('llm')
+            addLog('info', msg)
+          } else if (msg.includes('skip') || msg.includes('SKIP')) {
+            addLog('warning', msg)
+          } else if (msg.startsWith('ERROR') || msg.includes('Traceback')) {
+            addLog('error', msg)
+          } else {
+            if (batchStage === 'idle') setBatchStage('querying')
+            addLog('info', msg)
+          }
+        }
+        if (!hasNew) {
+          emptyStreak++
+          if (emptyStreak >= 2 && attempts > 3) {
+            clearInterval(pollTimerRef.current!)
+            addLog('success', 'Batch completed.')
+            setBatchRunning(false)
+            setBatchDone(true)
+            setBatchStage('done')
+          }
+        } else {
+          emptyStreak = 0
+        }
+      } catch {
+        // CloudWatch may not have flushed yet — keep polling
+      }
+    }, 5000)
+  }
+
+  async function handleRunBatch() {
+    setBatchRunning(true)
+    setBatchDone(false)
+    setBatchStage('idle')
+    addLog('info', 'Triggering Insights Builder')
+
+    if (!isLambdaDataSource) {
+      await new Promise(r => setTimeout(r, 1200))
+      addLog('success', 'Mock mode — batch skipped.')
+      setBatchRunning(false)
+      setBatchDone(true)
+      setBatchStage('done')
+      return
+    }
+
+    const triggerTime = new Date().toISOString()
+    triggerBatch()
+    addLog('info', 'Lambda triggered — waiting for logs…')
+    startBatchLogPolling(triggerTime)
+  }
+
   async function handleTrigger(entry: MockFileEntry) {
     setStatuses(prev => ({ ...prev, [entry.id]: 'triggering' }))
     addLog('info', `Triggering ${entry.label}…`)
@@ -464,96 +576,140 @@ export default function Pipeline() {
 
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', margin: 0 }}>Ingestion Demo</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', margin: 0 }}>Data Pipeline</h1>
         <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '4px 0 0' }}>
-          Select mock files and trigger the ingestion pipeline manually.
+          Trigger ingestion từ mock files và chạy Insights Builder để tổng hợp insights.
         </p>
       </div>
 
-      {/* Flow diagram */}
-      <FlowDiagram stage={flowStage} />
+      {/* Two-column layout: left all content + right Activity Log */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 28, alignItems: 'start' }}>
 
-      {/* Main body: file list + log */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
+        {/* Left: all sections */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        {/* File list */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {loading ? (
-            <div style={{ padding: 32, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Loading files…</div>
-          ) : (
-            Object.entries(bySource).map(([source, entries]) => (
-              <div key={source}>
-                <div style={{
-                  fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                  color: sourceColor(source), marginBottom: 8, paddingLeft: 4,
-                }}>
-                  {SOURCE_LABELS[source] ?? source}
+          {/* 1 · Ingestion */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#94a3b8' }}>
+              1 · Ingestion
+            </div>
+            <FlowDiagram stage={flowStage} />
+          </div>
+
+          {/* File list */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {loading ? (
+              <div style={{ padding: 32, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Loading files…</div>
+            ) : (
+              Object.entries(bySource).map(([source, entries]) => (
+                <div key={source}>
+                  <div style={{
+                    fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                    color: sourceColor(source), marginBottom: 8, paddingLeft: 4,
+                  }}>
+                    {SOURCE_LABELS[source] ?? source}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {entries.map(entry => (
+                      <FileRow
+                        key={entry.id}
+                        entry={entry}
+                        status={statuses[entry.id] ?? 'idle'}
+                        onTrigger={() => handleTrigger(entry)}
+                        onPreview={() => setPreviewEntry(entry)}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {entries.map(entry => (
-                    <FileRow
-                      key={entry.id}
-                      entry={entry}
-                      status={statuses[entry.id] ?? 'idle'}
-                      onTrigger={() => handleTrigger(entry)}
-                      onPreview={() => setPreviewEntry(entry)}
-                    />
-                  ))}
+              ))
+            )}
+          </div>
+
+          {/* 2 · Insights Builder */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#94a3b8' }}>
+              2 · Insights Builder
+            </div>
+            <BatchFlowDiagram stage={batchStage} />
+            <div style={{
+              background: 'var(--surface)', border: '1px solid var(--border)',
+              borderRadius: 12, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 12,
+            }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>Run Batch</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                  Tổng hợp insights từ signals đã ingested.
                 </div>
               </div>
-            ))
-          )}
-        </div>
-
-        {/* Activity log */}
-        <div style={{
-          background: '#0f1117', border: '1px solid var(--border)', borderRadius: 14,
-          display: 'flex', flexDirection: 'column', overflow: 'hidden',
-          position: 'sticky', top: 24, maxHeight: 520,
-        }}>
-          <div style={{
-            padding: '14px 18px 10px', borderBottom: '1px solid rgba(255,255,255,0.06)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4ade80' }}>
-              Activity Log
-            </span>
-            {log.length > 0 && (
               <button
                 type="button"
-                onClick={() => setLog([])}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569', fontSize: 11, padding: '2px 6px', borderRadius: 4 }}
+                onClick={handleRunBatch}
+                disabled={batchRunning}
+                style={{
+                  alignSelf: 'flex-start',
+                  padding: '7px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                  border: 'none', cursor: batchRunning ? 'not-allowed' : 'pointer',
+                  background: batchDone ? 'var(--surface)' : 'var(--accent)',
+                  color: batchDone ? 'var(--text-muted)' : '#fff',
+                  opacity: batchRunning ? 0.7 : 1,
+                  transition: 'all 0.15s',
+                }}
               >
-                Clear
+                {batchRunning ? '⏳ Running…' : batchDone ? '✓ Done' : '▶ Run Batch'}
               </button>
-            )}
+              {batchRunning && (
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Lambda đang xử lý — có thể mất vài phút…
+                </div>
+              )}
+            </div>
           </div>
-          <div
-            ref={logScrollRef}
-            style={{ flex: 1, overflowY: 'auto', padding: '12px 18px', display: 'flex', flexDirection: 'column', gap: 4 }}
-          >
-            {log.length === 0 ? (
-              <div style={{ color: '#475569', fontSize: 12, fontStyle: 'italic' }}>
-                Trigger a file to see the ingestion pipeline in action…
-              </div>
-            ) : (
-              log.map((entry, i) => <LogLine key={i} entry={entry} />)
-            )}
-          </div>
-        </div>
-      </div>
 
-      {/* How it works */}
-      <div style={{
-        background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12,
-        padding: '14px 18px', display: 'flex', gap: 16, alignItems: 'flex-start',
-      }}>
-        <span style={{ fontSize: 16, flexShrink: 0 }}>ℹ️</span>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-          <strong style={{ color: 'var(--text)' }}>How it works:</strong>{' '}
-          Trigger files one by one — each pushes mock JSON to S3, fires the Transform Lambda, extracts signals via LLM, and stores results in Aurora + pgvector.
-          In local dev mode, the pipeline runs synchronously using Gemini.
         </div>
+
+        {/* Right: Activity Log — sticky alongside all content */}
+        <div style={{ position: 'sticky', top: 24, marginTop: 24 }}>
+          <div style={{
+            background: '#111827', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 14,
+            display: 'flex', flexDirection: 'column', overflow: 'hidden',
+            maxHeight: 'calc(100vh - 80px)',
+          }}>
+            <div style={{
+              padding: '12px 16px 10px', borderBottom: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: 'rgba(99,102,241,0.08)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px #4ade80' }} />
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#e2e8f0' }}>
+                  Activity Log
+                </span>
+              </div>
+              {log.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setLog([])}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontSize: 11, padding: '2px 6px', borderRadius: 4 }}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            <div
+              ref={logScrollRef}
+              style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 4, minHeight: 200 }}
+            >
+              {log.length === 0 ? (
+                <div style={{ color: '#64748b', fontSize: 12, fontStyle: 'italic', lineHeight: 1.6 }}>
+                  Trigger a file or run batch to see activity here…
+                </div>
+              ) : (
+                log.map((entry, i) => <LogLine key={i} entry={entry} />)
+              )}
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   )

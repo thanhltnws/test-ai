@@ -14,7 +14,7 @@ import os
 import sys
 import time
 from collections import Counter
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pg8000.dbapi
@@ -452,6 +452,51 @@ def write_insight_embeddings(
     return len(to_embed)
 
 
+# ── CloudWatch logs ────────────────────────────────────────────────────────────
+
+def _fetch_own_logs(since_iso: str) -> list[dict]:
+    import boto3
+    region = os.environ.get("AWS_REGION", "ap-southeast-1")
+    log_group = os.environ.get(
+        "BATCH_LOG_GROUP",
+        f"/aws/lambda/{os.environ.get('AWS_LAMBDA_FUNCTION_NAME', 'ai-insight-hub-insights-builder')}",
+    )
+    client = boto3.client("logs", region_name=region)
+
+    try:
+        since_dt = datetime.fromisoformat(since_iso.replace("Z", "+00:00"))
+    except Exception:
+        since_dt = datetime.now(timezone.utc)
+
+    start_ms = int(since_dt.timestamp() * 1000)
+    events: list[dict] = []
+    try:
+        streams = client.describe_log_streams(
+            logGroupName=log_group,
+            orderBy="LastEventTime",
+            descending=True,
+            limit=3,
+        ).get("logStreams", [])
+        for stream in streams:
+            if stream.get("lastEventTimestamp", 0) < start_ms:
+                continue
+            resp = client.get_log_events(
+                logGroupName=log_group,
+                logStreamName=stream["logStreamName"],
+                startTime=start_ms,
+                startFromHead=True,
+            )
+            for e in resp.get("events", []):
+                msg = e["message"].rstrip("\n")
+                if msg.startswith(("START ", "END ", "REPORT ")):
+                    continue
+                events.append({"ts": e["timestamp"], "message": msg})
+    except Exception as exc:
+        print(f"CloudWatch fetch error: {exc}")
+    events.sort(key=lambda x: x["ts"])
+    return events
+
+
 # ── lambda handler ─────────────────────────────────────────────────────────────
 
 def handler(event=None, context=None):
@@ -461,7 +506,14 @@ def handler(event=None, context=None):
     if is_options_request(event):
         return options_response()
 
-
+    req = (event.get("requestContext") or {}).get("http", {})
+    if req.get("method", "").upper() == "GET":
+        since = (event.get("queryStringParameters") or {}).get("since", "")
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"events": _fetch_own_logs(since)}),
+        }
 
     today = date.today()
     granularities = ["weekly", "monthly"]

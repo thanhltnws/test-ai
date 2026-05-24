@@ -2,10 +2,9 @@
 Ingestion demo Lambda — serves the Ingestion UI screen.
 
 Endpoints (Lambda Function URL, method + path routed internally):
-    GET  /ingestion           → list mock files with metadata (alias: /ingestion/files)
-    GET  /ingestion/preview   → return raw records of a mock file (?file_id=...)
-    GET  /ingestion/logs      → fetch recent CloudWatch logs of Transform Lambda (?since=ISO8601)
-    POST /ingestion/trigger   → push one mock file to S3 (AWS) or run transform directly (local dev)
+    GET  /ingestion              → list mock files with metadata (alias: /ingestion/files)
+    GET  /ingestion/preview      → return raw records of a mock file (?file_id=...)
+    POST /ingestion/trigger      → push one mock file to S3 (AWS) or run transform directly (local dev)
 
 Local dev (DATABASE_URL set, no DB_SECRET_ARN):
     trigger runs the transform pipeline synchronously using Gemini for LLM extraction.
@@ -14,17 +13,16 @@ AWS mode (DB_SECRET_ARN set):
     trigger pushes the file to S3; the S3 ObjectCreated event fires Transform Lambda asynchronously.
 
 Environment variables:
-    S3_BUCKET             target S3 bucket (AWS mode)
-    DB_SECRET_ARN         Secrets Manager ARN for Aurora (AWS mode)
-    DATABASE_URL          local dev PG connection string
-    AWS_REGION            (default: ap-southeast-1)
-    GEMINI_API_KEY        required in local dev mode
-    TRANSFORM_LOG_GROUP   CloudWatch log group (default: /aws/lambda/ai-insight-hub-transform)
+    S3_BUCKET                       target S3 bucket (AWS mode)
+    DB_SECRET_ARN                   Secrets Manager ARN for Aurora (AWS mode)
+    DATABASE_URL                    local dev PG connection string
+    AWS_REGION                      (default: ap-southeast-1)
+    GEMINI_API_KEY                  required in local dev mode
 """
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone  # used in _trigger_aws
 from pathlib import Path
 
 _HERE = Path(__file__).resolve().parent
@@ -105,19 +103,17 @@ def _trigger_local(source_id: str, source_name: str, file_path: Path) -> dict:
     }
 
 
-# ── CORS + response helpers ───────────────────────────────────────────────────
+# ── Response helpers ──────────────────────────────────────────────────────────
+# Lambda Function URL CORS config (CDK) adds Access-Control-* headers automatically.
+# Do NOT add them here — duplicates cause browsers to reject the response.
 
-_CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-}
+_HEADERS = {"Content-Type": "application/json"}
 
 
 def _ok(body: dict, status: int = 200) -> dict:
     return {
         "statusCode": status,
-        "headers": {"Content-Type": "application/json", **_CORS_HEADERS},
+        "headers": _HEADERS,
         "body": json.dumps(body, default=str),
     }
 
@@ -125,7 +121,7 @@ def _ok(body: dict, status: int = 200) -> dict:
 def _err(message: str, status: int = 400) -> dict:
     return {
         "statusCode": status,
-        "headers": {"Content-Type": "application/json", **_CORS_HEADERS},
+        "headers": _HEADERS,
         "body": json.dumps({"error": message}),
     }
 
@@ -186,7 +182,7 @@ def handler(event: dict, context=None) -> dict:
     query = event.get("queryStringParameters") or {}
 
     if method == "OPTIONS":
-        return {"statusCode": 200, "headers": _CORS_HEADERS, "body": ""}
+        return {"statusCode": 204, "headers": _HEADERS, "body": ""}
 
     raw_body = event.get("body") or "{}"
     if event.get("isBase64Encoded"):

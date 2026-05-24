@@ -179,11 +179,11 @@ export async function sendChat(
 // ── Ingestion demo API ────────────────────────────────────────────────────────
 
 const MOCK_FILES: MockFileEntry[] = [
-  { id: 'redmine_01', source: 'redmine', file: 'mock/redmine_01.json', label: 'Redmine — International Project Tickets', description: 'Support, bug, and feature tickets across international client projects' },
+{ id: 'redmine_01', source: 'redmine', file: 'mock/redmine_01.json', label: 'Redmine — International Project Tickets', description: 'Support, bug, and feature tickets across international client projects' },
   { id: 'redmine_02', source: 'redmine', file: 'mock/redmine_02.json', label: 'Redmine — Japan Project Tickets', description: 'Japanese-language project tickets from PayFlow JP, EduNavi JP, KeiRetail JP and others' },
-  { id: 'outlook_email_01', source: 'outlook_email', file: 'mock/outlook_email_01.json', label: 'Outlook Email — International', description: 'Pre-sales, delivery, and commercial emails across international markets' },
+{ id: 'outlook_email_01', source: 'outlook_email', file: 'mock/outlook_email_01.json', label: 'Outlook Email — International', description: 'Pre-sales, delivery, and commercial emails across international markets' },
   { id: 'outlook_email_02', source: 'outlook_email', file: 'mock/outlook_email_02.json', label: 'Outlook Email — Vietnam Focus', description: 'Emails covering Vietnam-market deals including VinPay, ShopViet, MedViet' },
-  { id: 'teams_transcript_01', source: 'teams_transcript', file: 'mock/teams_transcript_01.json', label: 'Teams Transcripts — Sales & Delivery', description: 'Meeting transcripts: kick-offs, sprint reviews, escalations, and discovery calls' },
+{ id: 'teams_transcript_01', source: 'teams_transcript', file: 'mock/teams_transcript_01.json', label: 'Teams Transcripts — Sales & Delivery', description: 'Meeting transcripts: kick-offs, sprint reviews, escalations, and discovery calls' },
 ]
 
 export async function listIngestionFiles(): Promise<IngestionFilesResponse> {
@@ -215,7 +215,20 @@ export async function triggerIngestionFile(fileId: string): Promise<TriggerResul
 export async function fetchTransformLogs(since: string): Promise<{ events: { ts: number; message: string }[] }> {
   if (!useLambdaData) return { events: [] }
   const res = await axios.get<{ events: { ts: number; message: string }[] }>(
-    `${transformBase}/logs`,
+    joinUrl(transformBase, 'logs'),
+    { params: { since } },
+  )
+  return res.data
+}
+
+export function triggerBatch(): void {
+  axios.post(lambdaEndpoints.insightsBuilder, {}).catch(() => {})
+}
+
+export async function fetchBatchRunLogs(since: string): Promise<{ events: { ts: number; message: string }[] }> {
+  if (!useLambdaData) return { events: [] }
+  const res = await axios.get<{ events: { ts: number; message: string }[] }>(
+    lambdaEndpoints.insightsBuilder,
     { params: { since } },
   )
   return res.data
