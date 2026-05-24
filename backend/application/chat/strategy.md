@@ -53,15 +53,24 @@ Câu hỏi map rõ vào một trong 4 loại output dashboard đã có sẵn.
 Câu hỏi về tổng quan, trend, pattern — không map rõ result_type nhưng rõ là hỏi ở mức tổng hợp.
 
 - `query_insight_embeddings()`: vector search trên `insight_embeddings`, top `_INSIGHT_TOP_K=4`.
-- Signal: `top_k=3` thông thường, `_VECTOR_TOP_K` khi `needs_citations=True`.
+- Signal: `top_k=3` thông thường, `_SIGNAL_TOP_K` khi `needs_citations=True`.
 
 ### Flow C — open / ambiguous / other (default fallback)
 
 Câu hỏi mở, mơ hồ, drill-down, hoặc không xác định được loại.
 
 - Không query insights.
-- `query_signal_embeddings()`: vector search trên `signal_embeddings`, `top_k=_VECTOR_TOP_K`.
+- `query_signal_embeddings()`: vector search trên `signal_embeddings`, `top_k=_SIGNAL_TOP_K`.
 - `null` question_type cũng rơi vào đây — tránh over-route sang insight side khi không chắc.
+
+### TOP_K theo flow
+
+| Flow | Bảng insight | top_k | Đề xuất | Bảng signal | top_k | Đề xuất | Ghi chú |
+| ---- | ------------ | ----- | ------- | ----------- | ----- | ------- | ------- |
+| A | `insights` (SQL) | `_INSIGHT_TOP_K=4` | 2 | `signal_embeddings` | 3 | 3 | Exact match, 1–2 rows là đủ |
+| A-fallback | `insight_embeddings` (semantic) | `_INSIGHT_TOP_K=4` | 4 | `signal_embeddings` | 3 | 3 | Khi structured trả 0 rows |
+| B | `insight_embeddings` (semantic) | `_INSIGHT_TOP_K=4` | 4 | `signal_embeddings` | 3 (hoặc `_SIGNAL_TOP_K=8` nếu needs_citations) | 3 (hoặc 4 nếu needs_citations) | — |
+| C | — | — | — | `signal_embeddings` | `_SIGNAL_TOP_K=8` | 4 | Không query insights |
 
 ---
 

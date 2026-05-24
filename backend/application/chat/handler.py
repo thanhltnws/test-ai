@@ -27,7 +27,7 @@ from prompt import build_chat_prompt, build_intent_prompt, intent_defaults
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 BEDROCK_INTENT_MODEL = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
-_VECTOR_TOP_K  = 8
+_SIGNAL_TOP_K  = 8
 _INSIGHT_TOP_K = 4
 _MAX_QUESTION_CHARS = 2000
 
@@ -164,7 +164,7 @@ def _embed_queries(texts: list[str]) -> list[list[float]]:
 
 # ── intent detection ───────────────────────────────────────────────────────────
 
-def _call_gemini_small(prompt_text: str) -> str:
+def _call_gemini_small(prompt_text: str, max_tokens: int = 256) -> str:
     from google import genai
     from google.genai import types
 
@@ -172,12 +172,12 @@ def _call_gemini_small(prompt_text: str) -> str:
     resp = client.models.generate_content(
         model=GEMINI_MODEL,
         contents=prompt_text,
-        config=types.GenerateContentConfig(temperature=0.0),
+        config=types.GenerateContentConfig(temperature=0.0, max_output_tokens=max_tokens),
     )
     return resp.text
 
 
-def _call_bedrock_small(prompt_text: str) -> str:
+def _call_bedrock_small(prompt_text: str, max_tokens: int = 256) -> str:
     import boto3
     from botocore.config import Config
 
@@ -188,7 +188,7 @@ def _call_bedrock_small(prompt_text: str) -> str:
     )
     body = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 256,
+        "max_tokens": max_tokens,
         "temperature": 0.0,
         "messages": [{"role": "user", "content": prompt_text}],
     })
@@ -226,8 +226,8 @@ def rewrite_question(question: str, history: list[dict]) -> str:
     )
     try:
         if _llm_provider() == "gemini":
-            return _call_gemini_small(prompt_text).strip()
-        return _call_bedrock_small(prompt_text).strip()
+            return _call_gemini_small(prompt_text, max_tokens=128).strip()
+        return _call_bedrock_small(prompt_text, max_tokens=128).strip()
     except Exception as exc:
         print(f"[rewrite] error: {exc} — using original")
         return question
@@ -235,7 +235,7 @@ def rewrite_question(question: str, history: list[dict]) -> str:
 
 # ── db queries ─────────────────────────────────────────────────────────────────
 
-def query_signal_embeddings(conn, question_vector: list[float], intent: dict, top_k: int = _VECTOR_TOP_K) -> list[dict]:
+def query_signal_embeddings(conn, question_vector: list[float], intent: dict, top_k: int = _SIGNAL_TOP_K) -> list[dict]:
     cur = conn.cursor()
     try:
         where_clauses = []
@@ -458,7 +458,7 @@ def _call_gemini(prompt_text: str) -> str:
     resp = client.models.generate_content(
         model=GEMINI_MODEL,
         contents=prompt_text,
-        config=types.GenerateContentConfig(temperature=0.2),
+        config=types.GenerateContentConfig(temperature=0.2, max_output_tokens=2048),
     )
     return resp.text
 
@@ -511,8 +511,6 @@ def lambda_handler(event=None, context=None):
 
     if is_options_request(event):
         return options_response()
-
-
 
     try:
         body = json.loads(event.get("body") or "{}")
@@ -577,33 +575,49 @@ def lambda_handler(event=None, context=None):
         question_type     = intent.get("question_type")  # "summary" | None
 
         if result_type_known:
-            # Flow A: question maps to a known dashboard output → SQL on insights
+            # Flow A: parallel structured insight + signal, then fallback if needed
             flow = "A"
-            insight_ctx = query_insights_structured(conn, intent)
+            def _a_insight(): c = _pg_connect(); r = query_insights_structured(c, intent); c.close(); return r
+            def _a_signal():  c = _pg_connect(); r = query_signal_embeddings(c, question_vector, intent, 3); c.close(); return r
+            with ThreadPoolExecutor(max_workers=2) as ex:
+                f_i, f_s = ex.submit(_a_insight), ex.submit(_a_signal)
+            insight_ctx, signal_ctx = f_i.result(), f_s.result()
             if not insight_ctx:
                 print("[routing]      flow=A structured 0 rows — fallback semantic insight")
                 insight_ctx = query_insight_embeddings(conn, question_vector, intent)
                 flow = "A-fallback"
-            signal_ctx = query_signal_embeddings(conn, question_vector, intent, top_k=3)
 
         elif question_type == "summary":
-            # Flow B: summary / trend → insight_embeddings primary
+            # Flow B: parallel insight embeddings + signal
             flow = "B"
-            insight_ctx = query_insight_embeddings(conn, question_vector, intent)
-            signal_top_k = _VECTOR_TOP_K if intent.get("needs_citations") else 3
-            signal_ctx  = query_signal_embeddings(conn, question_vector, intent, top_k=signal_top_k)
+            signal_top_k = _SIGNAL_TOP_K if intent.get("needs_citations") else 3
+            def _b_insight(): c = _pg_connect(); r = query_insight_embeddings(c, question_vector, intent); c.close(); return r
+            def _b_signal():  c = _pg_connect(); r = query_signal_embeddings(c, question_vector, intent, signal_top_k); c.close(); return r
+            with ThreadPoolExecutor(max_workers=2) as ex:
+                f_i, f_s = ex.submit(_b_insight), ex.submit(_b_signal)
+            insight_ctx, signal_ctx = f_i.result(), f_s.result()
 
         else:
             # Flow C: open / ambiguous / other — default fallback → signal_embeddings
             flow = "C"
             insight_ctx = []
-            signal_ctx  = query_signal_embeddings(conn, question_vector, intent, top_k=_VECTOR_TOP_K)
+            signal_ctx  = query_signal_embeddings(conn, question_vector, intent, top_k=_SIGNAL_TOP_K)
 
         t_retrieval = time.perf_counter() - t1
         print(f"[routing]      flow={flow}  insight_chunks={len(insight_ctx)}  signal_chunks={len(signal_ctx)}")
         print(f"[timing]       retrieval={t_retrieval*1000:.0f}ms")
 
+        if insight_ctx:
+            scores = [c.get("score", 0) for c in insight_ctx]
+            print(f"[scores/insight] min={min(scores):.3f}  max={max(scores):.3f}  scores={[round(s,3) for s in scores]}")
+        if signal_ctx:
+            scores = [c.get("score", 0) for c in signal_ctx]
+            print(f"[scores/signal]  min={min(scores):.3f}  max={max(scores):.3f}  scores={[round(s,3) for s in scores]}")
+
         prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history, flow=flow)
+        prompt_chars = len(prompt)
+        prompt_tokens_est = prompt_chars // 4
+        print(f"[prompt]       chars={prompt_chars}  tokens_est≈{prompt_tokens_est}")
 
         # LLM answer generation
         print(f"[llm/answer]   calling {answer_model} …")

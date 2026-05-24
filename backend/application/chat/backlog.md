@@ -6,20 +6,25 @@
 
 ## P1 — Tiếp theo
 
-### Tham số LLM — review
+### Review LLM parameters
 
-Chưa tuning `top_k`, `top_p`, `temperature` cho intent model (Haiku) và answer model (Sonnet). Cần xem xét trade-off coherence vs. creativity theo từng vai trò.
+Cần review liên tục để tuning `top_k`, `top_p`, `temperature` cho intent model (Haiku) và answer model (Sonnet). Cần xem xét trade-off coherence vs. creativity theo từng vai trò.
 
-### TOP_K rebalance
+### Review RAG parameters
 
-`_INSIGHT_TOP_K=4` và `_VECTOR_TOP_K=8` cần đảo lại:
-
-- `_INSIGHT_TOP_K` → dynamic: detect được `result_type` → 2, không detect → 4
-- `_VECTOR_TOP_K` → 4
+retrieval sizing theo flow,...
 
 ---
 
 ## P2 — Còn lại
+
+### Graceful fallback khi context yếu/rỗng
+
+Khi signal_ctx rỗng hoặc toàn bộ scores thấp (dưới ngưỡng), trả lời an toàn thay vì để LLM hallucinate. Ví dụ: inject rõ "Không đủ dữ liệu để trả lời câu hỏi này." vào response hoặc short-circuit trước khi gọi LLM.
+
+### Fallback routing theo score / context quality
+
+Khi context yếu (top-1 score thấp, hoặc 0 rows sau filter), tự động đổi cách retrieve trước khi trả lời. Ví dụ: nới rộng filter (bỏ `market`/`sector`), hoặc tăng `top_k`, hoặc switch flow. Cần xác định ngưỡng score sau khi có data test thực tế.
 
 ### So sánh kỹ thuật đã apply vs. docs
 
@@ -59,10 +64,3 @@ Không cần cho demo. `_SESSION_WINDOW = 12` đủ giữ toàn bộ cuộc hộ
 
 In-memory `_sessions` dict mất sạch khi Lambda cold start, không sync giữa nhiều instance. Chấp nhận cho demo (1 instance warm, vài user). Giải pháp nếu scale: Redis (ElastiCache) với TTL 30 phút.
 
----
-
-## Schema cleanup — Deferred
-
-### Xóa `metadata` JSONB khỏi embedding tables
-
-`signal_embeddings.metadata` và `insight_embeddings.metadata` là denormalized copy từ bảng cha, không dùng ở bất kỳ đâu trong handler. Cần: `ALTER TABLE DROP COLUMN` + cập nhật `dev/init.sql` + bất kỳ write code nào populate field này.
