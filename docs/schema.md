@@ -115,8 +115,7 @@ CREATE TABLE signal_embeddings (
     signal_id      UUID         PRIMARY KEY REFERENCES signals(id) ON DELETE CASCADE,
     embedding_text TEXT         NOT NULL,
     embedding      vector(1024) NOT NULL,
-    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    metadata       JSONB
+    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 ```
 
@@ -126,18 +125,8 @@ CREATE TABLE signal_embeddings (
 | `embedding_text` | TEXT         | NL summary from Transform — input to the embedder |
 | `embedding`      | vector(1024) | 1024-dim vector (Bedrock prod / Gemini local) |
 | `embedded_at`    | TIMESTAMPTZ  | When the vector was written |
-| `metadata`       | JSONB        | Filter fields for pre-filtered similarity search: `source`, `funnel_stage`, `market`, `sector`, `source_url` |
 
-`metadata` structure:
-```json
-{
-  "source": "hubspot",
-  "funnel_stage": "consideration",
-  "market": "vietnam",
-  "sector": "fintech",
-  "source_url": "https://..."
-}
-```
+Filter fields (`source`, `funnel_stage`, `market`, `sector`, `source_url`, etc.) are retrieved via JOIN on `signals` at query time.
 
 ---
 
@@ -152,18 +141,18 @@ CREATE TABLE insight_embeddings (
     insight_id     UUID         PRIMARY KEY REFERENCES insights(id) ON DELETE CASCADE,
     embedding_text TEXT         NOT NULL,
     embedding      vector(1024) NOT NULL,
-    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    metadata       JSONB
+    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 ```
 
-| Column           | Type         | Notes |
-| ---------------- | ------------ | ----- |
-| `insight_id`     | UUID         | PK + FK → `insights.id`. 1:1. |
-| `embedding_text` | TEXT         | Narrative text extracted from `payload` — the text that was embedded. Derived per `result_type` (see below). |
-| `embedding`      | vector(1024) | 1024-dim vector, same model as `signal_embeddings` |
-| `embedded_at`    | TIMESTAMPTZ  | When the vector was written |
-| `metadata`       | JSONB        | Filter fields for pre-filtered similarity search |
+| Column           | Type         | Notes                                                    |
+| ---------------- | ------------ | -------------------------------------------------------- |
+| `insight_id`     | UUID         | PK + FK → `insights.id`. 1:1.                            |
+| `embedding_text` | TEXT         | Flattened text from `payload` — input to the embedder.   |
+| `embedding`      | vector(1024) | 1024-dim vector, same model as `signal_embeddings`       |
+| `embedded_at`    | TIMESTAMPTZ  | When the vector was written                              |
+
+Filter fields (`period`, `period_start`, `period_end`, `result_type`, `market`) are retrieved via JOIN on `insights` at query time.
 
 #### `embedding_text` derivation per `result_type`
 

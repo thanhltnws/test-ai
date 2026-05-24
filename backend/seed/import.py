@@ -231,7 +231,7 @@ def insert_embeddings(records: list[dict]) -> None:
     provider = _get_embedding_provider()
     print(f"Embedding provider: {provider}")
 
-    embedding_rows: list[tuple[str, str, dict]] = []
+    embedding_rows: list[tuple[str, str]] = []
     skipped = 0
 
     for rec in records:
@@ -241,15 +241,7 @@ def insert_embeddings(records: list[dict]) -> None:
             skipped += 1
             continue
 
-        metadata = {
-            "source": rec["source"],
-            "funnel_stage": rec.get("funnel_stage"),
-            "market": rec.get("market"),
-            "sector": rec.get("sector"),
-            "source_url": rec.get("source_url"),
-        }
-
-        embedding_rows.append((rec["id"], embedding_text, metadata))
+        embedding_rows.append((rec["id"], embedding_text))
 
     batch_size = CLOUDFLARE_BATCH_SIZE if provider == "cloudflare" else BEDROCK_BATCH_SIZE
 
@@ -294,27 +286,19 @@ def insert_embeddings(records: list[dict]) -> None:
                         (empty_ids,),
                     )
 
-                for (signal_id, embedding_text, metadata), values in zip(
+                for (signal_id, embedding_text), values in zip(
                     embedding_rows,
                     embeddings,
                 ):
                     cur.execute(
                         """
-                        INSERT INTO signal_embeddings (
-                            signal_id, embedding_text, embedding, metadata
-                        )
-                        VALUES (%s, %s, %s::vector, %s)
+                        INSERT INTO signal_embeddings (signal_id, embedding_text, embedding)
+                        VALUES (%s, %s, %s::vector)
                         ON CONFLICT (signal_id) DO UPDATE SET
                             embedding_text = EXCLUDED.embedding_text,
-                            embedding      = EXCLUDED.embedding,
-                            metadata       = EXCLUDED.metadata
+                            embedding      = EXCLUDED.embedding
                         """,
-                        (
-                            signal_id,
-                            embedding_text,
-                            str(values),
-                            psycopg2.extras.Json(metadata),
-                        ),
+                        (signal_id, embedding_text, str(values)),
                     )
 
         print(

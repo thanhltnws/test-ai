@@ -436,23 +436,15 @@ def write_insight_embeddings(
     cur = conn.cursor()
     try:
         for (insight_id, emb_text, result_type), vec in zip(to_embed, vectors):
-            metadata = {
-                "period":       granularity,
-                "period_start": str(period_start),
-                "period_end":   str(period_end),
-                "result_type":  result_type,
-                "market":       market,
-            }
             cur.execute(
                 """
-                INSERT INTO insight_embeddings (insight_id, embedding_text, embedding, metadata)
-                VALUES (%s, %s, %s::vector, %s)
+                INSERT INTO insight_embeddings (insight_id, embedding_text, embedding)
+                VALUES (%s, %s, %s::vector)
                 ON CONFLICT (insight_id) DO UPDATE SET
                     embedding_text = EXCLUDED.embedding_text,
-                    embedding      = EXCLUDED.embedding,
-                    metadata       = EXCLUDED.metadata
+                    embedding      = EXCLUDED.embedding
                 """,
-                (insight_id, emb_text[:COHERE_MAX_CHARS], str(vec), json.dumps(metadata)),
+                (insight_id, emb_text[:COHERE_MAX_CHARS], str(vec)),
             )
         conn.commit()
     finally:

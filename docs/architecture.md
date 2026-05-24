@@ -60,7 +60,7 @@ Processes unstructured text (CRM note, email, Teams transcript, Jira/Redmine not
 
 **Output B — Vector embedding → Aurora pgvector (`signal_embeddings`)**
 
-`embedding_text` (grounded evidence text — preserves original customer wording, optimised for semantic retrieval) is embedded and stored in `signal_embeddings` with `source_url` in metadata. Enables semantic search at the Application layer.
+`embedding_text` (grounded evidence text — preserves original customer wording, optimised for semantic retrieval) is embedded and stored in `signal_embeddings`. Signal fields (`source_url`, `pain_points`, etc.) are retrieved via JOIN on `signals`. Enables semantic search at the Application layer.
 
 ---
 
@@ -114,7 +114,7 @@ Fixed SQL is the primary Aurora query strategy. Text-to-SQL is last-resort fallb
 | Transform | Lambda ETL | Schema normalize, dedup, field map |
 | Transform | Bedrock / Claude | AI field extraction from unstructured text |
 | Store | Aurora PostgreSQL | `signals` table (source of truth) + `insights` (pre-computed) |
-| Store | Aurora pgvector | Vector index — `signal_embeddings` + source_url metadata |
+| Store | Aurora pgvector | Vector index — `signal_embeddings` + `insight_embeddings` |
 | Application | EventBridge | Batch scheduler |
 | Application | InsightsBuilderFn (`ai-insight-hub-insights-builder`) | Batch compute |
 | Application | DashboardApiFn (`ai-insight-hub-dashboard-api`) | REST API — GET /insights |

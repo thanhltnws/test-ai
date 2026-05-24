@@ -10,20 +10,20 @@
 
 Chưa tuning `top_k`, `top_p`, `temperature` cho intent model (Haiku) và answer model (Sonnet). Cần xem xét trade-off coherence vs. creativity theo từng vai trò.
 
-### So sánh kỹ thuật đã apply vs. docs
-
-Đối chiếu với `docs/rag_optimization.md` và `docs/chat_optimization.md` — xem còn kỹ thuật nào chưa apply hoặc apply sai.
-
----
-
-## P2 — Còn lại
-
 ### TOP_K rebalance
 
 `_INSIGHT_TOP_K=4` và `_VECTOR_TOP_K=8` cần đảo lại:
 
 - `_INSIGHT_TOP_K` → dynamic: detect được `result_type` → 2, không detect → 4
 - `_VECTOR_TOP_K` → 4
+
+---
+
+## P2 — Còn lại
+
+### So sánh kỹ thuật đã apply vs. docs
+
+Đối chiếu với `docs/rag_optimization.md` và `docs/chat_optimization.md` — xem còn kỹ thuật nào chưa apply hoặc apply sai.
 
 ---
 

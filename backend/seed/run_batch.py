@@ -119,21 +119,20 @@ def _embed_texts(texts: list[str]) -> list[list[float]]:
     return json.loads(resp["body"].read())["embeddings"]
 
 
-def _insert_insight_embeddings(conn, rows: list[tuple[str, str, str, dict]]) -> None:
-    """rows: list of (insight_id, embedding_text, vector_str, metadata)"""
+def _insert_insight_embeddings(conn, rows: list[tuple[str, str, str]]) -> None:
+    """rows: list of (insight_id, embedding_text, vector_str)"""
     cur = conn.cursor()
     try:
-        for insight_id, emb_text, vector_str, metadata in rows:
+        for insight_id, emb_text, vector_str in rows:
             cur.execute(
                 """
-                INSERT INTO insight_embeddings (insight_id, embedding_text, embedding, metadata)
-                VALUES (%s, %s, %s::vector, %s)
+                INSERT INTO insight_embeddings (insight_id, embedding_text, embedding)
+                VALUES (%s, %s, %s::vector)
                 ON CONFLICT (insight_id) DO UPDATE SET
                     embedding_text = EXCLUDED.embedding_text,
-                    embedding      = EXCLUDED.embedding,
-                    metadata       = EXCLUDED.metadata
+                    embedding      = EXCLUDED.embedding
                 """,
-                (insight_id, emb_text, vector_str, json.dumps(metadata)),
+                (insight_id, emb_text, vector_str),
             )
         conn.commit()
     finally:
@@ -259,14 +258,7 @@ def main(dry_run: bool = False) -> None:
         print(f"  Embedding batch {start // EMBED_BATCH_SIZE + 1}: {len(texts)} texts...")
         vectors = _embed_texts(texts)
         for (insight_id, emb_text, row), vec in zip(batch, vectors):
-            metadata = {
-                "period":       row["granularity"],
-                "period_start": str(row["p_start"]),
-                "period_end":   str(row["p_end"]),
-                "result_type":  row["result_type"],
-                "market":       row["market"],
-            }
-            embed_rows.append((insight_id, emb_text, str(vec), metadata))
+            embed_rows.append((insight_id, emb_text, str(vec)))
 
     conn2 = _pg_connect()
     try:
@@ -307,21 +299,18 @@ def embed_only() -> None:
         insight_id, result_type, payload, period, p_start, p_end, market = r
         emb_text = _derive_embedding_text(result_type, payload)
         if emb_text:
-            to_embed.append((str(insight_id), emb_text, {
-                "period": period, "period_start": str(p_start),
-                "period_end": str(p_end), "result_type": result_type, "market": market,
-            }))
+            to_embed.append((str(insight_id), emb_text))
 
     print(f"Embedding {len(to_embed)} rows ({len(rows) - len(to_embed)} skipped — empty text)...")
 
-    embed_rows: list[tuple[str, str, str, dict]] = []
+    embed_rows: list[tuple[str, str, str]] = []
     for start in range(0, len(to_embed), EMBED_BATCH_SIZE):
         batch = to_embed[start:start + EMBED_BATCH_SIZE]
         texts = [r[1] for r in batch]
         print(f"  Batch {start // EMBED_BATCH_SIZE + 1}: {len(texts)} texts...")
         vectors = _embed_texts(texts)
-        for (insight_id, emb_text, metadata), vec in zip(batch, vectors):
-            embed_rows.append((insight_id, emb_text, str(vec), metadata))
+        for (insight_id, emb_text), vec in zip(batch, vectors):
+            embed_rows.append((insight_id, emb_text, str(vec)))
 
     conn2 = _pg_connect()
     try:

@@ -60,20 +60,16 @@ CREATE TABLE IF NOT EXISTS signal_embeddings (
     signal_id      UUID         PRIMARY KEY REFERENCES signals(id) ON DELETE CASCADE,
     embedding_text TEXT         NOT NULL,
     embedding      vector(1024) NOT NULL,
-    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    metadata       JSONB
+    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
 CREATE INDEX IF NOT EXISTS signal_embeddings_embedding_idx ON signal_embeddings USING hnsw (embedding vector_cosine_ops);
-CREATE INDEX IF NOT EXISTS signal_embeddings_metadata_idx  ON signal_embeddings USING GIN  (metadata);
 
 CREATE TABLE IF NOT EXISTS insight_embeddings (
     insight_id     UUID         PRIMARY KEY REFERENCES insights(id) ON DELETE CASCADE,
     embedding_text TEXT         NOT NULL,
     embedding      vector(1024) NOT NULL,
-    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    metadata       JSONB
+    embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
 CREATE INDEX IF NOT EXISTS insight_embeddings_embedding_idx ON insight_embeddings USING hnsw (embedding vector_cosine_ops);
-CREATE INDEX IF NOT EXISTS insight_embeddings_metadata_idx  ON insight_embeddings USING GIN  (metadata);

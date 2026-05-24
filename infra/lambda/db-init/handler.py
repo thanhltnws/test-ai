@@ -55,8 +55,7 @@ SCHEMA_SQL = [
         signal_id      UUID         PRIMARY KEY REFERENCES signals(id) ON DELETE CASCADE,
         embedding_text TEXT         NOT NULL,
         embedding      vector(1024) NOT NULL,
-        embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
-        metadata       JSONB
+        embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
     )
     """,
     """
@@ -64,8 +63,7 @@ SCHEMA_SQL = [
         insight_id     UUID         PRIMARY KEY REFERENCES insights(id) ON DELETE CASCADE,
         embedding_text TEXT         NOT NULL,
         embedding      vector(1024) NOT NULL,
-        embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
-        metadata       JSONB
+        embedded_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
     )
     """,
     "CREATE INDEX IF NOT EXISTS signals_market_idx          ON signals (market)",
@@ -80,10 +78,8 @@ SCHEMA_SQL = [
     "CREATE INDEX IF NOT EXISTS signals_pain_points_idx     ON signals USING GIN (pain_points)",
     "CREATE INDEX IF NOT EXISTS insights_period_slice_idx   ON insights (period, period_start, result_type, market)",
     "CREATE INDEX IF NOT EXISTS insights_computed_at_idx    ON insights (computed_at DESC)",
-    "CREATE INDEX IF NOT EXISTS signal_embeddings_embedding_idx ON signal_embeddings USING hnsw (embedding vector_cosine_ops)",
-    "CREATE INDEX IF NOT EXISTS signal_embeddings_metadata_idx  ON signal_embeddings USING GIN  (metadata)",
+    "CREATE INDEX IF NOT EXISTS signal_embeddings_embedding_idx  ON signal_embeddings  USING hnsw (embedding vector_cosine_ops)",
     "CREATE INDEX IF NOT EXISTS insight_embeddings_embedding_idx ON insight_embeddings USING hnsw (embedding vector_cosine_ops)",
-    "CREATE INDEX IF NOT EXISTS insight_embeddings_metadata_idx  ON insight_embeddings USING GIN  (metadata)",
 ]
 
 

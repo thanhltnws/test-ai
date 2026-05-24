@@ -123,8 +123,4 @@ Max 5 references — chỉ từ `source_url` của SIGNALS.
 
 ---
 
-**Đã bỏ:** `query_aurora` background aggregates, `_extract_keywords`, `raw_text ILIKE`, `insight_low` metric, `intent_has_period` / `intent_structured` discriminators.
-
----
-
 _Backlog còn lại xem `backlog.md`._

@@ -314,14 +314,7 @@ def _insert_embeddings(
         if not embedding_text or pre_id not in vectors:
             empty_db_ids.append(db_id)
             continue
-        metadata = {
-            "source":       row["source"],
-            "funnel_stage": row.get("funnel_stage"),
-            "source_url":   row.get("source_url"),
-            "market":       row.get("market"),
-            "sector":       row.get("sector"),
-        }
-        embedding_rows.append((db_id, embedding_text, metadata, vectors[pre_id]))
+        embedding_rows.append((db_id, embedding_text, vectors[pre_id]))
 
     if not embedding_rows and not empty_db_ids:
         return 0
@@ -335,17 +328,16 @@ def _insert_embeddings(
                 "DELETE FROM signal_embeddings WHERE signal_id = ANY(%s::uuid[])",
                 (empty_db_ids,),
             )
-        for db_id, embedding_text, metadata, vector in embedding_rows:
+        for db_id, embedding_text, vector in embedding_rows:
             cur.execute(
                 """
-                INSERT INTO signal_embeddings (signal_id, embedding_text, embedding, metadata)
-                VALUES (%s, %s, %s::vector, %s::jsonb)
+                INSERT INTO signal_embeddings (signal_id, embedding_text, embedding)
+                VALUES (%s, %s, %s::vector)
                 ON CONFLICT (signal_id) DO UPDATE SET
                     embedding_text = EXCLUDED.embedding_text,
-                    embedding      = EXCLUDED.embedding,
-                    metadata       = EXCLUDED.metadata
+                    embedding      = EXCLUDED.embedding
                 """,
-                (db_id, embedding_text, str(vector), json.dumps(metadata)),
+                (db_id, embedding_text, str(vector)),
             )
             if cur.rowcount:
                 inserted += 1
