@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parents[1]))
 from common.auth import cors_headers, error_response, is_options_request, options_response
-from prompt import build_chat_prompt
+from prompt import build_chat_prompt, build_intent_prompt, intent_defaults
 
 GEMINI_MODEL = "gemini-3.1-flash-lite-preview"
 BEDROCK_INTENT_MODEL = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
@@ -164,46 +164,6 @@ def _embed_queries(texts: list[str]) -> list[list[float]]:
 
 # ── intent detection ───────────────────────────────────────────────────────────
 
-_INTENT_SCHEMA = '{"market": null|"vietnam"|"japan"|"korea"|"international", "sector": null|string, "period": "weekly"|"monthly"|"quarterly"|"yearly", "period_start": null|"YYYY-MM-DD", "use_latest": false|true, "result_type": null|"pain_points_summary"|"funnel_distribution"|"icp_narrative"|"recommendations", "funnel_stage": null|"awareness"|"consideration"|"negotiation"|"won"|"lost", "needs_citations": false|true, "out_of_scope": false|true}'
-
-_INTENT_PROMPT = """\
-Today is {today}. Extract search intent from the user question below. Return ONLY valid JSON matching this schema:
-{schema}
-
-Rules:
-- market: null if not mentioned
-- sector: null if not mentioned; industry/domain string if clearly stated (e.g. "fintech", "healthcare")
-- period: "weekly" if not mentioned
-- period_start: ISO date (YYYY-MM-DD) for the start of the target period. Compute relative references using today's date:
-  "tuần này"/"this week" → Monday of current week
-  "tuần trước"/"last week" → Monday of last week
-  "tháng này"/"this month" → first day of current month
-  "tháng trước"/"last month" → first day of last month
-  Named period: "Q1 2026" → "2026-01-01", "tháng 3 2026" → "2026-03-01", "2026" → "2026-01-01"
-  null only if truly ambiguous (no time reference at all)
-- use_latest: true ONLY for "gần đây", "mới nhất", "latest", "most recent"
-- result_type: null if not clearly one of the four types
-- funnel_stage: null if not mentioned; one of the enum values if the question is about a specific stage
-- needs_citations: true if user asks for specific sources, examples, or evidence
-- out_of_scope: true if question is completely unrelated to B2B sales, customer signals, or internal platform data
-
-Question: {question}"""
-
-
-def _intent_defaults() -> dict:
-    return {
-        "market": None,
-        "sector": None,
-        "period": "weekly",
-        "period_start": None,
-        "use_latest": False,
-        "result_type": None,
-        "funnel_stage": None,
-        "needs_citations": False,
-        "out_of_scope": False,
-    }
-
-
 def _call_gemini_small(prompt_text: str) -> str:
     from google import genai
     from google.genai import types
@@ -237,19 +197,19 @@ def _call_bedrock_small(prompt_text: str) -> str:
 
 
 def detect_intent(question: str) -> dict:
-    prompt_text = _INTENT_PROMPT.format(schema=_INTENT_SCHEMA, today=date.today().isoformat(), question=question)
+    prompt_text = build_intent_prompt(question, date.today().isoformat())
     try:
         if _llm_provider() == "gemini":
             raw = _call_gemini_small(prompt_text)
         else:
             raw = _call_bedrock_small(prompt_text)
         intent = parse_json_response(raw)
-        defaults = _intent_defaults()
+        defaults = intent_defaults()
         defaults.update({k: intent[k] for k in defaults if k in intent})
         return defaults
     except Exception as exc:
         print(f"[intent] parse error: {exc} — using defaults")
-        return _intent_defaults()
+        return intent_defaults()
 
 
 # ── follow-up rewrite ──────────────────────────────────────────────────────────
@@ -308,7 +268,15 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict, to
                 s.source_url,
                 s.funnel_stage,
                 e.embedding_text,
-                1 - (e.embedding <=> %s::vector) AS score
+                1 - (e.embedding <=> %s::vector) AS score,
+                s.pain_points,
+                s.objections,
+                s.use_cases,
+                s.deal_size,
+                s.client_type,
+                s.tech_maturity,
+                s.market,
+                s.sector
             FROM signal_embeddings e
             JOIN signals s ON s.id = e.signal_id
             {where}
@@ -320,11 +288,19 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict, to
         return [
             {
                 "signal_id": str(r[0]),
-                "score": round(float(r[5]), 3),
                 "source": r[1],
                 "source_url": r[2],
                 "funnel_stage": r[3],
                 "embedding_text": r[4],
+                "score": round(float(r[5]), 3),
+                "pain_points": r[6] or [],
+                "objections": r[7] or [],
+                "use_cases": r[8] or [],
+                "deal_size": r[9],
+                "client_type": r[10],
+                "tech_maturity": r[11],
+                "market": r[12],
+                "sector": r[13],
             }
             for r in cur.fetchall()
         ]
@@ -337,7 +313,8 @@ def query_signal_embeddings(conn, question_vector: list[float], intent: dict, to
 
 def query_insights_structured(conn, intent: dict) -> list[dict]:
     """Structured retrieval: query insights directly by period/market/result_type.
-    Used when intent has a clear period anchor. Returns score=1.0 (exact match)."""
+    Period filter always applied — intent LLM defaults period to 'monthly' when not mentioned.
+    Returns score=1.0 (exact match)."""
     cur = conn.cursor()
     try:
         where_clauses = []
@@ -594,38 +571,39 @@ def lambda_handler(event=None, context=None):
                 ),
             }
 
-        # phase 1: structured-first on insights, semantic fallback via insight_embeddings
+        # 3-flow routing — primary discriminator: question type, not period
         t1 = time.perf_counter()
-        intent_has_period = intent.get("period_start") is not None or bool(intent.get("use_latest"))
-        retrieval_mode = "structured" if intent_has_period else "semantic"
+        result_type_known = bool(intent.get("result_type"))
+        question_type     = intent.get("question_type")  # "summary" | None
 
-        if intent_has_period:
+        if result_type_known:
+            # Flow A: question maps to a known dashboard output → SQL on insights
+            flow = "A"
             insight_ctx = query_insights_structured(conn, intent)
             if not insight_ctx:
-                print("[phase1]       structured returned 0 rows — insights may exist but embeddings missing, falling back to semantic")
+                print("[routing]      flow=A structured 0 rows — fallback semantic insight")
                 insight_ctx = query_insight_embeddings(conn, question_vector, intent)
-                retrieval_mode = "semantic-fallback"
-        else:
+                flow = "A-fallback"
+            signal_ctx = query_signal_embeddings(conn, question_vector, intent, top_k=3)
+
+        elif question_type == "summary":
+            # Flow B: summary / trend → insight_embeddings primary
+            flow = "B"
             insight_ctx = query_insight_embeddings(conn, question_vector, intent)
+            signal_top_k = _VECTOR_TOP_K if intent.get("needs_citations") else 3
+            signal_ctx  = query_signal_embeddings(conn, question_vector, intent, top_k=signal_top_k)
 
-        t_phase1 = time.perf_counter() - t1
-        print(f"[phase1]       mode={retrieval_mode}  chunks={len(insight_ctx)}  scores={[c['score'] for c in insight_ctx]}")
-        print(f"[timing]       phase1={t_phase1*1000:.0f}ms")
+        else:
+            # Flow C: open / ambiguous / other — default fallback → signal_embeddings
+            flow = "C"
+            insight_ctx = []
+            signal_ctx  = query_signal_embeddings(conn, question_vector, intent, top_k=_VECTOR_TOP_K)
 
-        top_insight_score = insight_ctx[0]["score"] if insight_ctx else 0.0
-        insight_low = top_insight_score < 0.5
-        print(f"[insight_low]  {insight_low}  (top_score={top_insight_score})")
+        t_retrieval = time.perf_counter() - t1
+        print(f"[routing]      flow={flow}  insight_chunks={len(insight_ctx)}  signal_chunks={len(signal_ctx)}")
+        print(f"[timing]       retrieval={t_retrieval*1000:.0f}ms")
 
-        # phase 2: signal vector search — always run for references; full top_k only when insight is weak
-        signal_top_k = _VECTOR_TOP_K if (insight_low or intent.get("needs_citations")) else 3
-        print(f"[phase2]       querying signal_embeddings (top_k={signal_top_k})")
-        t2 = time.perf_counter()
-        signal_ctx = query_signal_embeddings(conn, question_vector, intent, top_k=signal_top_k)
-        t_phase2 = time.perf_counter() - t2
-        print(f"[vec/signal]   chunks={len(signal_ctx)}  scores={[c['score'] for c in signal_ctx]}")
-        print(f"[timing]       phase2 (signal_vec)={t_phase2*1000:.0f}ms")
-
-        prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history, insight_low=insight_low)
+        prompt = build_chat_prompt(standalone, insight_ctx, signal_ctx, history, flow=flow)
 
         # LLM answer generation
         print(f"[llm/answer]   calling {answer_model} …")
